@@ -14,7 +14,7 @@ public class Language extends BaseEntity {
 
     private String language;
 
-    private Long level; // foreign key to languageLevel ==>enum
+    private Long languageLevel; // foreign key to languageLevel ==>enum
 
 
 }

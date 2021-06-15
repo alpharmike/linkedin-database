@@ -9,11 +9,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Connect extends BaseEntity {
 
-    private Long follower; // foreign key to profile
+    private Long profileIdRequest; // foreign key to profile
 
-    private Long following; // foreign key to profile
+    private Long profileIdReceive; // foreign key to profile
 
-    private Long connectStatus; // foreign key to connectStatus ==>enum
+    private Long connectType; // foreign key to connectType ==>enum
 
 
 }

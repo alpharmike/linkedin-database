@@ -1,4 +1,4 @@
-package com.project.linkedindatabase.domain.profileDetail;
+package com.project.linkedindatabase.domain;
 
 import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class Profile extends BaseEntity {
 
     private String formerName;
 
-    private Long formerNameVisibility;// foreign key to formerNameVisibility ==>enum
+    private Long formerNameVisibilityType;// foreign key to formerNameVisibility ==>enum
 
     private String headline;
 
