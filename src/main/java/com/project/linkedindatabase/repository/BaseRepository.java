@@ -16,12 +16,14 @@ public abstract class BaseRepository<T extends BaseEntity,ID extends  Long> {
 
     private String tableName;
 
-    private final Converter<ResultSet, T> convertSql;
 
-    public BaseRepository(String tableName, Converter<ResultSet, T> convertSql) throws SQLException {
+
+    public BaseRepository(String tableName) throws SQLException {
         this.tableName = tableName;
-        this.convertSql = convertSql;
+
     }
+
+    public abstract T convertSql(ResultSet resultSet);
 
 
     T findById(ID  id) throws SQLException {
@@ -30,7 +32,7 @@ public abstract class BaseRepository<T extends BaseEntity,ID extends  Long> {
         ps.setString(1,tableName);
         ps.setLong(2,id);
         ResultSet resultSet = ps.executeQuery();
-        return convertSql.convert(resultSet);
+        return convertSql(resultSet);
     }
 
 
@@ -41,7 +43,7 @@ public abstract class BaseRepository<T extends BaseEntity,ID extends  Long> {
         ResultSet resultSet = ps.executeQuery();
         List<T> allObject = new ArrayList<>();
         while (resultSet.next()) {
-            allObject.add(convertSql.convert(resultSet));
+            allObject.add(convertSql(resultSet));
         }
         return allObject;
     }
