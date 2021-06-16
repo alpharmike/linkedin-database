@@ -1,0 +1,36 @@
+package com.project.linkedindatabase.connection;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DataSourceConnector {
+    @Value("${spring.datasource.url}")
+    static private String connectionUrl;
+
+    @Value("${spring.datasource.username}")
+    static private String username;
+
+    @Value("${spring.datasource.password}")
+    static private String password;
+
+    static private Connection connection;
+
+    static public Connection establishConnection() {
+        try {
+            if (connection == null) {
+                connection = DriverManager.getConnection(connectionUrl, username, password);
+            }
+
+            return connection;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
+
+
+}
