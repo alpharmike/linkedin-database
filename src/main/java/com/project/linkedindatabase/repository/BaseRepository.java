@@ -56,7 +56,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
         ResultSet resultSet = ps.executeQuery();
     }
 
-
+    abstract void insert(T object) throws SQLException;
 }
 
 
