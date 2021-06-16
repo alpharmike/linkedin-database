@@ -1,7 +1,6 @@
-package com.project.linkedindatabase.bootStrap;
+package com.project.linkedindatabase.bootstrap;
 
 
-import com.project.linkedindatabase.domain.Type.BackgroundType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -12,6 +11,6 @@ import org.springframework.stereotype.Component;
 public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        log.info("start test");
+        log.info("Application Started");
     }
 }

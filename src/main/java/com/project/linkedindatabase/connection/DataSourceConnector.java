@@ -1,6 +1,9 @@
 package com.project.linkedindatabase.connection;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

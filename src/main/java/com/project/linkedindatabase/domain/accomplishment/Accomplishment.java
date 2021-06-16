@@ -10,9 +10,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Accomplishment extends BaseEntity {
-
-
-
     private Long profileId;
 
     private String subject;
