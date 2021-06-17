@@ -2,6 +2,8 @@ package com.project.linkedindatabase.repository;
 
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.connection.DataSourceConnector;
+import com.project.linkedindatabase.domain.Type.BaseType;
+import com.project.linkedindatabase.utils.AnnotationValueGetter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,10 +16,10 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
 
     protected Connection conn = DataSourceConnector.establishConnection();
 
-    private final String tableName;
+    protected String tableName;
 
-    public BaseRepository(String tableName) throws SQLException {
-        this.tableName = tableName;
+    public BaseRepository() throws SQLException {
+        this.tableName = "";
     }
 
     public abstract T convertSql(ResultSet resultSet);
@@ -55,7 +57,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
         ResultSet resultSet = ps.executeQuery();
     }
 
-    abstract void insert(T object) throws SQLException;
+    abstract void save(T object) throws SQLException;
 }
 
 

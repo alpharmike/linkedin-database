@@ -13,9 +13,9 @@ public abstract class BaseEntity {
 
     private Long id;
 
-    public String getTableName() {
-        if (this.getClass().isAnnotationPresent(Table.class)) {
-            Table table = this.getClass().getAnnotation(Table.class);
+    static public String getTableName(Class<?> reflectClass) {
+        if (reflectClass.isAnnotationPresent(Table.class)) {
+            Table table = (Table) reflectClass.getAnnotation(Table.class);
             return table.tableName();
         }
         return "";
