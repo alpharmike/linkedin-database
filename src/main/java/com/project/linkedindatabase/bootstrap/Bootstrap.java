@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.bootstrap;
 
 
+import com.project.linkedindatabase.domain.Profile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

@@ -1,12 +1,17 @@
 package com.project.linkedindatabase.repository;
 
 import com.project.linkedindatabase.domain.Type.BaseType;
+import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.service.BaseTypeService;
+import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-public class BaseTypeRepository extends BaseRepository<BaseType, Long> {
+public abstract class BaseTypeRepository extends BaseRepository<BaseType, Long> {
+
     public BaseTypeRepository(String tableName) throws SQLException {
         super(tableName);
     }

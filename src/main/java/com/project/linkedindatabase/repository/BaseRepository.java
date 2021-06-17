@@ -12,13 +12,12 @@ import java.util.*;
 @Setter
 public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
 
-    Connection conn = DataSourceConnector.establishConnection();
+    protected Connection conn = DataSourceConnector.establishConnection();
 
     private final String tableName;
 
     public BaseRepository(String tableName) throws SQLException {
         this.tableName = tableName;
-
     }
 
     public abstract T convertSql(ResultSet resultSet);

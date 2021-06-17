@@ -3,8 +3,8 @@ package com.project.linkedindatabase.service;
 import java.util.List;
 
 
-public interface BaseService <T,ID>{
-    T findById(ID  id);
+public interface BaseService<T, ID> {
+    T findById(ID id);
 
     T save(T object);
 
