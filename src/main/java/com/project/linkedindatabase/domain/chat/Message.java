@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.domain.chat;
 
 
+import com.project.linkedindatabase.annotations.Table;
 import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(tableName = "message")
 public class Message extends BaseEntity {
 
 

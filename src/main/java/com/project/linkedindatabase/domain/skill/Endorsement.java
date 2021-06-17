@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.domain.skill;
 
 
+import com.project.linkedindatabase.annotations.Table;
 import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(tableName = "endorsement")
 public class Endorsement extends BaseEntity {
 
 
