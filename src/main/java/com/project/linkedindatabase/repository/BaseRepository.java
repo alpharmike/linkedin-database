@@ -24,7 +24,6 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
 
     public abstract T convertSql(ResultSet resultSet);
 
-
     T findById(ID id) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from ? where ? = id");
         ps.setString(1, tableName);
@@ -58,6 +57,8 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
     }
 
     abstract void save(T object) throws SQLException;
+
+    abstract void createTable() throws SQLException;
 }
 
 
