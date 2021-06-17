@@ -14,8 +14,7 @@ import java.util.List;
 public abstract class BaseTypeRepository extends BaseRepository<BaseType, Long> {
 
     public BaseTypeRepository(Class<?> type) throws SQLException {
-        super();
-        this.tableName = AnnotationValueGetter.getTableName(type);
+        super(type);
     }
 
     @Override

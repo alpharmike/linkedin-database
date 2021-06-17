@@ -18,8 +18,8 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
 
     protected String tableName;
 
-    public BaseRepository() throws SQLException {
-        this.tableName = "";
+    public BaseRepository(Class<?> type) throws SQLException {
+        this.tableName = AnnotationValueGetter.getTableName(type);
     }
 
     public abstract T convertSql(ResultSet resultSet);
