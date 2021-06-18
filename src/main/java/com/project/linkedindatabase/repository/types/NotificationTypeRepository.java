@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.NotificationTypeService;
 
 import java.sql.SQLException;
 
-public class NotificationTypeRepository extends BaseTypeRepository<NotificationType> implements NotificationTypeService {
+public class NotificationTypeRepository extends BaseTypeRepository<NotificationType> {
     public NotificationTypeRepository() throws SQLException {
         super(NotificationType.class);
     }

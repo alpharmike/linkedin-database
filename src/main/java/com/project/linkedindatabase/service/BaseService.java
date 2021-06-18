@@ -5,13 +5,15 @@ import java.util.List;
 
 
 public interface BaseService<T, ID> {
-    public T findById(ID id) throws Exception;
+    public T findById(ID id) throws SQLException;
 
-    public void save(T object) throws Exception;
+    public void save(T object) throws SQLException;
 
-    public List<T> findAll() throws Exception;
+    public List<T> findAll() throws SQLException;
 
-    public void deleteByObject(T object) throws Exception;
+    public void deleteByObject(T object) throws SQLException;
 
-    public void deleteById(ID id) throws Exception;
+    public void deleteById(ID id) throws SQLException;
+
+    public void createTable() throws SQLException;
 }

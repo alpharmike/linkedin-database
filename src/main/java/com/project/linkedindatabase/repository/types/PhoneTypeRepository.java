@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.PhoneTypeService;
 
 import java.sql.SQLException;
 
-public class PhoneTypeRepository extends BaseTypeRepository<PhoneType> implements PhoneTypeService {
+public class PhoneTypeRepository extends BaseTypeRepository<PhoneType> {
     public PhoneTypeRepository() throws SQLException {
         super(PhoneType.class);
     }

@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.IndustryService;
 
 import java.sql.SQLException;
 
-public class IndustryRepository extends BaseTypeRepository<Industry> implements IndustryService {
+public class IndustryRepository extends BaseTypeRepository<Industry> {
     public IndustryRepository() throws SQLException {
         super(Industry.class);
     }

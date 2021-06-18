@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.LanguageLevelService;
 
 import java.sql.SQLException;
 
-public class LanguageLevelRepository extends BaseTypeRepository<LanguageLevel> implements LanguageLevelService {
+public class LanguageLevelRepository extends BaseTypeRepository<LanguageLevel> {
     public LanguageLevelRepository() throws SQLException {
         super(LanguageLevel.class);
     }

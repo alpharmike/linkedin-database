@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.FormerNameVisibilityTypeServic
 
 import java.sql.SQLException;
 
-public class FormerNameVisibilityTypeRepository extends BaseTypeRepository<FormerNameVisibilityType> implements FormerNameVisibilityTypeService {
+public class FormerNameVisibilityTypeRepository extends BaseTypeRepository<FormerNameVisibilityType> {
     public FormerNameVisibilityTypeRepository() throws SQLException {
         super(FormerNameVisibilityType.class);
     }

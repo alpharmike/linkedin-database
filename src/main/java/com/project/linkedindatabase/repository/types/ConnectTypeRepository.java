@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.ConnectTypeService;
 
 import java.sql.SQLException;
 
-public class ConnectTypeRepository extends BaseTypeRepository<ConnectType> implements ConnectTypeService {
+public class ConnectTypeRepository extends BaseTypeRepository<ConnectType> {
     public ConnectTypeRepository() throws SQLException {
         super(ConnectType.class);
     }

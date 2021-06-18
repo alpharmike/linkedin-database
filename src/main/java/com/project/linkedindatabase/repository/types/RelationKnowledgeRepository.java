@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.RelationKnowledgeService;
 
 import java.sql.SQLException;
 
-public class RelationKnowledgeRepository extends BaseTypeRepository<RelationKnowledge> implements RelationKnowledgeService {
+public class RelationKnowledgeRepository extends BaseTypeRepository<RelationKnowledge> {
     public RelationKnowledgeRepository() throws SQLException {
         super(RelationKnowledge.class);
     }

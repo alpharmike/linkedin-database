@@ -6,10 +6,8 @@ import com.project.linkedindatabase.service.types.AccomplishmentTypeService;
 
 import java.sql.SQLException;
 
-public class AccomplishmentTypeRepository extends BaseTypeRepository<AccomplishmentType> implements AccomplishmentTypeService {
+public class AccomplishmentTypeRepository extends BaseTypeRepository<AccomplishmentType> {
     public AccomplishmentTypeRepository() throws SQLException {
         super(AccomplishmentType.class);
     }
-
-
 }

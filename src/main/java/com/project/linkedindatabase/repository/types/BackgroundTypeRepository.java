@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.BackgroundTypeService;
 
 import java.sql.SQLException;
 
-public class BackgroundTypeRepository extends BaseTypeRepository<BackgroundType> implements BackgroundTypeService {
+public class BackgroundTypeRepository extends BaseTypeRepository<BackgroundType> {
 
     public BackgroundTypeRepository() throws SQLException {
         super(BackgroundType.class);

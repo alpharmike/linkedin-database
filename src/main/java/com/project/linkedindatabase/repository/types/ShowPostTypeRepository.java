@@ -6,7 +6,7 @@ import com.project.linkedindatabase.service.types.ShowPostTypeService;
 
 import java.sql.SQLException;
 
-public class ShowPostTypeRepository extends BaseTypeRepository<ShowPostType> implements ShowPostTypeService {
+public class ShowPostTypeRepository extends BaseTypeRepository<ShowPostType> {
     public ShowPostTypeRepository() throws SQLException {
         super(ShowPostType.class);
     }
