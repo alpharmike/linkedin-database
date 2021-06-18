@@ -26,9 +26,13 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("create table if not exists ? (id bigint not null auto_increment, name nvarchar(100) not null, primary key (id))");
-        ps.setString(1, this.tableName);
-        ps.executeQuery();
+        final String createQuery = String.format("create table if not exists %s ("
+                + " id bigint not null auto_increment,"
+                + " name nvarchar(100) not null,"
+                + " primary key (id)"
+                + ")", this.tableName);
+        PreparedStatement ps = conn.prepareStatement(createQuery);
+        ps.execute();
     }
 
 }
