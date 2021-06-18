@@ -29,4 +29,6 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
         ps.setString(2, object.getName());
         ResultSet resultSet = ps.executeQuery();
     }
+
+
 }

@@ -24,7 +24,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
 
     public abstract T convertSql(ResultSet resultSet);
 
-    T findById(ID id) throws SQLException {
+    protected T findById(ID id) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from ? where ? = id");
         ps.setString(1, tableName);
         ps.setLong(2, id);
@@ -33,7 +33,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
     }
 
 
-    List<T> findAll() throws SQLException {
+    protected List<T> findAll() throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from ?");
         ps.setString(1, tableName);
 
@@ -45,11 +45,11 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
         return allObject;
     }
 
-    void deleteByItem(T object) throws SQLException {
+    protected void deleteByItem(T object) throws SQLException {
         this.deleteById((ID) object.getId());
     }
 
-    void deleteById(ID id) throws SQLException {
+    protected void deleteById(ID id) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("DELETE  from ? where id = ?");
         ps.setString(1, tableName);
         ps.setLong(2, id);

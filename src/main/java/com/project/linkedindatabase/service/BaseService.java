@@ -1,16 +1,17 @@
 package com.project.linkedindatabase.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
 public interface BaseService<T, ID> {
-    T findById(ID id);
+    public T findById(ID id) throws Exception;
 
-    T save(T object);
+    public void save(T object) throws Exception;
 
-    List<T> findAll();
+    public List<T> findAll() throws Exception;
 
-    void deleteByObject(T object);
+    public void deleteByObject(T object) throws Exception;
 
-    void deleteById(ID id);
+    public void deleteById(ID id) throws Exception;
 }
