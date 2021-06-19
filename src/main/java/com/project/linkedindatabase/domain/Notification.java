@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(tableName = "notification")
-public class Notification {
+public class Notification extends BaseEntity {
 
     private Long profileId;
 
