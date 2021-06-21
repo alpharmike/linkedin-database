@@ -30,7 +30,7 @@ public class ShowPostTypeServiceMap extends ShowPostTypeRepository implements Sh
     }
 
     @Override
-    public void deleteByItem(ShowPostType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(ShowPostType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

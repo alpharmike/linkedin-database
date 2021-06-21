@@ -30,7 +30,7 @@ public class LanguageLevelServiceMap extends LanguageLevelRepository implements 
     }
 
     @Override
-    public void deleteByItem(LanguageLevel object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(LanguageLevel object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

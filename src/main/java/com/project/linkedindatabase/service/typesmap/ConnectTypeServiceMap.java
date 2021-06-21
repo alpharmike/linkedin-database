@@ -30,7 +30,7 @@ public class ConnectTypeServiceMap extends ConnectTypeRepository implements Conn
     }
 
     @Override
-    public void deleteByItem(ConnectType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(ConnectType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

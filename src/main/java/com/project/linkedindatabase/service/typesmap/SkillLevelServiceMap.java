@@ -30,7 +30,7 @@ public class SkillLevelServiceMap extends SkillLevelRepository implements SkillL
     }
 
     @Override
-    public void deleteByItem(SkillLevel object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(SkillLevel object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

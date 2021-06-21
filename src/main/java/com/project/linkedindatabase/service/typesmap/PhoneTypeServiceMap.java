@@ -30,7 +30,7 @@ public class PhoneTypeServiceMap extends PhoneTypeRepository implements PhoneTyp
     }
 
     @Override
-    public void deleteByItem(PhoneType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(PhoneType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

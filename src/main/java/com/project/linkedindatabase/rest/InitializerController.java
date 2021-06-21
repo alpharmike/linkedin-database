@@ -63,5 +63,4 @@ public class InitializerController {
         this.skillLevelService.createTable();
     }
 
-
 }

@@ -12,7 +12,7 @@ public interface BaseService<T, ID> {
 
     public List<T> findAll() throws SQLException;
 
-    public void deleteByItem(T object) throws SQLException;
+    public void deleteByObject(T object) throws SQLException;
 
     public void deleteById(ID id) throws SQLException;
 

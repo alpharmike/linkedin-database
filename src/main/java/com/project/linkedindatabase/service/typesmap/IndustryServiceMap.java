@@ -30,7 +30,7 @@ public class IndustryServiceMap extends IndustryRepository implements IndustrySe
     }
 
     @Override
-    public void deleteByItem(Industry object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(Industry object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

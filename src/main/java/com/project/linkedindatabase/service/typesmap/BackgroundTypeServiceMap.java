@@ -30,7 +30,7 @@ public class BackgroundTypeServiceMap extends BackgroundTypeRepository implement
     }
 
     @Override
-    public void deleteByItem(BackgroundType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(BackgroundType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

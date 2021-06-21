@@ -50,7 +50,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>  imp
         this.deleteById((ID) object.getId());
     }
 
-    protected void deleteById(ID id) throws SQLException {
+    public void deleteById(ID id) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("DELETE  from ? where id = ?");
         ps.setString(1, tableName);
         ps.setLong(2, id);

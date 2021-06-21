@@ -30,7 +30,7 @@ public class RelationKnowledgeServiceMap extends RelationKnowledgeRepository imp
     }
 
     @Override
-    public void deleteByItem(RelationKnowledge object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(RelationKnowledge object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

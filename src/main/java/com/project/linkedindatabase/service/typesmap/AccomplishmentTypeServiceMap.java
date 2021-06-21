@@ -30,7 +30,7 @@ public class AccomplishmentTypeServiceMap extends AccomplishmentTypeRepository i
     }
 
     @Override
-    public void deleteByItem(AccomplishmentType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(AccomplishmentType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

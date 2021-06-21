@@ -30,7 +30,7 @@ public class NotificationTypeServiceMap extends NotificationTypeRepository imple
     }
 
     @Override
-    public void deleteByItem(NotificationType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(NotificationType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }

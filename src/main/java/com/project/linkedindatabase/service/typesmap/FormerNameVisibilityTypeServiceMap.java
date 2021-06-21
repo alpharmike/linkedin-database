@@ -30,7 +30,7 @@ public class FormerNameVisibilityTypeServiceMap extends FormerNameVisibilityType
     }
 
     @Override
-    public void deleteByItem(FormerNameVisibilityType object) throws SQLException {
-        super.deleteByItem(object);
+    public void deleteByObject(FormerNameVisibilityType object) throws SQLException {
+        super.deleteByObject(object);
     }
 }
