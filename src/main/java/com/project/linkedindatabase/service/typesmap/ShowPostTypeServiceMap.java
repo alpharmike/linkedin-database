@@ -9,28 +9,40 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class ShowPostTypeServiceMap extends ShowPostTypeRepository implements ShowPostTypeService {
+public class ShowPostTypeServiceMap  implements ShowPostTypeService {
+
+    private final ShowPostTypeRepository showPostTypeRepository;
     public ShowPostTypeServiceMap() throws SQLException {
-        super();
+        showPostTypeRepository = new ShowPostTypeRepository();
     }
 
     @Override
     public ShowPostType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return showPostTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(ShowPostType object) throws SQLException {
+        showPostTypeRepository.save(object);
     }
 
     @Override
     public List<ShowPostType> findAll() throws SQLException {
-        return super.findAll();
+        return showPostTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        showPostTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        showPostTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(ShowPostType object) throws SQLException {
-        super.deleteByObject(object);
+        showPostTypeRepository.deleteByObject(object);
     }
 }

@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class ConnectTypeServiceMap extends ConnectTypeRepository implements ConnectTypeService {
+public class ConnectTypeServiceMap implements ConnectTypeService {
+
+    private final ConnectTypeRepository connectTypeRepository;
+
     public ConnectTypeServiceMap() throws SQLException {
-        super();
+        connectTypeRepository = new ConnectTypeRepository();
     }
 
     @Override
     public ConnectType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return connectTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(ConnectType object) throws SQLException {
+        connectTypeRepository.save(object);
     }
 
     @Override
     public List<ConnectType> findAll() throws SQLException {
-        return super.findAll();
+        return connectTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        connectTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        connectTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(ConnectType object) throws SQLException {
-        super.deleteByObject(object);
+        connectTypeRepository.deleteByObject(object);
     }
 }

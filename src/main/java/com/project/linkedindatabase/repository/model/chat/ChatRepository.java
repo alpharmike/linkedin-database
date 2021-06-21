@@ -12,26 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class ChatRepository extends BaseRepository<Chat,Long> implements ChatService {
+public class ChatRepository extends BaseRepository<Chat,Long> {
 
     public ChatRepository() throws SQLException {
         super(Chat.class);
     }
 
-    @Override
-    public Chat findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
-
-    @Override
-    public List<Chat> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Chat object) throws SQLException {
@@ -43,11 +29,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> implements ChatSer
 
     }
 
-    @Override
-    public void deleteByObject(Chat object) throws SQLException {
-        super.deleteByObject(object);
 
-    }
 
     @Override
     public Chat convertSql(ResultSet resultSet) {

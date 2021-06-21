@@ -12,26 +12,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class MessageRepository extends BaseRepository<Message,Long> implements MessageService {
+public class MessageRepository extends BaseRepository<Message,Long>  {
 
     public MessageRepository() throws SQLException {
         super(Message.class);
     }
 
-    @Override
-    public Message findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
 
-    @Override
-    public List<Message> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Message object) throws SQLException {
@@ -43,11 +30,7 @@ public class MessageRepository extends BaseRepository<Message,Long> implements M
 
     }
 
-    @Override
-    public void deleteByObject(Message object) throws SQLException {
-        super.deleteByObject(object);
 
-    }
 
     @Override
     public Message convertSql(ResultSet resultSet) {

@@ -16,7 +16,6 @@ public interface BaseService<T, ID> {
 
     public void deleteById(ID id) throws SQLException;
 
-    public  T convertSql(ResultSet resultSet);
 
     public void createTable() throws SQLException;
 }

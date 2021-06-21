@@ -12,26 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class EndorsementRepository extends BaseRepository<Endorsement,Long> implements EndorsementService {
+public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
     public EndorsementRepository() throws SQLException {
         super(Endorsement.class);
     }
 
-    @Override
-    public Endorsement findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
-
-    @Override
-    public List<Endorsement> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Endorsement object) throws SQLException {
@@ -43,11 +29,6 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long> impl
 
     }
 
-    @Override
-    public void deleteByObject(Endorsement object) throws SQLException {
-        super.deleteByObject(object);
-
-    }
 
     @Override
     public Endorsement convertSql(ResultSet resultSet) {

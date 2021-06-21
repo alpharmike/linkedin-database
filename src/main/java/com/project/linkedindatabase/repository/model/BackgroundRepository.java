@@ -13,26 +13,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class BackgroundRepository extends BaseRepository<Background,Long> implements BackgroundService {
+public class BackgroundRepository extends BaseRepository<Background,Long>  {
 
     public BackgroundRepository() throws SQLException {
         super(Background.class);
     }
 
-    @Override
-    public Background findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
 
-    @Override
-    public List<Background> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Background object) throws SQLException {
@@ -44,11 +31,7 @@ public class BackgroundRepository extends BaseRepository<Background,Long> implem
 
     }
 
-    @Override
-    public void deleteByObject(Background object) throws SQLException {
-        super.deleteByObject(object);
 
-    }
 
     @Override
     public Background convertSql(ResultSet resultSet) {

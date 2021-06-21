@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class IndustryServiceMap extends IndustryRepository implements IndustryService {
+public class IndustryServiceMap  implements IndustryService {
+
+    private final IndustryRepository industryRepository;
+
     public IndustryServiceMap() throws SQLException {
-        super();
+        industryRepository = new IndustryRepository();
     }
 
     @Override
     public Industry findById(Long id) throws SQLException {
-        return super.findById(id);
+        return industryRepository.findById(id);
+    }
+
+    @Override
+    public void save(Industry object) throws SQLException {
+
     }
 
     @Override
     public List<Industry> findAll() throws SQLException {
-        return super.findAll();
+        return industryRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        industryRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+
     }
 
     @Override
     public void deleteByObject(Industry object) throws SQLException {
-        super.deleteByObject(object);
+        industryRepository.deleteByObject(object);
     }
 }

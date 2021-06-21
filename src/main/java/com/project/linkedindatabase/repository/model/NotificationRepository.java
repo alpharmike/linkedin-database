@@ -11,26 +11,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class NotificationRepository extends BaseRepository<Notification,Long> implements NotificationService {
+public class NotificationRepository extends BaseRepository<Notification,Long>  {
 
     public NotificationRepository() throws SQLException {
         super(Notification.class);
     }
 
-    @Override
-    public Notification findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
 
-    @Override
-    public List<Notification> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Notification object) throws SQLException {
@@ -42,11 +29,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long> im
 
     }
 
-    @Override
-    public void deleteByObject(Notification object) throws SQLException {
-        super.deleteByObject(object);
 
-    }
 
     @Override
     public Notification convertSql(ResultSet resultSet) {

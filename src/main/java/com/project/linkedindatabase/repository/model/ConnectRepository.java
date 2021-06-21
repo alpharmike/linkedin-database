@@ -12,26 +12,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class ConnectRepository extends BaseRepository<Connect,Long> implements ConnectService {
+public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     public ConnectRepository() throws SQLException {
         super(Connect.class);
     }
 
-    @Override
-    public Connect findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
 
-    @Override
-    public List<Connect> findAll() throws SQLException {
-        return super.findAll();
-    }
 
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Connect object) throws SQLException {
@@ -43,11 +31,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> implements C
 
     }
 
-    @Override
-    public void deleteByObject(Connect object) throws SQLException {
-        super.deleteByObject(object);
 
-    }
 
     @Override
     public Connect convertSql(ResultSet resultSet) {

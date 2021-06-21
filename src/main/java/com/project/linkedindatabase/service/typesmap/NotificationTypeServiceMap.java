@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class NotificationTypeServiceMap extends NotificationTypeRepository implements NotificationTypeService {
+public class NotificationTypeServiceMap  implements NotificationTypeService {
+
+    private final NotificationTypeRepository notificationTypeRepository;
+
     public NotificationTypeServiceMap() throws SQLException {
-        super();
+        notificationTypeRepository = new NotificationTypeRepository();
     }
 
     @Override
     public NotificationType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return notificationTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(NotificationType object) throws SQLException {
+        notificationTypeRepository.save(object);
     }
 
     @Override
     public List<NotificationType> findAll() throws SQLException {
-        return super.findAll();
+        return notificationTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        notificationTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        notificationTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(NotificationType object) throws SQLException {
-        super.deleteByObject(object);
+        notificationTypeRepository.deleteByObject(object);
     }
 }

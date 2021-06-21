@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class FormerNameVisibilityTypeServiceMap extends FormerNameVisibilityTypeRepository implements FormerNameVisibilityTypeService {
+public class FormerNameVisibilityTypeServiceMap  implements FormerNameVisibilityTypeService {
+
+    private final FormerNameVisibilityTypeRepository formerNameVisibilityTypeRepository;
+
     public FormerNameVisibilityTypeServiceMap() throws SQLException {
-        super();
+        formerNameVisibilityTypeRepository = new FormerNameVisibilityTypeRepository();
     }
 
     @Override
     public FormerNameVisibilityType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return formerNameVisibilityTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(FormerNameVisibilityType object) throws SQLException {
+        formerNameVisibilityTypeRepository.save(object);
     }
 
     @Override
     public List<FormerNameVisibilityType> findAll() throws SQLException {
-        return super.findAll();
+        return formerNameVisibilityTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        formerNameVisibilityTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        formerNameVisibilityTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(FormerNameVisibilityType object) throws SQLException {
-        super.deleteByObject(object);
+        formerNameVisibilityTypeRepository.deleteByObject(object);
     }
 }

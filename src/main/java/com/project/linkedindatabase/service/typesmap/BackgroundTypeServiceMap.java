@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class BackgroundTypeServiceMap extends BackgroundTypeRepository implements BackgroundTypeService {
+public class BackgroundTypeServiceMap implements BackgroundTypeService {
+
+    private final BackgroundTypeRepository backgroundTypeRepository;
+
     public BackgroundTypeServiceMap() throws SQLException {
-        super();
+        backgroundTypeRepository = new BackgroundTypeRepository();
     }
 
     @Override
     public BackgroundType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return backgroundTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(BackgroundType object) throws SQLException {
+        backgroundTypeRepository.save(object);
     }
 
     @Override
     public List<BackgroundType> findAll() throws SQLException {
-        return super.findAll();
+        return backgroundTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        backgroundTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        backgroundTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(BackgroundType object) throws SQLException {
-        super.deleteByObject(object);
+        backgroundTypeRepository.deleteByObject(object);
     }
 }

@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class AccomplishmentTypeServiceMap extends AccomplishmentTypeRepository implements AccomplishmentTypeService {
+public class AccomplishmentTypeServiceMap  implements AccomplishmentTypeService {
+
+    private final AccomplishmentTypeRepository accomplishmentTypeRepository;
+
     public AccomplishmentTypeServiceMap() throws SQLException {
-        super();
+        this.accomplishmentTypeRepository = new AccomplishmentTypeRepository();
     }
 
     @Override
     public AccomplishmentType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return accomplishmentTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(AccomplishmentType object) throws SQLException {
+        accomplishmentTypeRepository.save(object);
     }
 
     @Override
     public List<AccomplishmentType> findAll() throws SQLException {
-        return super.findAll();
+        return accomplishmentTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        accomplishmentTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        accomplishmentTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(AccomplishmentType object) throws SQLException {
-        super.deleteByObject(object);
+        accomplishmentTypeRepository.deleteByObject(object);
     }
 }

@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class PhoneTypeServiceMap extends PhoneTypeRepository implements PhoneTypeService {
+public class PhoneTypeServiceMap  implements PhoneTypeService {
+
+    private final PhoneTypeRepository phoneTypeRepository;
+
     public PhoneTypeServiceMap() throws SQLException {
-        super();
+        phoneTypeRepository = new PhoneTypeRepository();
     }
 
     @Override
     public PhoneType findById(Long id) throws SQLException {
-        return super.findById(id);
+        return phoneTypeRepository.findById(id);
+    }
+
+    @Override
+    public void save(PhoneType object) throws SQLException {
+        phoneTypeRepository.save(object);
     }
 
     @Override
     public List<PhoneType> findAll() throws SQLException {
-        return super.findAll();
+        return phoneTypeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        phoneTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        phoneTypeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(PhoneType object) throws SQLException {
-        super.deleteByObject(object);
+        phoneTypeRepository.deleteByObject(object);
     }
 }

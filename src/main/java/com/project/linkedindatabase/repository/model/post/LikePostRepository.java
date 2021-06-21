@@ -12,26 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class LikePostRepository extends BaseRepository<LikePost,Long> implements LikePostService {
+public class LikePostRepository extends BaseRepository<LikePost,Long>   {
 
     public LikePostRepository() throws SQLException {
         super(LikePost.class);
     }
 
-    @Override
-    public LikePost findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
-
-    @Override
-    public List<LikePost> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(LikePost object) throws SQLException {
@@ -43,11 +29,7 @@ public class LikePostRepository extends BaseRepository<LikePost,Long> implements
 
     }
 
-    @Override
-    public void deleteByObject(LikePost object) throws SQLException {
-        super.deleteByObject(object);
 
-    }
 
     @Override
     public LikePost convertSql(ResultSet resultSet) {

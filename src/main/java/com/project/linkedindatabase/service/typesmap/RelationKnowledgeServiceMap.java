@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class RelationKnowledgeServiceMap extends RelationKnowledgeRepository implements RelationKnowledgeService {
+public class RelationKnowledgeServiceMap  implements RelationKnowledgeService {
+
+    private final RelationKnowledgeRepository relationKnowledgeRepository;
+
     public RelationKnowledgeServiceMap() throws SQLException {
-        super();
+        relationKnowledgeRepository = new RelationKnowledgeRepository();
     }
 
     @Override
     public RelationKnowledge findById(Long id) throws SQLException {
-        return super.findById(id);
+        return relationKnowledgeRepository.findById(id);
+    }
+
+    @Override
+    public void save(RelationKnowledge object) throws SQLException {
+        relationKnowledgeRepository.save(object);
     }
 
     @Override
     public List<RelationKnowledge> findAll() throws SQLException {
-        return super.findAll();
+        return relationKnowledgeRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        relationKnowledgeRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        relationKnowledgeRepository.createTable();
     }
 
     @Override
     public void deleteByObject(RelationKnowledge object) throws SQLException {
-        super.deleteByObject(object);
+        relationKnowledgeRepository.deleteByObject(object);
     }
 }

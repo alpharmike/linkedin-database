@@ -12,26 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long> implements AccomplishmentService {
+public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long>   {
 
     public AccomplishmentRepository() throws SQLException {
         super(Accomplishment.class);
     }
 
-    @Override
-    public Accomplishment findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
-
-    @Override
-    public List<Accomplishment> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Accomplishment object) throws SQLException {
@@ -43,11 +29,6 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
 
     }
 
-    @Override
-    public void deleteByObject(Accomplishment object) throws SQLException {
-        super.deleteByObject(object);
-
-    }
 
     @Override
     public Accomplishment convertSql(ResultSet resultSet) {

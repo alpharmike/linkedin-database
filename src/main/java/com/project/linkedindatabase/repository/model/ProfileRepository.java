@@ -10,26 +10,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class ProfileRepository extends BaseRepository<Profile,Long>  implements ProfileService {
+public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     public ProfileRepository() throws SQLException {
         super(Profile.class);
     }
 
-    @Override
-    public Profile findById(Long id) throws SQLException {
-        return super.findById(id);
-    }
 
-    @Override
-    public List<Profile> findAll() throws SQLException {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
-    }
 
     @Override
     public void save(Profile object) throws SQLException {
@@ -41,11 +28,6 @@ public class ProfileRepository extends BaseRepository<Profile,Long>  implements 
 
     }
 
-    @Override
-    public void deleteByObject(Profile object) throws SQLException {
-        super.deleteByObject(object);
-
-    }
 
     @Override
     public Profile convertSql(ResultSet resultSet) {

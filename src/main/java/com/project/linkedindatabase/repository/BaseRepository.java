@@ -13,11 +13,13 @@ import java.util.*;
 
 @Getter
 @Setter
-public abstract class BaseRepository<T extends BaseEntity, ID extends Long>  implements BaseService<T,Long> {
+public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
 
     protected Connection conn = DataSourceConnector.establishConnection();
 
     protected String tableName;
+
+
 
     public BaseRepository(Class<?> type) throws SQLException {
         this.tableName = AnnotationValueGetter.getTableName(type);
@@ -60,6 +62,8 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>  imp
     abstract public void save(T object) throws SQLException;
 
     abstract public void createTable() throws SQLException;
+
+    abstract public T convertSql(ResultSet resultSet);
 }
 
 

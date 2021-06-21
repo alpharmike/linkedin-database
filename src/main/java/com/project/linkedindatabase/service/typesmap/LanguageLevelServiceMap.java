@@ -9,28 +9,41 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class LanguageLevelServiceMap extends LanguageLevelRepository implements LanguageLevelService {
+public class LanguageLevelServiceMap  implements LanguageLevelService {
+
+    private final LanguageLevelRepository languageLevelRepository;
+
     public LanguageLevelServiceMap() throws SQLException {
-        super();
+        languageLevelRepository = new LanguageLevelRepository();
     }
 
     @Override
     public LanguageLevel findById(Long id) throws SQLException {
-        return super.findById(id);
+        return languageLevelRepository.findById(id);
+    }
+
+    @Override
+    public void save(LanguageLevel object) throws SQLException {
+        languageLevelRepository.save(object);
     }
 
     @Override
     public List<LanguageLevel> findAll() throws SQLException {
-        return super.findAll();
+        return languageLevelRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        super.deleteById(id);
+        languageLevelRepository.deleteById(id);
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        languageLevelRepository.createTable();
     }
 
     @Override
     public void deleteByObject(LanguageLevel object) throws SQLException {
-        super.deleteByObject(object);
+        languageLevelRepository.deleteByObject(object);
     }
 }
