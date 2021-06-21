@@ -3,6 +3,7 @@ package com.project.linkedindatabase.repository;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.connection.DataSourceConnector;
 import com.project.linkedindatabase.domain.Type.BaseType;
+import com.project.linkedindatabase.service.BaseService;
 import com.project.linkedindatabase.utils.AnnotationValueGetter;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
+public abstract class BaseRepository<T extends BaseEntity, ID extends Long>  implements BaseService<T,Long> {
 
     protected Connection conn = DataSourceConnector.establishConnection();
 
@@ -22,9 +23,9 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
         this.tableName = AnnotationValueGetter.getTableName(type);
     }
 
-    public abstract T convertSql(ResultSet resultSet);
 
-    protected T findById(ID id) throws SQLException {
+
+    public T findById(ID id) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from ? where ? = id");
         ps.setString(1, tableName);
         ps.setLong(2, id);
@@ -33,7 +34,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
     }
 
 
-    protected List<T> findAll() throws SQLException {
+    public List<T> findAll() throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from ?");
         ps.setString(1, tableName);
 
@@ -45,7 +46,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long> {
         return allObject;
     }
 
-    protected void deleteByItem(T object) throws SQLException {
+    public void deleteByObject(T object) throws SQLException {
         this.deleteById((ID) object.getId());
     }
 

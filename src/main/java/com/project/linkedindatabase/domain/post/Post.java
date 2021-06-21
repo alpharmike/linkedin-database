@@ -2,6 +2,7 @@ package com.project.linkedindatabase.domain.post;
 
 
 import com.project.linkedindatabase.annotations.Table;
+import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Table(tableName = "post")
-public class Post {
+public class Post extends BaseEntity {
 
     private Long profileId;
 

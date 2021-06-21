@@ -1,5 +1,6 @@
 package com.project.linkedindatabase.service;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface BaseService<T, ID> {
     public void deleteByItem(T object) throws SQLException;
 
     public void deleteById(ID id) throws SQLException;
+
+    public  T convertSql(ResultSet resultSet);
 
     public void createTable() throws SQLException;
 }
