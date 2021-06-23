@@ -32,7 +32,7 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
                 + " "+ID+" bigint not null auto_increment,"
                 + " "+NAME+" nvarchar(100) not null,"
                 + " primary key ("+ID+")"
-                + ")", this.tableName);
+                + ");", this.tableName);
         PreparedStatement ps = conn.prepareStatement(createQuery);
         ps.execute();
     }
