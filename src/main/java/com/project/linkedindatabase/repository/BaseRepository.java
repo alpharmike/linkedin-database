@@ -63,7 +63,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
 
     abstract public void createTable() throws SQLException;
 
-    abstract public T convertSql(ResultSet resultSet);
+    abstract public T convertSql(ResultSet resultSet) throws SQLException;
 }
 
 
