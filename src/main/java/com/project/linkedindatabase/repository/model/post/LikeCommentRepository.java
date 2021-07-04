@@ -7,6 +7,7 @@ import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,7 +23,7 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
     @Override
     public void save(LikeComment object) throws SQLException {
-
+        PreparedStatement savePs =
     }
 
     @Override
