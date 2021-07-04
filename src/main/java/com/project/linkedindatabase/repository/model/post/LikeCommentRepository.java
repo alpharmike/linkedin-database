@@ -23,19 +23,36 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
     @Override
     public void save(LikeComment object) throws SQLException {
-        PreparedStatement savePs =
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO LikeComments(commentId, profileId) VALUES(?, ?)");
+        savePs.setLong(0, object.getCommentId());
+        savePs.setLong(1, object.getProfileId());
+        savePs.execute();
     }
 
     @Override
     public void createTable() throws SQLException {
-
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE LikeComments(" +
+                "id BIGINT NOT NULL AUTO_INCREMENT,"+
+                "profileId FOREIGN KEY REFERENCES Profiles(id),"+
+                "commentId FOREIGN KEY REFERENCES Comments(id)"+
+                ")");
+        createTablePs.execute();
     }
 
 
 
     @Override
     public LikeComment convertSql(ResultSet resultSet) {
-        return null;
+        LikeComment likeComment = new LikeComment();
+        try {
+            resultSet.first();
+            likeComment.setId(resultSet.getLong("id"));
+            likeComment.setProfileId(resultSet.getLong("profileId"));
+            likeComment.setCommentId(resultSet.getLong("commentId"));
+        }catch (SQLException s){
+            System.out.println(s.getMessage());
+        }
+        return likeComment;
     }
 
 }

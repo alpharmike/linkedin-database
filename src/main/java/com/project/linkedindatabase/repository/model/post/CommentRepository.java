@@ -30,7 +30,7 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
 
     @Override
     public void save(Comment object) throws SQLException{
-        PreparedStatement savingPs = this.conn.prepareStatement("INSERT INTO comments(text, date, profileId, postId, reCommentId)" +
+        PreparedStatement savingPs = this.conn.prepareStatement("INSERT INTO Comments(text, date, profileId, postId, reCommentId)" +
                 " VALUES(?,?,?,?,?)");
         savingPs.setString(0, object.getText());
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -47,9 +47,9 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
                 "text NVARCHAR NOT NULL,"+
                 "date NVARCHAR NOT NULL,"+
-                "profileId FOREIGN KEY REFERENCES Profiles(profileId)," +
-                "postId FOREIGN KEY REFERENCES Posts(postId)," +
-                "reCommentId FOREIGN KEY REFERENCES Comments(),"+
+                "profileId FOREIGN KEY REFERENCES Profiles(id)," +
+                "postId FOREIGN KEY REFERENCES Posts(id)," +
+                "reCommentId FOREIGN KEY REFERENCES Comments(id),"+
                 "PRIMARY KEY (id),"+
                 ")");
         createTablePs.execute();
@@ -61,12 +61,12 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
         Comment comment = new Comment();
         try{
             resultSet.first();
-            comment.setId((long) resultSet.getInt("id"));
+            comment.setId(resultSet.getLong("id"));
             comment.setText( resultSet.getString("text"));
             comment.setDate(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(resultSet.getString("date")));
-            comment.setProfileId((long)  resultSet.getLong("profileId"));
-            comment.setPostId( (long) resultSet.getLong("postId"));
-            comment.setReCommentId( (long) resultSet.getLong("reCommentId"));
+            comment.setProfileId(resultSet.getLong("profileId"));
+            comment.setPostId(resultSet.getLong("postId"));
+            comment.setReCommentId(resultSet.getLong("reCommentId"));
         }catch (SQLException  | ParseException s){
             System.out.println(s.getMessage());
         }
