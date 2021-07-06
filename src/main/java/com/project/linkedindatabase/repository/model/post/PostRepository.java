@@ -26,30 +26,37 @@ public class PostRepository extends BaseRepository<Post,Long>  {
 
     @Override
     public void save(Post object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO Posts(profileId, sharedId, showPostType, " +
+
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(profileId, sharedId, showPostType, " +
                 "text, date, file) VALUES(?, ?, ?, ?, ?, ?)");
-        savePs.setLong(0, object.getProfileId());
-        savePs.setLong(1, object.getsharedId());
-        savePs.setLong(2, object.getShowPostType());
-        savePs.setString(3, object.getText());
+        savePs.setString(0, this.tableName);
+        savePs.setLong(1, object.getProfileId());
+        savePs.setLong(2, object.getSharedId());
+        savePs.setLong(3, object.getShowPostType());
+        savePs.setString(4, object.getText());
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String date = df.format(object.getDate());
-        savePs.setString(4, date);
-        savePs.setBytes(5, object.getFile());
-        savePs.execute();
+        savePs.setString(5, date);
+        savePs.setBytes(6, object.getFile());
+        savePs.executeQuery();
     }
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE Posts(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS ?(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "profileId FOREIGN KEY REFERENCES Profiles(id),"+
-                "sharedId FOREIGN KEY REFERENCES Posts(id),"+
-                "showPostType FOREIGN KEY REFERENCES ShowPostTypes(id),"+
-                "text NVARCHAR NOT NULL,"+
-                "date NVARCHAR NOT NULL,"+
-                "file MEDIUMBLOB"+
+                "profileId BIGINT," +
+                "FOREIGN KEY (profileId) REFERENCES profile(id),"+
+                "sharedId BIGINT," +
+                "FOREIGN KEY (sharedId) REFERENCES post(id),"+
+                "showPostType BIGINT," +
+                "FOREIGN KEY (showPostType) REFERENCES show_post_type(id),"+
+                "text NVARCHAR(2000) NOT NULL,"+
+                "date NVARCHAR(255) NOT NULL,"+
+                "file MEDIUMBLOB,"+
+                "PRIMARY KEY (id),"+
                 ")");
+        createTablePs.setString(0, this.tableName);
         createTablePs.execute();
     }
 
@@ -65,7 +72,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
             post.setShowPostType(resultSet.getLong("showPostType"));
             post.setText(resultSet.getString("text"));
             post.setDate(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(resultSet.getString("date")));
-            post.setFile(resultSet.getBytes("file"));
+            //post.setFile(resultSet.getBytes("file"));
 
     }catch (SQLException | ParseException s){
             System.out.println(s.getMessage());

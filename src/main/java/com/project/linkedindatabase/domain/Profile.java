@@ -53,6 +53,6 @@ public class Profile extends BaseEntity {
 
     private String about;
 
-    private String urlTOProfile;
+    private String urlToProfile;
 
 }

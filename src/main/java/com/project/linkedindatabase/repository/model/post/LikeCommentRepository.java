@@ -23,19 +23,24 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
     @Override
     public void save(LikeComment object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO LikeComments(commentId, profileId) VALUES(?, ?)");
-        savePs.setLong(0, object.getCommentId());
-        savePs.setLong(1, object.getProfileId());
-        savePs.execute();
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(commentId, profileId) VALUES(?, ?)");
+        savePs.setString(0, this.tableName);
+        savePs.setLong(1, object.getCommentId());
+        savePs.setLong(2, object.getProfileId());
+        savePs.executeQuery();
     }
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE LikeComments(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS ?(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "profileId FOREIGN KEY REFERENCES Profiles(id),"+
-                "commentId FOREIGN KEY REFERENCES Comments(id)"+
+                "profileId BIGINT," +
+                "FOREIGN KEY (profileId) REFERENCES profile(id),"+
+                "commentId BIGINT," +
+                "FOREIGN KEY (commentId) REFERENCES comment(id),"+
+                "PRIMARY KEY (id),"+
                 ")");
+        createTablePs.setString(0, this.tableName);
         createTablePs.execute();
     }
 
