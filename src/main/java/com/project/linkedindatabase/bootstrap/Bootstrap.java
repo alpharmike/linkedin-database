@@ -24,12 +24,27 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
         log.info("Application Started");
-        try {
-            new PhoneTypeRepository().createTable();
-            new FormerNameVisibilityTypeRepository().createTable();
-            new ProfileRepository().createTable();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+//        try {
+//            new PhoneTypeRepository().createTable();
+//            new FormerNameVisibilityTypeRepository().createTable();
+//            new IndustryRepository().createTable();
+//            new ProfileRepository().createTable();
+//            new AccomplishmentTypeRepository().createTable();
+//            new ConnectTypeRepository().createTable();
+//            new BackgroundTypeRepository().createTable();
+//            new LanguageLevelRepository().createTable();
+//            new RelationKnowledgeRepository().createTable();
+//            new ShowPostTypeRepository().createTable();
+//            new SkillLevelRepository().createTable();
+//            new SkillRepository().createTable();
+//            new EndorsementRepository().createTable();
+//            new PostRepository().createTable();
+//            new CommentRepository().createTable();
+//            new LikePostRepository().createTable();
+//            new LikeCommentRepository().createTable();
+//
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
     }
 }

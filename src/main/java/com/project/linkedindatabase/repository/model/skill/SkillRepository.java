@@ -23,7 +23,7 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
 
     @Override
     public void save(Skill object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(name, profileId) VALUES(" +
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(name, profileId) VALUES(" +
                 "?, ?)");
         savePs.setString(0, this.tableName);
         savePs.setString(1, object.getName());
@@ -33,14 +33,14 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS ?(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
                 "name VARCHAR(255) NOT NULL,"+
                 "profileId BIGINT," +
                 "FOREIGN KEY (profileId) REFERENCES profile(id),"+
-                "PRIMARY KEY (id),"+
+                "PRIMARY KEY (id)"+
                 ")");
-        createTablePs.setString(0, this.tableName);
+
         createTablePs.execute();
     }
 

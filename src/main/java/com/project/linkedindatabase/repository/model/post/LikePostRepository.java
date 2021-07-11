@@ -22,7 +22,7 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
 
     @Override
     public void save(LikePost object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(postId, profileId) VALUES(?, ?)");
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(postId, profileId) VALUES(?, ?)");
         savePs.setString(0, this.tableName);
         savePs.setLong(1, object.getPostId());
         savePs.setLong(2, object.getProfileId());
@@ -31,15 +31,15 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS ?(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
                 "profileId BIGINT," +
                 "FOREIGN KEY (profileId) REFERENCES profile(id),"+
                 "postId BIGINT," +
                 "FOREIGN KEY (postId) REFERENCES post(id),"+
-                "PRIMARY KEY (id),"+
+                "PRIMARY KEY (id)"+
                 ")");
-        createTablePs.setString(0, this.tableName);
+
         createTablePs.execute();
     }
 

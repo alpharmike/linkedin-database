@@ -18,7 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
-/src/main/resources/application.properties
+./src/main/resources/application.properties
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -33,4 +33,4 @@ build/
 .vscode/
 
 
-/src/main/java/com/project/linkedindatabase/connection/DataSourceConnector.java
+./src/main/java/com/project/linkedindatabase/connection/DataSourceConnector.java

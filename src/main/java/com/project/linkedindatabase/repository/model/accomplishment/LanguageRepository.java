@@ -30,12 +30,12 @@ public class LanguageRepository extends BaseRepository<Language,Long>  {
 
     @Override
     public void save(Language object) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("insert into ? ("+PROFILE_ID+","+LANGUAGE +","+LANGUAGE_LEVEL+") " +
+        PreparedStatement ps = conn.prepareStatement("insert into "+ this.getTableName()+" ("+PROFILE_ID+","+LANGUAGE +","+LANGUAGE_LEVEL+") " +
                 "values (?,?,?);");
-        ps.setString(1, this.getTableName());
-        ps.setLong(2, object.getProfileId());
-        ps.setString(3, object.getLanguage());
-        ps.setLong(4, object.getLanguageLevel());
+
+        ps.setLong(1, object.getProfileId());
+        ps.setString(2, object.getLanguage());
+        ps.setLong(3, object.getLanguageLevel());
         ResultSet resultSet = ps.executeQuery();
     }
 

@@ -32,7 +32,7 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
 
     @Override
     public void save(Comment object) throws SQLException{
-        PreparedStatement savingPs = this.conn.prepareStatement("INSERT INTO ?(text, date, profileId, postId, reCommentId)" +
+        PreparedStatement savingPs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(text, date, profileId, postId, reCommentId)" +
                 " VALUES(?,?,?,?,?)");
         savingPs.setString(1, this.tableName);
         savingPs.setString(2, object.getText());
@@ -57,7 +57,7 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
                 "FOREIGN KEY (postId) REFERENCES post(id)," +
                 "reCommentId BIGINT," +
                 "FOREIGN KEY (reCommentId) REFERENCES comment(id),"+
-                "PRIMARY KEY (id),"+
+                "PRIMARY KEY (id)"+
                 ");");
         createTablePs.execute();
     }

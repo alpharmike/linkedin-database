@@ -28,17 +28,17 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
 
 
     public T findById(ID id) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from ? where ? = id");
-        ps.setString(1, tableName);
-        ps.setLong(2, id);
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+" where ? = id");
+
+        ps.setLong(1, id);
         ResultSet resultSet = ps.executeQuery();
         return convertSql(resultSet);
     }
 
 
     public List<T> findAll() throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from ?");
-        ps.setString(1, tableName);
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName());
+
 
         ResultSet resultSet = ps.executeQuery();
         List<T> allObject = new ArrayList<>();
@@ -53,9 +53,9 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
     }
 
     public void deleteById(ID id) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("DELETE  from ? where id = ?");
-        ps.setString(1, tableName);
-        ps.setLong(2, id);
+        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ?");
+
+        ps.setLong(1, id);
         ResultSet resultSet = ps.executeQuery();
     }
 

@@ -25,7 +25,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     @Override
     public void save(Profile object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(email, phoneNumber, phoneType, " +
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(email, phoneNumber, phoneType, " +
                 "password, firstName, lastName, formerName, formerNameVisibilityType, headline, currentPositionId, " +
                 "showCurrentPositionId, currentEducationId, showCurrentEducationId, country, locationInCountry, " +
                 "industry, address, dateOfBirth, about, urlToProfile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
@@ -71,16 +71,10 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
                 "formerNameVisibilityType BIGINT," +
                 "FOREIGN KEY (formerNameVisibilityType) REFERENCES former_name_visibility_type(id),"+ // ref
                 "headline VARCHAR(255) NOT NULL,"+
-                "currentPositionId BIGINT," +
-                "FOREIGN KEY (currentPositionId) REFERENCES current_position(id),"+ // ref
-                "showCurrentPositionId BOOLEAN,"+
-                "currentEducationId BIGINT," +
-                "FOREIGN KEY (currentEducationId) REFERENCES current_education(id),"+ // ref
-                "showCurrentEducationId BOOLEAN,"+
                 "country VARCHAR(255),"+
                 "locationInCountry VARCHAR(255),"+
                 "industry BIGINT," +
-                "FOREIGN KEY (industry) REFERENCES industry(id),"+ // ref
+                "FOREIGN KEY (industry) REFERENCES industry_type(id),"+ // ref
                 "address VARCHAR(255),"+
                 "dateOfBirth VARCHAR(255),"+
                 "about VARCHAR(255),"+
