@@ -22,7 +22,7 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
     @Override
     public void save(Endorsement object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(skillId, skillLevel," +
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(skillId, skillLevel," +
                 " relationKnowledge, endorserId) VALUES(?, ?, ?, ?)");
         savePs.setString(0, this.tableName);
         savePs.setLong(1, object.getSkillId());
@@ -34,19 +34,19 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS ?(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
                 "skillId BIGINT," +
-                "FOREIGN KEY (skillId) REFERENCES skill(id)"+
+                "FOREIGN KEY (skillId) REFERENCES skill(id),"+
                 "skillLevel BIGINT," +
-                "FOREIGN KEY (skillLevel) REFERENCES skill_level(id)"+
+                "FOREIGN KEY (skillLevel) REFERENCES skill_level_type(id),"+
                 "relationKnowledge BIGINT," +
-                "FOREIGN KEY (relationKnowledge) REFERENCES relation_knowledge(id)"+
+                "FOREIGN KEY (relationKnowledge) REFERENCES relation_knowledge_type(id),"+
                 "endorserId BIGINT," +
                 "FOREIGN KEY (endorserId) REFERENCES profile(id),"+
-                "PRIMARY KEY (id),"+
+                "PRIMARY KEY (id)"+
                 ")");
-        createTablePs.setString(0, this.tableName);
+
         createTablePs.execute();
     }
 

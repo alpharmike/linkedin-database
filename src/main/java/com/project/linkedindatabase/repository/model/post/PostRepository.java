@@ -43,7 +43,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS ?(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
                 "profileId BIGINT," +
                 "FOREIGN KEY (profileId) REFERENCES profile(id),"+
@@ -54,9 +54,8 @@ public class PostRepository extends BaseRepository<Post,Long>  {
                 "text NVARCHAR(2000) NOT NULL,"+
                 "date NVARCHAR(255) NOT NULL,"+
                 "file MEDIUMBLOB,"+
-                "PRIMARY KEY (id),"+
+                "PRIMARY KEY (id)"+
                 ")");
-        createTablePs.setString(0, this.tableName);
         createTablePs.execute();
     }
 
