@@ -24,6 +24,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
         log.info("Application Started");
+        log.info(BaseEntity.getTableName(Profile.class));
 //        try {
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();

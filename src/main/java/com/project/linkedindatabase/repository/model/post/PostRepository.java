@@ -1,10 +1,14 @@
 package com.project.linkedindatabase.repository.model.post;
 
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.ShowPostType;
 import com.project.linkedindatabase.domain.post.LikeComment;
 import com.project.linkedindatabase.domain.post.Post;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.service.model.post.PostService;
+import com.project.linkedindatabase.utils.DateConverter;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -28,34 +32,32 @@ public class PostRepository extends BaseRepository<Post,Long>  {
     public void save(Post object) throws SQLException {
 
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ? (profileId, sharedId, showPostType, " +
-                "text, date, file) VALUES(?, ?, ?, ?, ?, ?)");
-        savePs.setString(0, this.tableName);
+                "body, createdDate, file) VALUES(?, ?, ?, ?, ?, ?)");
         savePs.setLong(1, object.getProfileId());
         savePs.setLong(2, object.getSharedId());
         savePs.setLong(3, object.getShowPostType());
-        savePs.setString(4, object.getText());
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String date = df.format(object.getDate());
-        savePs.setString(5, date);
+        savePs.setString(4, object.getBody());
+        savePs.setString(5, DateConverter.convertDate(object.getCreatedDate(), "yyyy-mm-dd hh:mm:ss"));
         savePs.setBytes(6, object.getFile());
         savePs.executeQuery();
     }
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + this.tableName + "(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "profileId BIGINT," +
-                "FOREIGN KEY (profileId) REFERENCES profile(id),"+
-                "sharedId BIGINT," +
-                "FOREIGN KEY (sharedId) REFERENCES post(id),"+
-                "showPostType BIGINT," +
-                "FOREIGN KEY (showPostType) REFERENCES show_post_type(id),"+
-                "text NVARCHAR(2000) NOT NULL,"+
-                "date NVARCHAR(255) NOT NULL,"+
+                "profileId BIGINT NOT NULL," +
+                "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "sharedId BIGINT NOT NULL," +
+                "FOREIGN KEY (sharedId) REFERENCES " +  BaseEntity.getTableName(Post.class) + "(id),"+
+                "showPostType BIGINT NOT NULL," +
+                "FOREIGN KEY (showPostType) REFERENCES " +  BaseEntity.getTableName(ShowPostType.class) + "(id),"+
+                "body TEXT NOT NULL,"+
+                "createdDate NVARCHAR(255) NOT NULL,"+
                 "file MEDIUMBLOB,"+
                 "PRIMARY KEY (id)"+
-                ")");
+            ")"
+        );
         createTablePs.execute();
     }
 
@@ -63,19 +65,20 @@ public class PostRepository extends BaseRepository<Post,Long>  {
     @Override
     public Post convertSql(ResultSet resultSet) {
         Post post = new Post();
-        try{
+        try {
             resultSet.first();
             post.setId(resultSet.getLong("id"));
             post.setProfileId(resultSet.getLong("profileId"));
-            post.setSharedId(resultSet.getLong("SharedId"));
+            post.setSharedId(resultSet.getLong("sharedId"));
             post.setShowPostType(resultSet.getLong("showPostType"));
-            post.setText(resultSet.getString("text"));
-            post.setDate(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(resultSet.getString("date")));
+            post.setBody(resultSet.getString("body"));
+            post.setCreatedDate(DateConverter.parse(resultSet.getString("createdDate"), "yyyy-mm-dd hh:mm:ss"));
             //post.setFile(resultSet.getBytes("file"));
 
-    }catch (SQLException | ParseException s){
+    } catch (SQLException | ParseException s){
             System.out.println(s.getMessage());
         }
+
         return post;
     }
 }

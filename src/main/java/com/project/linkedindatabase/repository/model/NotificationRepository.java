@@ -1,8 +1,10 @@
 package com.project.linkedindatabase.repository.model;
 
+import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.NotificationType;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.NotificationService;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,11 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
 
     @Override
     public void save(Notification object) throws SQLException {
-        PreparedStatement ps = this.conn.prepareStatement("INSERT INTO " + this.tableName + " (profileId, notificationType, targetProfileId, text) VALUES (?, ?, ?, ?)");
+        PreparedStatement ps = this.conn.prepareStatement("INSERT INTO " + this.tableName + " (profileId, notificationType, targetProfileId, body) VALUES (?, ?, ?, ?)");
         ps.setLong(1, object.getProfileId());
         ps.setLong(2, object.getNotificationType());
         ps.setLong(3, object.getTargetProfileId());
-        ps.setString(4, object.getText());
+        ps.setString(4, object.getBody());
         ps.executeQuery();
     }
 
@@ -38,10 +40,10 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
                 "profileId bigint not null," +
                 "notificationType bigint not null," +
                 "targetProfileId bigint not null," +
-                "text TEXT not null," +
-                "foreign key (profileId) references profile(id)," +
-                "foreign key (notificationType) references notification_type(id)," +
-                "foreign key (targetProfileId) references profile(id)" +
+                "body TEXT not null," +
+                "foreign key (profileId) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "foreign key (notificationType) references " +  BaseEntity.getTableName(NotificationType.class) + "(id),"+
+                "foreign key (targetProfileId) references " +  BaseEntity.getTableName(Profile.class) + "(id)"+
             ")"
         );
 

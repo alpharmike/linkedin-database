@@ -1,6 +1,9 @@
 package com.project.linkedindatabase.repository.model;
 
+import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Connect;
+import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.ConnectType;
 import com.project.linkedindatabase.repository.BaseRepository;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +37,9 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
                 "profileIdRequest bigint not null," +
                 "profileIdReceive bigint not null," +
                 "connectType bigint not null," +
-                "foreign key (profileIdRequest) references profile(id)," +
-                "foreign key (profileIdReceive) references profile(id)," +
-                "foreign key (connectType) references connect_type(id)" +
+                "foreign key (profileIdRequest) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "foreign key (profileIdReceive) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "foreign key (connectType) references " +  BaseEntity.getTableName(ConnectType.class) + "(id)"+
             ")"
         );
 

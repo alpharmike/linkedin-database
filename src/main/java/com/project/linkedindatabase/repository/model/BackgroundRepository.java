@@ -1,12 +1,17 @@
 package com.project.linkedindatabase.repository.model;
 
 import com.project.linkedindatabase.domain.Background;
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.BackgroundType;
 import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.utils.DateConverter;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 @Service
 public class BackgroundRepository extends BaseRepository<Background,Long>  {
@@ -22,8 +27,8 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         PreparedStatement ps = this.conn.prepareStatement("INSERT INTO " + this.tableName + " (profileId, backgroundType, startDate, endDate, title, description) VALUES (?, ?, ?, ?, ?, ?)");
         ps.setLong(1, object.getProfileId());
         ps.setLong(2, object.getBackgroundType());
-        ps.setDate(3, object.getStartDate());
-        ps.setDate(4, object.getEndDate());
+        ps.setString(3, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
         ps.setString(5, object.getTitle());
         ps.setString(6, object.getDescription());
         ps.executeQuery();
@@ -35,13 +40,13 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
                 "id bigint primary key not null auto_increment," +
                 "profileId bigint not null," +
                 "backgroundType bigint not null," +
-                "startDate date not null," +
-                "endDate date not null," +
+                "startDate nvarchar(255) not null," +
+                "endDate nvarchar(255) not null," +
                 "title nvarchar(100) not null," +
                 "description TEXT not null," +
-                "foreign key (profileId) references profile(id)," +
-                "foreign key (backgroundType) references background_type(id)" +
-                ")"
+                "foreign key (profileId) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "foreign key (backgroundType) references " +  BaseEntity.getTableName(BackgroundType.class) + "(id)"+
+            ")"
         );
 
         ps.execute();
@@ -57,11 +62,11 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
             background.setId(resultSet.getLong("id"));
             background.setProfileId(resultSet.getLong("profileId"));
             background.setBackgroundType(resultSet.getLong("backgroundType"));
-            background.setStartDate(resultSet.getDate("startDate"));
-            background.setEndDate(resultSet.getDate("endDate"));
+            background.setStartDate(DateConverter.parse(resultSet.getString("startDate"), "yyyy-MM-dd HH:mm:ss"));
+            background.setEndDate(DateConverter.parse(resultSet.getString("endDate"), "yyyy-MM-dd HH:mm:ss"));
             background.setTitle(resultSet.getString("title"));
             background.setDescription(resultSet.getString("description"));
-        }catch (SQLException s){
+        }catch (SQLException | ParseException s){
             System.out.println(s.getMessage());
         }
         return background;

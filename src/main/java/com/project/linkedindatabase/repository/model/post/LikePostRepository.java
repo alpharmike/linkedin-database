@@ -1,7 +1,10 @@
 package com.project.linkedindatabase.repository.model.post;
 
 import com.project.linkedindatabase.domain.Background;
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.post.LikePost;
+import com.project.linkedindatabase.domain.post.Post;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
@@ -22,8 +25,7 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
 
     @Override
     public void save(LikePost object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(postId, profileId) VALUES(?, ?)");
-        savePs.setString(0, this.tableName);
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(postId, profileId) VALUES(?, ?)");
         savePs.setLong(1, object.getPostId());
         savePs.setLong(2, object.getProfileId());
         savePs.executeQuery();
@@ -31,14 +33,15 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + this.tableName + "(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "profileId BIGINT," +
-                "FOREIGN KEY (profileId) REFERENCES profile(id),"+
-                "postId BIGINT," +
-                "FOREIGN KEY (postId) REFERENCES post(id),"+
+                "profileId BIGINT NOT NULL," +
+                "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "postId BIGINT NOT NULL," +
+                "FOREIGN KEY (postId) REFERENCES " +  BaseEntity.getTableName(Post.class) + "(id),"+
                 "PRIMARY KEY (id)"+
-                ")");
+            ")"
+        );
 
         createTablePs.execute();
     }
