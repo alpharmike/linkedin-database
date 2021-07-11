@@ -61,7 +61,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
             notification.setProfileId(resultSet.getLong("profileId"));
             notification.setNotificationType(resultSet.getLong("notificationType"));
             notification.setTargetProfileId(resultSet.getLong("targetProfileId"));
-            notification.setText(resultSet.getString("text"));
+            notification.setBody(resultSet.getString("body"));
         } catch (SQLException s){
             System.out.println(s.getMessage());
         }

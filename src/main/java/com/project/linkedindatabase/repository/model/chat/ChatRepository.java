@@ -1,5 +1,7 @@
 package com.project.linkedindatabase.repository.model.chat;
 
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.chat.Chat;
 import com.project.linkedindatabase.repository.BaseRepository;
 import org.springframework.stereotype.Service;
@@ -34,8 +36,8 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
                 "profileId2 bigint not null," +
                 "isArchive bit not null," +
                 "markUnread bit not null," +
-                "foreign key (profileId1) references profile(id)," +
-                "foreign key (profileId2) references profile(id)" +
+                "foreign key (profileId1) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "foreign key (profileId2) references " +  BaseEntity.getTableName(Profile.class) + "(id)"+
             ")"
         );
 

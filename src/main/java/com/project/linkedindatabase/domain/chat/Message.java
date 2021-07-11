@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.util.Calendar;
 
 @Getter
 @Setter
@@ -17,11 +17,11 @@ public class Message extends BaseEntity {
 
 
 
-    private String text;
+    private String body;
 
     private Boolean isUnread;
 
-    private Timestamp createdDate;
+    private Calendar createdDate;
 
     private Long chatId;// foreign key to chat table
 
