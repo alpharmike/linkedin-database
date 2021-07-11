@@ -27,7 +27,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         try {
             new PhoneTypeRepository().createTable();
             new FormerNameVisibilityTypeRepository().createTable();
-            new CurrentP
             new ProfileRepository().createTable();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
