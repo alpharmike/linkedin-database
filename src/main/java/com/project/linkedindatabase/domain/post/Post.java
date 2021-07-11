@@ -17,7 +17,7 @@ public class Post extends BaseEntity {
 
     private Long profileId;
 
-    private Long shareId;// foreign key to post table ==> for sharing a post
+    private Long sharedId;// foreign key to post table ==> for sharing a post
 
     private Long showPostType;// foreign key to showPostType table ==>enum
 
@@ -25,7 +25,7 @@ public class Post extends BaseEntity {
 
     private Date date;
 
-    private Byte[] file;
+    private byte[] file;
 
 
 }

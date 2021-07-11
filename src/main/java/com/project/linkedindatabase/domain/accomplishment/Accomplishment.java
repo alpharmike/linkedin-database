@@ -20,6 +20,6 @@ public class Accomplishment extends BaseEntity {
 
     private Long accomplishmentType;// foreign key --> enum
 
-    private Byte[] file;//if it has file
+    private Byte[] file;//if it has a file
 
 }
