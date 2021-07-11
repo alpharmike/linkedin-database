@@ -37,14 +37,14 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
     @Override
     public void save(Accomplishment object) throws SQLException {
 
-        PreparedStatement ps = conn.prepareStatement("insert into ? " +
+        PreparedStatement ps = conn.prepareStatement("insert into "+this.getTableName()+" " +
                 "("+PROFILE_ID+","+SUBJECT +","+DESCRIPTION+ ","+ACCOMPLISHMENT_TYPE + ","+FILE + " ) " +
                 "values (?,?,?,?,?);");
-        ps.setString(1, this.getTableName());
-        ps.setLong(2, object.getProfileId());
-        ps.setString(3, object.getSubject());
-        ps.setString(4, object.getDescription());
-        ps.setLong(5, object.getAccomplishmentType());
+
+        ps.setLong(1, object.getProfileId());
+        ps.setString(2, object.getSubject());
+        ps.setString(3, object.getDescription());
+        ps.setLong(4, object.getAccomplishmentType());
 
 
         if(object.getFile() != null) {// if file wasn't null we will convert it to byteStream and save it
@@ -53,10 +53,10 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
             for (int i = 0; i < file.length; i++) {
                 bytes[i] = file[i];
             }
-            ps.setBinaryStream(6, new ByteArrayInputStream((bytes)));
+            ps.setBinaryStream(5, new ByteArrayInputStream((bytes)));
         }else
         {
-            ps.setBinaryStream(6,  null);
+            ps.setBinaryStream(5,  null);
         }
 
 

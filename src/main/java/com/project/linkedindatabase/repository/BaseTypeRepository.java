@@ -20,9 +20,9 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
 
     @Override
     public void save(T object) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("insert into ? ("+NAME+") values (?);");
-        ps.setString(1, this.getTableName());
-        ps.setString(2, object.getName());
+        PreparedStatement ps = conn.prepareStatement("insert into "+this.getTableName()+" ("+NAME+") values (?);");
+
+        ps.setString(1, object.getName());
         ResultSet resultSet = ps.executeQuery();
     }
 
