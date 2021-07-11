@@ -27,7 +27,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
     @Override
     public void save(Post object) throws SQLException {
 
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ?(profileId, sharedId, showPostType, " +
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO ? (profileId, sharedId, showPostType, " +
                 "text, date, file) VALUES(?, ?, ?, ?, ?, ?)");
         savePs.setString(0, this.tableName);
         savePs.setLong(1, object.getProfileId());
