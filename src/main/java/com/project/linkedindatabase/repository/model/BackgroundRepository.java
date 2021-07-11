@@ -1,19 +1,12 @@
 package com.project.linkedindatabase.repository.model;
 
 import com.project.linkedindatabase.domain.Background;
-import com.project.linkedindatabase.domain.Notification;
-import com.project.linkedindatabase.domain.Type.BackgroundType;
-import com.project.linkedindatabase.domain.skill.Endorsement;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.BaseService;
-import com.project.linkedindatabase.service.model.BackgroundService;
-import com.project.linkedindatabase.service.model.NotificationService;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 @Service
 public class BackgroundRepository extends BaseRepository<Background,Long>  {
@@ -46,8 +39,9 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
                 "endDate date not null," +
                 "title nvarchar(100) not null," +
                 "description TEXT not null," +
-                "foreign key (profileId) references profile(id)" +
-                "foreign key (backgroundType) references background_type(id)"
+                "foreign key (profileId) references profile(id)," +
+                "foreign key (backgroundType) references background_type(id)" +
+                ")"
         );
 
         ps.execute();
