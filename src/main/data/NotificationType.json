@@ -1,0 +1,13 @@
+{
+  "type": [
+    "connection request",
+    "connection accept",
+    "profile visit",
+    "comment for post",
+    "like for post",
+    "like or replay for comment",
+    "skill endorse",
+    "change job"
+  ]
+  
+}
