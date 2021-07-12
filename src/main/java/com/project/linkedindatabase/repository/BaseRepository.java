@@ -28,7 +28,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
 
 
     public T findById(ID id) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+" where ? = id");
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+" where id = ?");
 
         ps.setLong(1, id);
         ResultSet resultSet = ps.executeQuery();
