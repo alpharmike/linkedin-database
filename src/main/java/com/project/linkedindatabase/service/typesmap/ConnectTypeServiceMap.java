@@ -58,4 +58,9 @@ public class ConnectTypeServiceMap implements ConnectTypeService {
         return connectTypeRepository.findByName(name);
 
     }
+
+    @Override
+    public ConnectType defaultType() throws SQLException {
+        return connectTypeRepository.defaultType();
+    }
 }

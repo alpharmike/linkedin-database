@@ -2,7 +2,9 @@ package com.project.linkedindatabase.repository;
 
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.connection.DataSourceConnector;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.BaseType;
+import com.project.linkedindatabase.domain.Type.LanguageLevel;
 import com.project.linkedindatabase.service.BaseService;
 import com.project.linkedindatabase.utils.AnnotationValueGetter;
 import lombok.Getter;
@@ -19,7 +21,11 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
 
     protected String tableName;
 
-
+    public void dropTable() throws SQLException {
+        final String createQuery = String.format("DROP TABLE %s;", this.tableName);
+        PreparedStatement ps = conn.prepareStatement(createQuery);
+        ps.execute();
+    }
 
     public BaseRepository(Class<?> type) throws SQLException {
         this.tableName = AnnotationValueGetter.getTableName(type);

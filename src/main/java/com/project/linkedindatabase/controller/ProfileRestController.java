@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 
 @Slf4j
@@ -24,11 +25,12 @@ public class ProfileRestController {
     }
 
     @PostMapping("/sign-up")
-    public Profile newEmployee(@RequestBody SignUpData signUpData) {
+    public Profile newEmployee(@RequestBody SignUpData signUpData) throws SQLException {
         Profile profile;
         try {
 
             Calendar calendar = DateConverter.parse(signUpData.getDateOfBirth(), "yyyy-MM-dd");
+            //todo change password decoder
             profile = signUpData.convertToProfile();
             profile.setDateOfBirth(calendar);
             profile.setUrlToProfile(profile.getUsername());
@@ -40,12 +42,12 @@ public class ProfileRestController {
                     HttpStatus.BAD_REQUEST, "There was a problem in data you have are sent ",e);
 
         }
-
+        boolean notUnique = false;
         try {
             if (!profileService.uniqueUsernameEmailPhone(profile.getUsername(), profile.getEmail(), profile.getPhoneNumber()))
             {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "username or email or phone number isn't unique ",new Exception("duplication"));
+                notUnique = true;
+
             }
         }catch (Exception e)
         {
@@ -53,14 +55,23 @@ public class ProfileRestController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with data ",e);
         }
+
+        if(notUnique)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "username or email or phone number isn't unique ",new Exception("duplication"));
+        }
+
         try {
             profileService.save(profile);
             profile = profileService.findByUsername(profile.getUsername());
         } catch (Exception e)
         {
-            e.printStackTrace();
-            return null;
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "there some problem  ",new Exception("unknown problem"));
         }
+
+
         return profile;
     }
 

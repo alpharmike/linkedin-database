@@ -57,4 +57,9 @@ public class PhoneTypeServiceMap  implements PhoneTypeService {
     public PhoneType findByName(String name) throws SQLException {
         return phoneTypeRepository.findByName(name);
     }
+
+    @Override
+    public PhoneType defaultType() throws SQLException {
+        return phoneTypeRepository.defaultType();
+    }
 }

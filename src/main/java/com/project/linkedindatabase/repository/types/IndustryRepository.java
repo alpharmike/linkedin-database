@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.repository.types;
 
 import com.project.linkedindatabase.domain.Type.BackgroundType;
+import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.domain.Type.Industry;
 import com.project.linkedindatabase.repository.BaseTypeRepository;
 import com.project.linkedindatabase.service.types.IndustryService;
@@ -11,6 +12,12 @@ import java.sql.SQLException;
 public class IndustryRepository extends BaseTypeRepository<Industry> {
     public IndustryRepository() throws SQLException {
         super(Industry.class);
+    }
+
+
+    public Industry defaultType() throws SQLException {
+        String name = "Prefer not to say";
+        return super.findByName(name);
     }
 
 

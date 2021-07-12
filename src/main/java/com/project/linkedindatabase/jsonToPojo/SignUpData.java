@@ -48,6 +48,7 @@ public class SignUpData {
         profile.setIndustry(this.industry);
         profile.setLastName(this.lastName);
         profile.setLocationInCountry(this.locationInCountry);
+        //todo change the function
         profile.setPassword( new BCryptPasswordEncoder().encode(this.password ));
         profile.setPhoneNumber(this.phoneNumber);
 

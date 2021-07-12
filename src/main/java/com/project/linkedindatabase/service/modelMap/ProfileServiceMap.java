@@ -13,8 +13,8 @@ public class ProfileServiceMap implements ProfileService {
 
     private final ProfileRepository profileRepository;
 
-    public ProfileServiceMap() throws SQLException {
-        profileRepository = new ProfileRepository();
+    public ProfileServiceMap(ProfileRepository profileRepository) throws SQLException {
+        this.profileRepository = profileRepository;
     }
 
     @Override

@@ -6,32 +6,55 @@ import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.domain.Type.Industry;
 import com.project.linkedindatabase.domain.Type.PhoneType;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.repository.types.PhoneTypeRepository;
-import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.types.FormerNameVisibilityTypeService;
+import com.project.linkedindatabase.service.types.IndustryService;
+import com.project.linkedindatabase.service.types.PhoneTypeService;
 import com.project.linkedindatabase.utils.DateConverter;
-import org.springframework.asm.Type;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.sql.Types;
 
+@Slf4j
 @Service
 public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
-    public ProfileRepository() throws SQLException {
+    public Long DEFAULT_PHONE_TYPE;
+    public Long DEFAULT_INDUSTRY_TYPE;
+    public Long DEFAULT_FORMER_NAME_VISIBILITY_TYPE;
+
+    private final PhoneTypeService phoneTypeService;
+    private final IndustryService industryService;
+    private final FormerNameVisibilityTypeService formerNameVisibilityTypeService;
+
+
+
+
+
+
+    public ProfileRepository(PhoneTypeService phoneTypeService, IndustryService industryService, FormerNameVisibilityTypeService formerNameVisibilityTypeService) throws SQLException {
         super(Profile.class);
+        this.phoneTypeService = phoneTypeService;
+        this.industryService = industryService;
+        this.formerNameVisibilityTypeService = formerNameVisibilityTypeService;
     }
+
 
 
 
     @Override
     public void save(Profile object) throws SQLException {
+
+        System.out.println(phoneTypeService);
+
+        DEFAULT_PHONE_TYPE = phoneTypeService.defaultType().getId();
+        DEFAULT_INDUSTRY_TYPE = industryService.defaultType().getId();
+        DEFAULT_FORMER_NAME_VISIBILITY_TYPE = formerNameVisibilityTypeService.defaultType().getId();
+
+
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(username, email, phoneNumber, phoneType, " +
                 "password, firstName, lastName, formerName, formerNameVisibilityType, headline, " +
                 "country, locationInCountry, " +
@@ -43,7 +66,8 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         if (object.getPhoneType() != null){
             savePs.setLong(4, object.getPhoneType());}
         else{
-            savePs.setLong(4, 1);}
+            savePs.setLong(4, DEFAULT_PHONE_TYPE);
+        }
 
         savePs.setString(5, object.getPassword());
         savePs.setString(6, object.getFirstName());
@@ -59,7 +83,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         if (object.getFormerNameVisibilityType() != null){
             savePs.setLong(9, object.getFormerNameVisibilityType());}
         else{
-            savePs.setLong(9, 1);
+            savePs.setLong(9, DEFAULT_FORMER_NAME_VISIBILITY_TYPE);
              }
 
         if (object.getHeadline() != null){
@@ -70,11 +94,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         savePs.setString(11, object.getCountry());
         savePs.setString(12, object.getLocationInCountry());
 
-        if (object.getFormerNameVisibilityType() != null){
+        if (object.getIndustry() != null){
             savePs.setLong(13, object.getIndustry());}
         else
         {
-            savePs.setLong(13, 1);
+            savePs.setLong(13, DEFAULT_INDUSTRY_TYPE);
         }
 
         if (object.getAddress() != null){
@@ -83,15 +107,17 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         {
             savePs.setString(14, "");
         }
+
         savePs.setString(15, DateConverter.convertDate(object.getDateOfBirth(), "yyyy-MM-dd"));
-        if (object.getAddress() != null){
+
+        if (object.getAbout() != null){
             savePs.setString(16, object.getAbout());}
         else
         {
             savePs.setString(16, "");
         }
-        savePs.setString(17, object.getUrlToProfile());
 
+        savePs.setString(17, object.getUrlToProfile());
         savePs.execute();
     }
 
@@ -125,43 +151,53 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
 
         createTablePs.execute();
+
+
     }
 
     public Profile findByUsername(String username) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where username = ?");
         ps.setString(1, username);
         ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst())
+        {
+            return null;
+        }
+        resultSet.next();
         return convertSql(resultSet);
     }
 
 
     @Override
-    public Profile convertSql(ResultSet resultSet) {
+    public Profile convertSql(ResultSet resultSet) throws SQLException {
         Profile profile = new Profile();
-        try{
-            resultSet.first();
-            profile.setId(resultSet.getLong("id"));
-            profile.setEmail(resultSet.getString("email"));
-            profile.setPhoneNumber(resultSet.getString("phoneNumber"));
-            profile.setPhoneType(resultSet.getLong("phoneType"));
-            profile.setPassword(resultSet.getString("password"));
-            profile.setFirstName(resultSet.getString("firstName"));
-            profile.setLastName(resultSet.getString("lastName"));
-            profile.setFormerName(resultSet.getString("formerName"));
-            profile.setFormerNameVisibilityType(resultSet.getLong("formerNameVisibilityType"));
-            profile.setHeadline(resultSet.getString("headline"));
-            profile.setCountry(resultSet.getString("country"));
-            profile.setLocationInCountry(resultSet.getString("locationInCountry"));
-            profile.setIndustry(resultSet.getLong("industry"));
-            profile.setAddress(resultSet.getString("address"));
-            profile.setDateOfBirth(DateConverter.parse(resultSet.getString("dateOfBirth"), "yyyy-MM-dd"));
-            profile.setAbout(resultSet.getString("about"));
-            profile.setUrlToProfile(resultSet.getString("urlToProfile"));
 
-        }catch (SQLException | ParseException s){
-            System.out.println(s.getMessage());
+        profile.setId(resultSet.getLong("id"));
+        profile.setEmail(resultSet.getString("email"));
+        profile.setPhoneNumber(resultSet.getString("phoneNumber"));
+        profile.setPhoneType(resultSet.getLong("phoneType"));
+        profile.setPassword(resultSet.getString("password"));
+        profile.setFirstName(resultSet.getString("firstName"));
+        profile.setLastName(resultSet.getString("lastName"));
+        profile.setFormerName(resultSet.getString("formerName"));
+        profile.setFormerNameVisibilityType(resultSet.getLong("formerNameVisibilityType"));
+        profile.setHeadline(resultSet.getString("headline"));
+        profile.setCountry(resultSet.getString("country"));
+        profile.setLocationInCountry(resultSet.getString("locationInCountry"));
+        profile.setIndustry(resultSet.getLong("industry"));
+        profile.setAddress(resultSet.getString("address"));
+        try {
+            profile.setDateOfBirth(DateConverter.parse(resultSet.getString("dateOfBirth"), "yyyy-MM-dd"));
+        }catch (Exception e)
+        {
+            throw new SQLException("there is a problem with date save in data base");
         }
-        return null;
+
+        profile.setAbout(resultSet.getString("about"));
+        profile.setUrlToProfile(resultSet.getString("urlToProfile"));
+
+
+        return profile;
     }
 
 

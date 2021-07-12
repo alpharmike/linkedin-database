@@ -58,4 +58,9 @@ public class IndustryServiceMap  implements IndustryService {
         return industryRepository.findByName(name);
 
     }
+
+    @Override
+    public Industry defaultType() throws SQLException {
+        return industryRepository.defaultType();
+    }
 }

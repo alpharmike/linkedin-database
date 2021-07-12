@@ -20,6 +20,7 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
         PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+" where "+NAME+" = ?");
 
         ps.setString(1, name);
+
         ResultSet resultSet = ps.executeQuery();
         if (!resultSet.isBeforeFirst())
         {
