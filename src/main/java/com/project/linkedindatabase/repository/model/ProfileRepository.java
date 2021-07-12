@@ -31,10 +31,9 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     @Override
     public void save(Profile object) throws SQLException {
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(email, phoneNumber, phoneType, " +
-                "password, firstName, lastName, formerName, formerNameVisibilityType, headline, currentPositionId, " +
-                "showCurrentPositionId, currentEducationId, showCurrentEducationId, country, locationInCountry, " +
-                "industry, address, dateOfBirth, about, urlToProfile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
-                "?, ?, ?, ?, ?");
+                "password, firstName, lastName, formerName, formerNameVisibilityType, headline, " +
+                "country, locationInCountry, " +
+                "industry, address, dateOfBirth, about, urlToProfile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
         savePs.setString(1, object.getEmail());
         savePs.setString(2, object.getPhoneNumber());
         savePs.setLong(3, object.getPhoneType());
@@ -44,17 +43,13 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         savePs.setString(7, object.getFormerName());
         savePs.setLong(8, object.getFormerNameVisibilityType());
         savePs.setString(9, object.getHeadline());
-        savePs.setLong(10, object.getCurrentPositionId());
-        savePs.setBoolean(11, object.getShowCurrentPositionId());
-        savePs.setLong(12, object.getCurrentEducationId());
-        savePs.setBoolean(13, object.getShowCurrentEducationId());
-        savePs.setString(14, object.getCountry());
-        savePs.setString(15, object.getLocationInCountry());
-        savePs.setLong(16, object.getIndustry());
-        savePs.setString(17, object.getAddress());
-        savePs.setString(18, DateConverter.convertDate(object.getDateOfBirth(), "yyyy-MM-dd"));
-        savePs.setString(19, object.getAbout());
-        savePs.setString(20, object.getUrlToProfile());
+        savePs.setString(10, object.getCountry());
+        savePs.setString(11, object.getLocationInCountry());
+        savePs.setLong(12, object.getIndustry());
+        savePs.setString(13, object.getAddress());
+        savePs.setString(14, DateConverter.convertDate(object.getDateOfBirth(), "yyyy-MM-dd"));
+        savePs.setString(15, object.getAbout());
+        savePs.setString(16, object.getUrlToProfile());
         savePs.executeQuery();
     }
 
@@ -73,14 +68,14 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
                 "formerNameVisibilityType BIGINT NOT NULL," +
                 "FOREIGN KEY (formerNameVisibilityType) REFERENCES " +  BaseEntity.getTableName(FormerNameVisibilityType.class) + "(id),"+
                 "headline NVARCHAR(255) NOT NULL,"+
-                "country VARCHAR(255),"+
-                "locationInCountry VARCHAR(255),"+
+                "country VARCHAR(255) NOT NULL,"+
+                "locationInCountry VARCHAR(255) NOT NULL,"+
                 "industry BIGINT NOT NULL," +
                 "FOREIGN KEY (industry) REFERENCES " +  BaseEntity.getTableName(Industry.class) + "(id),"+
-                "address NVARCHAR(255),"+
-                "dateOfBirth NVARCHAR(255),"+
-                "about TEXT,"+
-                "urlToProfile NVARCHAR(255),"+
+                "address NVARCHAR(255) NOT NULL,"+
+                "dateOfBirth NVARCHAR(255) NOT NULL,"+
+                "about TEXT NOT NULL,"+
+                "urlToProfile NVARCHAR(255) NOT NULL,"+
                 "PRIMARY KEY (id)"+
             ")"
         );
@@ -105,10 +100,6 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
             profile.setFormerName(resultSet.getString("formerName"));
             profile.setFormerNameVisibilityType(resultSet.getLong("formerNameVisibilityType"));
             profile.setHeadline(resultSet.getString("headline"));
-            profile.setCurrentPositionId(resultSet.getLong("currentPositionId"));
-            profile.setShowCurrentPositionId(resultSet.getBoolean("showCurrentPositionId"));
-            profile.setCurrentEducationId(resultSet.getLong("currentEducationId"));
-            profile.setShowCurrentEducationId(resultSet.getBoolean("showCurrentEducationId"));
             profile.setCountry(resultSet.getString("country"));
             profile.setLocationInCountry(resultSet.getString("locationInCountry"));
             profile.setIndustry(resultSet.getLong("industry"));
