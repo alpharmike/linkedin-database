@@ -14,6 +14,7 @@ import java.util.Calendar;
 @NoArgsConstructor
 @Table(tableName = "profile")
 public class Profile extends BaseEntity {
+    private String username;
 
     private String email;
 

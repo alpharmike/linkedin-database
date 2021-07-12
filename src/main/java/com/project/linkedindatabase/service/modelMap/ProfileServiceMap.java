@@ -46,4 +46,8 @@ public class ProfileServiceMap implements ProfileService {
     public void createTable() throws SQLException {
         profileRepository.createTable();
     }
+
+    public Profile findByUsername(String username) throws SQLException {
+        return profileRepository.findByUsername(username);
+    }
 }
