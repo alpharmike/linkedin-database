@@ -46,4 +46,16 @@ public class ConnectTypeServiceMap implements ConnectTypeService {
     public void deleteByObject(ConnectType object) throws SQLException {
         connectTypeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        connectTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public ConnectType findByName(String name) throws SQLException {
+        return connectTypeRepository.findByName(name);
+
+    }
 }

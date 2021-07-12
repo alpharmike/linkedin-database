@@ -16,6 +16,30 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
     }
 
 
+    public T findByName(String name) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+" where "+NAME+" = ?");
+
+        ps.setString(1, name);
+        ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst())
+        {
+            return null;
+        }
+        resultSet.next();
+        return convertSql(resultSet);
+    }
+
+    public void saveIfNotExist(String name) throws SQLException {
+
+        T obj = findByName(name);
+        if (obj == null) {
+            PreparedStatement ps = this.conn.prepareStatement("insert into " + this.getTableName() + " (" + NAME + ") values (?) ;");
+
+            ps.setString(1, name);
+
+            ps.execute();
+        }
+    }
 
 
     @Override

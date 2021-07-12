@@ -46,4 +46,16 @@ public class NotificationTypeServiceMap  implements NotificationTypeService {
     public void deleteByObject(NotificationType object) throws SQLException {
         notificationTypeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        notificationTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public NotificationType findByName(String name) throws SQLException {
+        return notificationTypeRepository.findByName(name);
+
+    }
 }

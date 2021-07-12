@@ -48,4 +48,16 @@ public class SkillLevelServiceMap  implements SkillLevelService {
     public void deleteByObject(SkillLevel object) throws SQLException {
         skillLevelRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        skillLevelRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public SkillLevel findByName(String name) throws SQLException {
+        return skillLevelRepository.findByName(name);
+
+    }
 }

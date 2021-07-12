@@ -46,4 +46,16 @@ public class RelationKnowledgeServiceMap  implements RelationKnowledgeService {
     public void deleteByObject(RelationKnowledge object) throws SQLException {
         relationKnowledgeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        relationKnowledgeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public RelationKnowledge findByName(String name) throws SQLException {
+        return relationKnowledgeRepository.findByName(name);
+
+    }
 }

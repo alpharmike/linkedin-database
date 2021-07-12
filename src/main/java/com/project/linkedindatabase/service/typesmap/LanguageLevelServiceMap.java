@@ -46,4 +46,16 @@ public class LanguageLevelServiceMap  implements LanguageLevelService {
     public void deleteByObject(LanguageLevel object) throws SQLException {
         languageLevelRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        languageLevelRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public LanguageLevel findByName(String name) throws SQLException {
+        return languageLevelRepository.findByName(name);
+
+    }
 }

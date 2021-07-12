@@ -46,4 +46,15 @@ public class PhoneTypeServiceMap  implements PhoneTypeService {
     public void deleteByObject(PhoneType object) throws SQLException {
         phoneTypeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        phoneTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public PhoneType findByName(String name) throws SQLException {
+        return phoneTypeRepository.findByName(name);
+    }
 }

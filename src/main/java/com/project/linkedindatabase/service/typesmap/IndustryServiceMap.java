@@ -24,7 +24,7 @@ public class IndustryServiceMap  implements IndustryService {
 
     @Override
     public void save(Industry object) throws SQLException {
-
+        industryRepository.save(object);
     }
 
     @Override
@@ -39,11 +39,23 @@ public class IndustryServiceMap  implements IndustryService {
 
     @Override
     public void createTable() throws SQLException {
-
+        industryRepository.createTable();
     }
 
     @Override
     public void deleteByObject(Industry object) throws SQLException {
         industryRepository.deleteByObject(object);
+    }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        industryRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public Industry findByName(String name) throws SQLException {
+        return industryRepository.findByName(name);
+
     }
 }

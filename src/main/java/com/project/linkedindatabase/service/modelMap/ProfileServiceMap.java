@@ -50,4 +50,11 @@ public class ProfileServiceMap implements ProfileService {
     public Profile findByUsername(String username) throws SQLException {
         return profileRepository.findByUsername(username);
     }
+
+
+
+    @Override
+    public boolean uniqueUsernameEmailPhone(String username, String email, String phone) throws SQLException{
+        return this.profileRepository.uniqueUsernameEmailPhone(username,email,phone);
+    }
 }

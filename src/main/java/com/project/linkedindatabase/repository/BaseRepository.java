@@ -32,6 +32,11 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
 
         ps.setLong(1, id);
         ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst())
+        {
+            return null;
+        }
+        resultSet.next();
         return convertSql(resultSet);
     }
 

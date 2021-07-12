@@ -46,4 +46,16 @@ public class FormerNameVisibilityTypeServiceMap  implements FormerNameVisibility
     public void deleteByObject(FormerNameVisibilityType object) throws SQLException {
         formerNameVisibilityTypeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        formerNameVisibilityTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public FormerNameVisibilityType findByName(String name) throws SQLException {
+        return formerNameVisibilityTypeRepository.findByName(name);
+
+    }
 }

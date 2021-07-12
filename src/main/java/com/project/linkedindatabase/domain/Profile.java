@@ -1,10 +1,12 @@
 package com.project.linkedindatabase.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.linkedindatabase.annotations.Table;
 import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.lang.annotation.Annotation;
 import java.util.Calendar;
@@ -50,6 +52,7 @@ public class Profile extends BaseEntity {
 
     private String address;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Calendar dateOfBirth;
 
     private String about;
