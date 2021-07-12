@@ -4,15 +4,12 @@ package com.project.linkedindatabase.bootstrap;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.post.Comment;
-import com.project.linkedindatabase.repository.model.BackgroundRepository;
 import com.project.linkedindatabase.repository.model.ProfileRepository;
 import com.project.linkedindatabase.repository.model.post.CommentRepository;
-import com.project.linkedindatabase.repository.model.post.LikeCommentRepository;
-import com.project.linkedindatabase.repository.model.post.LikePostRepository;
 import com.project.linkedindatabase.repository.model.post.PostRepository;
-import com.project.linkedindatabase.repository.model.skill.EndorsementRepository;
-import com.project.linkedindatabase.repository.model.skill.SkillRepository;
-import com.project.linkedindatabase.repository.types.*;
+import com.project.linkedindatabase.repository.types.AccomplishmentTypeRepository;
+import com.project.linkedindatabase.repository.types.FormerNameVisibilityTypeRepository;
+import com.project.linkedindatabase.repository.types.PhoneTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -27,6 +24,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
         log.info("Application Started");
+        log.info(BaseEntity.getTableName(Profile.class));
 //        try {
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();

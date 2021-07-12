@@ -20,7 +20,7 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
 
     @Override
     public void save(T object) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("insert into "+this.getTableName()+" ("+NAME+") values (?);");
+        PreparedStatement ps = this.conn.prepareStatement("insert into " +this.getTableName() + " (" + NAME + ") values (?);");
 
         ps.setString(1, object.getName());
         ResultSet resultSet = ps.executeQuery();
@@ -28,17 +28,11 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
 
     @Override
     public void createTable() throws SQLException {
-        final String createQuery = String.format("create table if not exists %s ("
-                + " "+ID+" bigint not null auto_increment,"
-                + " "+NAME+" nvarchar(100) not null,"
-                + " primary key ("+ID+")"
-                + ");", this.tableName);
-        PreparedStatement ps = conn.prepareStatement(createQuery);
+        PreparedStatement ps = this.conn.prepareStatement("create table if not exists " + this.tableName + "("
+                + " " + ID + " bigint primary key not null auto_increment,"
+                + " " + NAME + " nvarchar(100) not null"
+                + ");"
+        );
         ps.execute();
     }
-
-
-
-
-
 }

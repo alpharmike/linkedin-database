@@ -17,7 +17,7 @@ public class Notification extends BaseEntity {
 
     private Long targetProfileId;//notification will send for him
 
-    private String text;
+    private String body;
 
 
 }

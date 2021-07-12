@@ -6,8 +6,7 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
+import java.util.Calendar;
 
 @Getter
 @Setter
@@ -21,9 +20,9 @@ public class Post extends BaseEntity {
 
     private Long showPostType;// foreign key to showPostType table ==>enum
 
-    private String text;
+    private String body;
 
-    private Date date;
+    private Calendar createdDate;
 
     private byte[] file;
 

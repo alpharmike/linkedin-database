@@ -1,11 +1,15 @@
 package com.project.linkedindatabase.repository.model;
 
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.NotificationType;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.NotificationService;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,18 +25,46 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
 
     @Override
     public void save(Notification object) throws SQLException {
-
+        PreparedStatement ps = this.conn.prepareStatement("INSERT INTO " + this.tableName + " (profileId, notificationType, targetProfileId, body) VALUES (?, ?, ?, ?)");
+        ps.setLong(1, object.getProfileId());
+        ps.setLong(2, object.getNotificationType());
+        ps.setLong(3, object.getTargetProfileId());
+        ps.setString(4, object.getBody());
+        ps.executeQuery();
     }
 
     @Override
     public void createTable() throws SQLException {
+        PreparedStatement ps = this.conn.prepareStatement("create table if not exists " + this.tableName + "(" +
+                "id bigint primary key not null auto_increment," +
+                "profileId bigint not null," +
+                "notificationType bigint not null," +
+                "targetProfileId bigint not null," +
+                "body TEXT not null," +
+                "foreign key (profileId) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "foreign key (notificationType) references " +  BaseEntity.getTableName(NotificationType.class) + "(id),"+
+                "foreign key (targetProfileId) references " +  BaseEntity.getTableName(Profile.class) + "(id)"+
+            ")"
+        );
 
+        ps.execute();
     }
 
 
 
     @Override
     public Notification convertSql(ResultSet resultSet) {
-        return null;
+        Notification notification = new Notification();
+        try {
+            resultSet.first();
+            notification.setId(resultSet.getLong("id"));
+            notification.setProfileId(resultSet.getLong("profileId"));
+            notification.setNotificationType(resultSet.getLong("notificationType"));
+            notification.setTargetProfileId(resultSet.getLong("targetProfileId"));
+            notification.setBody(resultSet.getString("body"));
+        } catch (SQLException s){
+            System.out.println(s.getMessage());
+        }
+        return notification;
     }
 }

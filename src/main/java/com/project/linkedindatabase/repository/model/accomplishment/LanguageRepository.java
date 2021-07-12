@@ -1,5 +1,7 @@
 package com.project.linkedindatabase.repository.model.accomplishment;
 
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.LanguageLevel;
 import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
 import com.project.linkedindatabase.domain.accomplishment.Language;
@@ -30,7 +32,7 @@ public class LanguageRepository extends BaseRepository<Language,Long>  {
 
     @Override
     public void save(Language object) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("insert into "+ this.getTableName()+" ("+PROFILE_ID+","+LANGUAGE +","+LANGUAGE_LEVEL+") " +
+        PreparedStatement ps = conn.prepareStatement("insert into "+ this.getTableName() + " (" + PROFILE_ID + "," + LANGUAGE + "," + LANGUAGE_LEVEL + ") " +
                 "values (?,?,?);");
 
         ps.setLong(1, object.getProfileId());
@@ -42,11 +44,13 @@ public class LanguageRepository extends BaseRepository<Language,Long>  {
     @Override
     public void createTable() throws SQLException {
         final String createQuery = String.format("create table if not exists %s ("
-                + " "+ID+" bigint not null auto_increment,"
-                + " "+PROFILE_ID+" bigint not null,"
-                + " "+LANGUAGE+" nvarchar(100) not null,"
-                + " "+LANGUAGE_LEVEL+" bigint not null,"
-                + " primary key ("+ID+")"
+                + " " + ID + " bigint not null auto_increment,"
+                + " " + PROFILE_ID + " bigint not null,"
+                + " " + LANGUAGE + " nvarchar(100) not null,"
+                + " " + LANGUAGE_LEVEL + " bigint not null,"
+                + " primary key (" + ID + "),"
+                + " foreign key " + "(" + PROFILE_ID + ")" + " references " + BaseEntity.getTableName(Profile.class) + "(id),"
+                + " foreign key " + "(" + LANGUAGE_LEVEL + ")" + " references " + BaseEntity.getTableName(LanguageLevel.class) + "(id)"
                 + ");", this.tableName);
         PreparedStatement ps = conn.prepareStatement(createQuery);
         ps.execute();

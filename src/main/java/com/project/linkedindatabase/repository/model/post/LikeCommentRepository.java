@@ -1,5 +1,8 @@
 package com.project.linkedindatabase.repository.model.post;
 
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.post.Comment;
 import com.project.linkedindatabase.domain.post.LikeComment;
 import com.project.linkedindatabase.domain.post.LikePost;
 import com.project.linkedindatabase.repository.BaseRepository;
@@ -23,8 +26,7 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
     @Override
     public void save(LikeComment object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(commentId, profileId) VALUES(?, ?)");
-        savePs.setString(0, this.tableName);
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(commentId, profileId) VALUES(?, ?)");
         savePs.setLong(1, object.getCommentId());
         savePs.setLong(2, object.getProfileId());
         savePs.executeQuery();
@@ -32,14 +34,15 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + this.tableName + "(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "profileId BIGINT," +
-                "FOREIGN KEY (profileId) REFERENCES profile(id),"+
-                "commentId BIGINT," +
-                "FOREIGN KEY (commentId) REFERENCES comment(id),"+
+                "profileId BIGINT NOT NULL," +
+                "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "commentId BIGINT NOT NULL," +
+                "FOREIGN KEY (commentId) REFERENCES " +  BaseEntity.getTableName(Comment.class) + "(id),"+
                 "PRIMARY KEY (id)"+
-                ")");
+            ")"
+        );
         createTablePs.execute();
     }
 

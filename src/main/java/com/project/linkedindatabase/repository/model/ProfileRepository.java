@@ -1,9 +1,14 @@
 package com.project.linkedindatabase.repository.model;
 
+import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
+import com.project.linkedindatabase.domain.Type.Industry;
+import com.project.linkedindatabase.domain.Type.PhoneType;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.repository.types.PhoneTypeRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.utils.DateConverter;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -25,34 +30,31 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     @Override
     public void save(Profile object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(email, phoneNumber, phoneType, " +
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(email, phoneNumber, phoneType, " +
                 "password, firstName, lastName, formerName, formerNameVisibilityType, headline, currentPositionId, " +
                 "showCurrentPositionId, currentEducationId, showCurrentEducationId, country, locationInCountry, " +
                 "industry, address, dateOfBirth, about, urlToProfile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
                 "?, ?, ?, ?, ?");
-        savePs.setString(1, this.tableName);
-        savePs.setString(2, object.getEmail());
-        savePs.setString(3, object.getPhoneNumber());
-        savePs.setLong(4, object.getPhoneType());
-        savePs.setString(5, object.getPassword());
-        savePs.setString(6, object.getFirstName());
-        savePs.setString(7, object.getLastName());
-        savePs.setString(8, object.getFormerName());
-        savePs.setLong(9, object.getFormerNameVisibilityType());
-        savePs.setString(10, object.getHeadline());
-        savePs.setLong(11, object.getCurrentPositionId());
-        savePs.setBoolean(12, object.getShowCurrentPositionId());
-        savePs.setLong(13, object.getCurrentEducationId());
-        savePs.setBoolean(14, object.getShowCurrentEducationId());
-        savePs.setString(15, object.getCountry());
-        savePs.setString(16, object.getLocationInCountry());
-        savePs.setLong(17, object.getIndustry());
-        savePs.setString(18, object.getAddress());
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String date = df.format(object.getDateOfBirth());
-        savePs.setString(19, date);
-        savePs.setString(20, object.getAbout());
-        savePs.setString(21, object.getUrlToProfile());
+        savePs.setString(1, object.getEmail());
+        savePs.setString(2, object.getPhoneNumber());
+        savePs.setLong(3, object.getPhoneType());
+        savePs.setString(4, object.getPassword());
+        savePs.setString(5, object.getFirstName());
+        savePs.setString(6, object.getLastName());
+        savePs.setString(7, object.getFormerName());
+        savePs.setLong(8, object.getFormerNameVisibilityType());
+        savePs.setString(9, object.getHeadline());
+        savePs.setLong(10, object.getCurrentPositionId());
+        savePs.setBoolean(11, object.getShowCurrentPositionId());
+        savePs.setLong(12, object.getCurrentEducationId());
+        savePs.setBoolean(13, object.getShowCurrentEducationId());
+        savePs.setString(14, object.getCountry());
+        savePs.setString(15, object.getLocationInCountry());
+        savePs.setLong(16, object.getIndustry());
+        savePs.setString(17, object.getAddress());
+        savePs.setString(18, DateConverter.convertDate(object.getDateOfBirth(), "yyyy-MM-dd"));
+        savePs.setString(19, object.getAbout());
+        savePs.setString(20, object.getUrlToProfile());
         savePs.executeQuery();
     }
 
@@ -62,25 +64,26 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
                 "email VARCHAR(255) NOT NULL,"+
                 "phoneNumber VARCHAR(255) NOT NULL,"+
-                "phoneType BIGINT," +
-                "FOREIGN KEY (phoneType) REFERENCES phone_type(id),"+
-                "password VARCHAR(255) NOT NULL,"+
-                "firstName VARCHAR(255) NOT NULL,"+
-                "lastName VARCHAR(255) NOT NULL,"+
-                "formerName VARCHAR(255) NOT NULL,"+
-                "formerNameVisibilityType BIGINT," +
-                "FOREIGN KEY (formerNameVisibilityType) REFERENCES former_name_visibility_type(id),"+ // ref
-                "headline VARCHAR(255) NOT NULL,"+
+                "phoneType BIGINT NOT NULL," +
+                "FOREIGN KEY (phoneType) REFERENCES " +  BaseEntity.getTableName(PhoneType.class) + "(id),"+
+                "password NVARCHAR(255) NOT NULL,"+
+                "firstName NVARCHAR(255) NOT NULL,"+
+                "lastName NVARCHAR(255) NOT NULL,"+
+                "formerName NVARCHAR(255) NOT NULL,"+
+                "formerNameVisibilityType BIGINT NOT NULL," +
+                "FOREIGN KEY (formerNameVisibilityType) REFERENCES " +  BaseEntity.getTableName(FormerNameVisibilityType.class) + "(id),"+
+                "headline NVARCHAR(255) NOT NULL,"+
                 "country VARCHAR(255),"+
                 "locationInCountry VARCHAR(255),"+
-                "industry BIGINT," +
-                "FOREIGN KEY (industry) REFERENCES industry_type(id),"+ // ref
-                "address VARCHAR(255),"+
-                "dateOfBirth VARCHAR(255),"+
-                "about VARCHAR(255),"+
-                "urlToProfile VARCHAR(255),"+
+                "industry BIGINT NOT NULL," +
+                "FOREIGN KEY (industry) REFERENCES " +  BaseEntity.getTableName(Industry.class) + "(id),"+
+                "address NVARCHAR(255),"+
+                "dateOfBirth NVARCHAR(255),"+
+                "about TEXT,"+
+                "urlToProfile NVARCHAR(255),"+
                 "PRIMARY KEY (id)"+
-                ")");
+            ")"
+        );
 
 
         createTablePs.execute();
@@ -95,7 +98,26 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
             profile.setId(resultSet.getLong("id"));
             profile.setEmail(resultSet.getString("email"));
             profile.setPhoneNumber(resultSet.getString("phoneNumber"));
-        }catch (SQLException s){
+            profile.setPhoneType(resultSet.getLong("phoneType"));
+            profile.setPassword(resultSet.getString("password"));
+            profile.setFirstName(resultSet.getString("firstName"));
+            profile.setLastName(resultSet.getString("lastName"));
+            profile.setFormerName(resultSet.getString("formerName"));
+            profile.setFormerNameVisibilityType(resultSet.getLong("formerNameVisibilityType"));
+            profile.setHeadline(resultSet.getString("headline"));
+            profile.setCurrentPositionId(resultSet.getLong("currentPositionId"));
+            profile.setShowCurrentPositionId(resultSet.getBoolean("showCurrentPositionId"));
+            profile.setCurrentEducationId(resultSet.getLong("currentEducationId"));
+            profile.setShowCurrentEducationId(resultSet.getBoolean("showCurrentEducationId"));
+            profile.setCountry(resultSet.getString("country"));
+            profile.setLocationInCountry(resultSet.getString("locationInCountry"));
+            profile.setIndustry(resultSet.getLong("industry"));
+            profile.setAddress(resultSet.getString("address"));
+            profile.setDateOfBirth(DateConverter.parse(resultSet.getString("dateOfBirth"), "yyyy-MM-dd"));
+            profile.setAbout(resultSet.getString("about"));
+            profile.setUrlToProfile(resultSet.getString("urlToProfile"));
+
+        }catch (SQLException | ParseException s){
             System.out.println(s.getMessage());
         }
         return null;

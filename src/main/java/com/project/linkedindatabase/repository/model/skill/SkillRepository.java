@@ -1,6 +1,8 @@
 package com.project.linkedindatabase.repository.model.skill;
 
+import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Notification;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Skill;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.NotificationService;
@@ -23,9 +25,8 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
 
     @Override
     public void save(Skill object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(name, profileId) VALUES(" +
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(name, profileId) VALUES(" +
                 "?, ?)");
-        savePs.setString(0, this.tableName);
         savePs.setString(1, object.getName());
         savePs.setLong(2, object.getProfileId());
         savePs.executeQuery();
@@ -33,13 +34,14 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+this.tableName+"(" +
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + this.tableName + "(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "name VARCHAR(255) NOT NULL,"+
-                "profileId BIGINT," +
-                "FOREIGN KEY (profileId) REFERENCES profile(id),"+
+                "name NVARCHAR(255) NOT NULL,"+
+                "profileId BIGINT NOT NULL," +
+                "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
                 "PRIMARY KEY (id)"+
-                ")");
+            ")"
+        );
 
         createTablePs.execute();
     }

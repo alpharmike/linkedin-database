@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Calendar;
 import java.util.Date;
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class Comment extends BaseEntity {
 
     private Long reCommentId;// foreign key to comment table ==> for re-comment a comment
 
-    private String text;
+    private String body;
 
-    private Date date;
+    private Calendar createdDate;
 }

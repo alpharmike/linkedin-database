@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.lang.annotation.Annotation;
-import java.util.Date;
+import java.util.Calendar;
 
 @Setter
 @Getter
@@ -49,7 +49,7 @@ public class Profile extends BaseEntity {
 
     private String address;
 
-    private Date dateOfBirth;
+    private Calendar dateOfBirth;
 
     private String about;
 

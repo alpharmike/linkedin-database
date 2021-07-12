@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.util.Calendar;
 
 @Getter
 @Setter
@@ -18,9 +18,9 @@ public class Background extends BaseEntity {
 
     private Long backgroundType;// foreign key to background ==>enum
 
-    private Date startDate;
+    private Calendar startDate;
 
-    private Date endDate;
+    private Calendar endDate;
 
     private String title;
 

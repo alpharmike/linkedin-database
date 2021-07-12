@@ -1,6 +1,9 @@
 package com.project.linkedindatabase.repository.model.accomplishment;
 
 import com.project.linkedindatabase.domain.Background;
+import com.project.linkedindatabase.domain.BaseEntity;
+import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.AccomplishmentType;
 import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
 import com.project.linkedindatabase.domain.accomplishment.Language;
 import com.project.linkedindatabase.repository.BaseRepository;
@@ -69,13 +72,15 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
     @Override
     public void createTable() throws SQLException {
         final String createQuery = String.format("create table if not exists %s ("
-                + " "+ID+" bigint not null auto_increment,"
-                + " "+PROFILE_ID+" bigint not null,"
-                + " "+SUBJECT+" nvarchar(100) not null,"
-                + " "+DESCRIPTION+" TEXT  not null,"
-                + " "+ACCOMPLISHMENT_TYPE+" bigint not null,"
-                + " "+FILE+" MEDIUMBLOB  ,"
-                + " primary key ("+ID+")"
+                + " " + ID +" bigint not null auto_increment,"
+                + " " + PROFILE_ID + " bigint not null,"
+                + " " + SUBJECT + " nvarchar(255) not null,"
+                + " " + DESCRIPTION + " TEXT not null,"
+                + " " + ACCOMPLISHMENT_TYPE + " bigint not null,"
+                + " " + FILE + " MEDIUMBLOB,"
+                + " primary key (" + ID + "),"
+                + " foreign key " + "(" + PROFILE_ID + ")" + " references " + BaseEntity.getTableName(Profile.class) + "(id),"
+                + " foreign key " + "(" + ACCOMPLISHMENT_TYPE + ")" + " references " + BaseEntity.getTableName(AccomplishmentType.class) + "(id)"
                 + ");", this.tableName);
         PreparedStatement ps = conn.prepareStatement(createQuery);
         ps.execute();
