@@ -1,8 +1,10 @@
 package com.project.linkedindatabase.controller;
 
 
+import com.project.linkedindatabase.config.JwtTokenUtil;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.jsonToPojo.SignUpData;
+import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.utils.DateConverter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -22,6 +25,21 @@ public class ProfileRestController {
 
     public ProfileRestController(ProfileService profileService) {
         this.profileService = profileService;
+    }
+
+
+    @GetMapping("/profile")
+    public Profile getProfile(@RequestHeader Map<String, Object> jsonHeader){
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService().getProfileByHeader(jsonHeader);
+        }catch (Exception e)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        return profile;
     }
 
     @PostMapping("/sign-up")

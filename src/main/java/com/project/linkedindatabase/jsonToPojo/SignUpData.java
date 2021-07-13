@@ -49,7 +49,7 @@ public class SignUpData {
         profile.setIndustry(this.industry);
         profile.setLastName(this.lastName);
         profile.setLocationInCountry(this.locationInCountry);
-        profile.setPassword( SHAHashing.get_SHA_512_SecurePassword(this.password ));
+        profile.setPassword( new BCryptPasswordEncoder().encode( (this.password )));
         profile.setPhoneNumber(this.phoneNumber);
 
         return profile;

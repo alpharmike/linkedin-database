@@ -159,6 +159,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where username = ?");
         ps.setString(1, username);
         ResultSet resultSet = ps.executeQuery();
+        System.out.println(resultSet.toString());
         if (!resultSet.isBeforeFirst())
         {
             return null;
@@ -186,6 +187,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         profile.setLocationInCountry(resultSet.getString("locationInCountry"));
         profile.setIndustry(resultSet.getLong("industry"));
         profile.setAddress(resultSet.getString("address"));
+        profile.setUsername(resultSet.getString("username"));
         try {
             profile.setDateOfBirth(DateConverter.parse(resultSet.getString("dateOfBirth"), "yyyy-MM-dd"));
         }catch (Exception e)

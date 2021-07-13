@@ -1,5 +1,6 @@
 package com.project.linkedindatabase.service.jwt;
 
+import com.project.linkedindatabase.config.JwtTokenUtil;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.repository.model.ProfileRepository;
 import lombok.SneakyThrows;
@@ -11,7 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Service
@@ -26,7 +30,27 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (profile == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         } else {
+
             return new User(profile.getUsername(), profile.getPassword(), new ArrayList<>());
+
         }
+    }
+
+    @SneakyThrows
+    public Profile loadProfileByUsername(String username) throws UsernameNotFoundException {
+        Profile profile = profileRepository.findByUsername(username);
+        if (profile == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        } else {
+            return profile;
+        }
+    }
+
+    public Profile getProfileByHeader(Map<String,Object> jsonHeader)  throws Exception
+    {
+        String token = (String) jsonHeader.get(JwtTokenUtil.TOKEN);
+        String username = new JwtTokenUtil().getUsernameFromToken(token);
+
+        return loadProfileByUsername( username );
     }
 }
