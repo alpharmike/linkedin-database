@@ -46,4 +46,24 @@ public class LanguageServiceMap implements LanguageService {
     public void createTable() throws SQLException {
         languageRepository.createTable();
     }
+
+    @Override
+    public List<Language> findByProfileId(Long id) throws Exception {
+        return languageRepository.findByProfileId(id);
+    }
+
+    @Override
+    public void update(Language language) throws Exception {
+        languageRepository.update(language);
+    }
+
+    @Override
+    public void updateWithProfileId(Language language) throws Exception {
+        languageRepository.updateWithProfileId( language);
+    }
+
+    @Override
+    public void deleteByIdAndProfileId(Language language) throws Exception {
+        languageRepository.deleteByIdAndProfileId( language);
+    }
 }
