@@ -3,29 +3,88 @@ package com.project.linkedindatabase.bootstrap;
 
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
-import com.project.linkedindatabase.domain.post.Comment;
-import com.project.linkedindatabase.repository.model.ProfileRepository;
-import com.project.linkedindatabase.repository.model.post.CommentRepository;
-import com.project.linkedindatabase.repository.model.post.PostRepository;
-import com.project.linkedindatabase.repository.types.AccomplishmentTypeRepository;
-import com.project.linkedindatabase.repository.types.FormerNameVisibilityTypeRepository;
-import com.project.linkedindatabase.repository.types.PhoneTypeRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 @Component
 public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
+
+
+
+    private final PhoneTypeService phoneTypeService;
+    private final FormerNameVisibilityTypeService formerNameVisibilityTypeService;
+    private final IndustryService industryService;
+    private final ConnectTypeService connectTypeService;
+    private final AccomplishmentTypeService accomplishmentTypeService;
+    private final BackgroundTypeService backgroundTypeService;
+    private final SkillLevelService skillLevelService;
+    private final NotificationTypeService notificationTypeService;
+    private final ShowPostTypeService showPostTypeService;
+    private final LanguageLevelService languageLevelService;
+    private final RelationKnowledgeService relationKnowledgeService;
+
+
+    private final ProfileService profileService;
+
+    public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
+                     FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
+                     ConnectTypeService connectTypeService, AccomplishmentTypeService accomplishmentTypeService,
+                     BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
+                     NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
+                     LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService) {
+
+
+
+        this.phoneTypeService = phoneTypeService;
+        this.formerNameVisibilityTypeService = formerNameVisibilityTypeService;
+        this.connectTypeService = connectTypeService;
+        this.industryService = industryService;
+        this.accomplishmentTypeService = accomplishmentTypeService;
+        this.backgroundTypeService = backgroundTypeService;
+        this.skillLevelService = skillLevelService;
+        this.notificationTypeService = notificationTypeService;
+        this.showPostTypeService = showPostTypeService;
+        this.languageLevelService = languageLevelService;
+        this.relationKnowledgeService = relationKnowledgeService;
+
+
+        this.profileService = profileService;
+    }
+
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
         log.info("Application Started");
         log.info(BaseEntity.getTableName(Profile.class));
-//        try {
+       try {
+
+
+           this.phoneTypeService.createTable();
+           this.formerNameVisibilityTypeService.createTable();
+           this.connectTypeService.createTable();
+           this.industryService.createTable();
+           this.accomplishmentTypeService.createTable();
+           this.backgroundTypeService.createTable();
+           this.skillLevelService.createTable();
+           this.notificationTypeService.createTable();
+           this.showPostTypeService.createTable();
+           this.languageLevelService.createTable();
+           this.relationKnowledgeService.createTable();
+
+
+
+
+           this.profileService.createTable();
+
+
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
 //            new IndustryRepository().createTable();
@@ -44,8 +103,89 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 //            new LikePostRepository().createTable();
 //            new LikeCommentRepository().createTable();
 //
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
+           addType();
+      } catch (Exception throwables) {
+           throwables.printStackTrace();
+       }
+    }
+
+    private void addType() throws Exception {
+
+
+        List<String> accomplishmentType = SaveTypes.readAccomplishmentType();
+        for (String name : accomplishmentType)
+        {
+            accomplishmentTypeService.saveIfNotExist(name);
+        }
+
+        List<String> backgroundType = SaveTypes.readBackgroundType();
+        for (String name : backgroundType)
+        {
+            backgroundTypeService.saveIfNotExist(name);
+        }
+
+        List<String> connectType = SaveTypes.readConnectType();
+        for (String name : connectType)
+        {
+            connectTypeService.saveIfNotExist(name);
+        }
+
+
+        List<String> skillLevel = SaveTypes.readSkillLevel();
+        for (String name : skillLevel)
+        {
+            skillLevelService.saveIfNotExist(name);
+        }
+
+        List<String> formerNameVisibilityType = SaveTypes.readFormerNameVisibilityType();
+        for (String name : formerNameVisibilityType)
+        {
+            formerNameVisibilityTypeService.saveIfNotExist(name);
+        }
+
+        List<String>  industryType = SaveTypes.readIndustryType();
+        for (String name :  industryType)
+        {
+            industryService.saveIfNotExist(name);
+        }
+
+        List<String> languageLevel = SaveTypes.readLanguageLevel();
+        for (String name : languageLevel)
+        {
+            languageLevelService.saveIfNotExist(name);
+        }
+
+        List<String> notificationType = SaveTypes.readNotificationType();
+        for (String name : notificationType)
+        {
+            notificationTypeService.saveIfNotExist(name);
+        }
+
+
+        List<String> phoneType = SaveTypes.readPhoneType();
+        for (String name : phoneType)
+        {
+            phoneTypeService.saveIfNotExist(name);
+        }
+
+
+        List<String> readRelationKnowledge = SaveTypes.readRelationKnowledge();
+        for (String name : readRelationKnowledge)
+        {
+            relationKnowledgeService.saveIfNotExist(name);
+        }
+
+
+
+
+        List<String> showPostType = SaveTypes.readShowPostType();
+        for (String name : showPostType)
+        {
+            showPostTypeService.saveIfNotExist(name);
+        }
+
+
+
+
     }
 }

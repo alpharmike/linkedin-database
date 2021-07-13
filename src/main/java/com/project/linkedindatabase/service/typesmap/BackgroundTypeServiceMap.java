@@ -46,4 +46,15 @@ public class BackgroundTypeServiceMap implements BackgroundTypeService {
     public void deleteByObject(BackgroundType object) throws SQLException {
         backgroundTypeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        backgroundTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public BackgroundType findByName(String name) throws SQLException {
+        return backgroundTypeRepository.findByName(name);
+    }
 }

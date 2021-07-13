@@ -1,5 +1,6 @@
 package com.project.linkedindatabase.service.typesmap;
 
+import com.project.linkedindatabase.domain.Type.ConnectType;
 import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.repository.types.FormerNameVisibilityTypeRepository;
 import com.project.linkedindatabase.service.types.FormerNameVisibilityTypeService;
@@ -45,5 +46,22 @@ public class FormerNameVisibilityTypeServiceMap  implements FormerNameVisibility
     @Override
     public void deleteByObject(FormerNameVisibilityType object) throws SQLException {
         formerNameVisibilityTypeRepository.deleteByObject(object);
+    }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        formerNameVisibilityTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public FormerNameVisibilityType findByName(String name) throws SQLException {
+        return formerNameVisibilityTypeRepository.findByName(name);
+
+    }
+
+    @Override
+    public FormerNameVisibilityType defaultType() throws SQLException {
+        return formerNameVisibilityTypeRepository.defaultType();
     }
 }

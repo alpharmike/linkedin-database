@@ -13,8 +13,8 @@ public class ProfileServiceMap implements ProfileService {
 
     private final ProfileRepository profileRepository;
 
-    public ProfileServiceMap() throws SQLException {
-        profileRepository = new ProfileRepository();
+    public ProfileServiceMap(ProfileRepository profileRepository) throws SQLException {
+        this.profileRepository = profileRepository;
     }
 
     @Override
@@ -45,5 +45,16 @@ public class ProfileServiceMap implements ProfileService {
     @Override
     public void createTable() throws SQLException {
         profileRepository.createTable();
+    }
+
+    public Profile findByUsername(String username) throws SQLException {
+        return profileRepository.findByUsername(username);
+    }
+
+
+
+    @Override
+    public boolean uniqueUsernameEmailPhone(String username, String email, String phone) throws SQLException{
+        return this.profileRepository.uniqueUsernameEmailPhone(username,email,phone);
     }
 }

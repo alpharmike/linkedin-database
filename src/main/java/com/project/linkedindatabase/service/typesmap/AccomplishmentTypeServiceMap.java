@@ -46,4 +46,14 @@ public class AccomplishmentTypeServiceMap  implements AccomplishmentTypeService 
     public void deleteByObject(AccomplishmentType object) throws SQLException {
         accomplishmentTypeRepository.deleteByObject(object);
     }
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        accomplishmentTypeRepository.saveIfNotExist(name);
+    }
+
+    @Override
+    public AccomplishmentType findByName(String name) throws SQLException {
+        return accomplishmentTypeRepository.findByName(name);
+    }
 }

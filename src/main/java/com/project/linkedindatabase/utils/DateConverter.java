@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateConverter {
     public static String convertDate(Calendar calendar, String format) {
@@ -15,6 +17,7 @@ public class DateConverter {
 
     public static Calendar parse(String formattedDate, String format) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone("PST"));
         Date date = sdf.parse(formattedDate);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

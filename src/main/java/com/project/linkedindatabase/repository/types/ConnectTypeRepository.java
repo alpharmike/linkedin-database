@@ -13,6 +13,11 @@ public class ConnectTypeRepository extends BaseTypeRepository<ConnectType> {
         super(ConnectType.class);
     }
 
+    public ConnectType defaultType() throws SQLException {
+        String name = "pending";
+        return super.findByName(name);
+    }
+
     @Override
     public ConnectType convertSql(ResultSet resultSet) throws SQLException {
         String name = resultSet.getString(NAME);

@@ -45,4 +45,17 @@ public class ShowPostTypeServiceMap  implements ShowPostTypeService {
     public void deleteByObject(ShowPostType object) throws SQLException {
         showPostTypeRepository.deleteByObject(object);
     }
+
+
+    @Override
+    public void saveIfNotExist(String name) throws SQLException {
+        showPostTypeRepository.saveIfNotExist(name);
+
+    }
+
+    @Override
+    public ShowPostType findByName(String name) throws SQLException {
+        return showPostTypeRepository.findByName(name);
+
+    }
 }
