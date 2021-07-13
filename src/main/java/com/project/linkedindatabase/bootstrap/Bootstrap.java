@@ -119,9 +119,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     private void addType() throws Exception {
-
-
-
         List<String> accomplishmentType = SaveTypes.readAccomplishmentType();
         for (String name : accomplishmentType)
         {
@@ -193,9 +190,5 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         {
             showPostTypeService.saveIfNotExist(name);
         }
-
-
-
-
     }
 }
