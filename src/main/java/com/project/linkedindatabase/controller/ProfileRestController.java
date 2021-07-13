@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Map;
 
 @Slf4j
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class ProfileRestController {
@@ -26,7 +27,7 @@ public class ProfileRestController {
         this.profileService = profileService;
     }
 
-
+    @CrossOrigin(origins = "*")
     @GetMapping("/profile")
     public Profile getProfile(@RequestHeader Map<String, Object> jsonHeader){
         log.info(jsonHeader.toString());
