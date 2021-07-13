@@ -1,7 +1,6 @@
 package com.project.linkedindatabase.controller;
 
 
-import com.project.linkedindatabase.config.JwtTokenUtil;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.jsonToPojo.SignUpData;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
@@ -33,7 +32,7 @@ public class ProfileRestController {
         log.info(jsonHeader.toString());
         Profile profile;
         try {
-            profile = new JwtUserDetailsService().getProfileByHeader(jsonHeader);
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
         }catch (Exception e)
         {
             e.printStackTrace();

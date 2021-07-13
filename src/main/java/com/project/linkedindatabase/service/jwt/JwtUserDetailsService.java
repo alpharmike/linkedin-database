@@ -2,9 +2,8 @@ package com.project.linkedindatabase.service.jwt;
 
 import com.project.linkedindatabase.config.JwtTokenUtil;
 import com.project.linkedindatabase.domain.Profile;
-import com.project.linkedindatabase.repository.model.ProfileRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,21 +11,23 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
-    @Autowired
-    private ProfileRepository profileRepository;
+
+    private final ProfileService profileService;
+
+    public JwtUserDetailsService(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Profile profile = profileRepository.findByUsername(username);
+        Profile profile = profileService.findByUsername(username);
         if (profile == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         } else {
@@ -38,7 +39,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @SneakyThrows
     public Profile loadProfileByUsername(String username) throws UsernameNotFoundException {
-        Profile profile = profileRepository.findByUsername(username);
+        Profile profile = profileService.findByUsername(username);
         if (profile == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         } else {
@@ -50,6 +51,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     {
 
         String token = (String) jsonHeader.get(JwtTokenUtil.TOKEN);
+        System.out.println(jsonHeader.toString());
         String username = new JwtTokenUtil().getUsernameFromToken(token);
 
         return loadProfileByUsername( username );
