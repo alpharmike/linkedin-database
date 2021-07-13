@@ -46,4 +46,24 @@ public class AccomplishmentServiceMap implements AccomplishmentService {
     public void createTable() throws SQLException {
         accomplishmentRepository.createTable();
     }
+
+    @Override
+    public List<Accomplishment> findByProfileId(Long id) throws Exception {
+        return accomplishmentRepository.findByProfileId( id);
+    }
+
+    @Override
+    public void update(Accomplishment accomplishment) throws Exception {
+        accomplishmentRepository.update(accomplishment);
+    }
+
+    @Override
+    public void updateWithProfileId(Accomplishment accomplishment) throws Exception {
+        accomplishmentRepository.updateWithProfileId(accomplishment);
+    }
+
+    @Override
+    public void deleteByIdAndProfileId(Accomplishment accomplishment) throws Exception {
+        accomplishmentRepository.deleteByIdAndProfileId(accomplishment);
+    }
 }

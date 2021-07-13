@@ -10,4 +10,8 @@ public interface BackgroundService extends BaseService<Background,Long> {
     public List<Background> findByProfileId(Long id) throws Exception;
 
     public void update(Background background) throws Exception;
+
+    public void updateWithProfileId(Background object) throws Exception;
+
+    public void deleteByIdAndProfileId(Background background) throws Exception;
 }

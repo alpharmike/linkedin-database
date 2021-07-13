@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,13 +61,13 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
             ps.setBinaryStream(5, new ByteArrayInputStream((bytes)));
         }else
         {
-            ps.setBinaryStream(5,  null);
+            ps.setNull(5, Types.BLOB);
         }
 
 
 
 
-        ResultSet resultSet = ps.executeQuery();
+        ps.execute();
 
     }
 
@@ -102,7 +104,8 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
         InputStream fileStream = resultSet.getBinaryStream(FILE);
         byte[] bytes = null;
         try {
-            bytes = fileStream.readAllBytes();
+            if (fileStream != null)
+                bytes = fileStream.readAllBytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -130,5 +133,86 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
 
         return accomplishment;
 
+    }
+
+    public List<Accomplishment> findByProfileId(Long id) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where "+PROFILE_ID+" = ?");
+        ps.setLong(1,id);
+        ResultSet resultSet = ps.executeQuery();
+
+        List<Accomplishment> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
+    public void update(Accomplishment object) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("UPDATE  "+this.getTableName()+"  SET " +
+                "" + SUBJECT + " = ?," + DESCRIPTION + " = ? ," + ACCOMPLISHMENT_TYPE + " = ? ,"+FILE + " = ? " +
+                "where " + ID + " = ?;");
+
+
+        ps.setString(1, object.getSubject());
+        ps.setString(2, object.getDescription());
+        ps.setLong(3, object.getAccomplishmentType());
+
+
+
+        if(object.getFile() != null) {// if file wasn't null we will convert it to byteStream and save it
+            Byte[] file = object.getFile();
+            byte[] bytes = new byte[file.length];
+            for (int i = 0; i < file.length; i++) {
+                bytes[i] = file[i];
+            }
+            ps.setBinaryStream(4, new ByteArrayInputStream((bytes)));
+        }else
+        {
+            ps.setNull(4, Types.BLOB);
+        }
+        ps.setLong(5, object.getId());
+
+
+
+        ps.execute();
+    }
+
+    public void updateWithProfileId(Accomplishment accomplishment) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("UPDATE  "+this.getTableName()+"  SET " +
+                "" + SUBJECT + " = ?," + DESCRIPTION + " = ? ," + ACCOMPLISHMENT_TYPE + " = ? ,"+FILE + " = ? " +
+                "where " + ID + " = ? and " +  PROFILE_ID + " = ? ;");
+
+
+        ps.setString(1, accomplishment.getSubject());
+        ps.setString(2, accomplishment.getDescription());
+        ps.setLong(3, accomplishment.getAccomplishmentType());
+
+
+
+        if(accomplishment.getFile() != null) {// if file wasn't null we will convert it to byteStream and save it
+            Byte[] file = accomplishment.getFile();
+            byte[] bytes = new byte[file.length];
+            for (int i = 0; i < file.length; i++) {
+                bytes[i] = file[i];
+            }
+            ps.setBinaryStream(4, new ByteArrayInputStream((bytes)));
+        }else
+        {
+            ps.setNull(4, Types.BLOB);
+        }
+        ps.setLong(5, accomplishment.getId());
+        ps.setLong(6, accomplishment.getProfileId());
+
+
+        ps.execute();
+    }
+
+    public void deleteByIdAndProfileId(Accomplishment accomplishment) throws SQLException {
+
+        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ? and  " + PROFILE_ID +" = ?");
+
+        ps.setLong(1, accomplishment.getId());
+        ps.setLong(2, accomplishment.getProfileId());
+        ps.execute();
     }
 }

@@ -6,6 +6,7 @@ import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.BackgroundType;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.utils.DateConverter;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -60,21 +61,20 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
 
 
 
+    @SneakyThrows
     @Override
-    public Background convertSql(ResultSet resultSet) {
+    public Background convertSql(ResultSet resultSet) throws SQLException {
         Background background = new Background();
-        try{
-            resultSet.first();
-            background.setId(resultSet.getLong("id"));
-            background.setProfileId(resultSet.getLong("profileId"));
-            background.setBackgroundType(resultSet.getLong("backgroundType"));
-            background.setStartDate(DateConverter.parse(resultSet.getString("startDate"), "yyyy-MM-dd HH:mm:ss"));
+
+        background.setId(resultSet.getLong("id"));
+        background.setProfileId(resultSet.getLong("profileId"));
+        background.setBackgroundType(resultSet.getLong("backgroundType"));
+        background.setStartDate(DateConverter.parse(resultSet.getString("startDate"), "yyyy-MM-dd HH:mm:ss"));
+        if (resultSet.getString("endDate") != null && !resultSet.getString("endDate").equals(""))
             background.setEndDate(DateConverter.parse(resultSet.getString("endDate"), "yyyy-MM-dd HH:mm:ss"));
-            background.setTitle(resultSet.getString("title"));
-            background.setDescription(resultSet.getString("description"));
-        }catch (SQLException | ParseException s){
-            System.out.println(s.getMessage());
-        }
+        background.setTitle(resultSet.getString("title"));
+        background.setDescription(resultSet.getString("description"));
+
         return background;
     }
 
@@ -95,20 +95,46 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
 
 
 
-        PreparedStatement ps = this.conn.prepareStatement("UPDATE " + this.tableName + " set profileId = ? , backgroundType = ? ," +
+        PreparedStatement ps = this.conn.prepareStatement("UPDATE " + this.tableName + " set backgroundType = ? ," +
                 " startDate = ? , endDate = ? , title = ? , description = ? where id = ?");
-        ps.setLong(1, object.getProfileId());
-        ps.setLong(2, object.getBackgroundType());
-        ps.setString(3, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        ps.setLong(1, object.getBackgroundType());
+        ps.setString(2, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
         if (object.getEndDate() != null)
-            ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+            ps.setString(3, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
         else
-            ps.setNull(4, Types.NVARCHAR);
-        ps.setString(5, object.getTitle());
-        ps.setString(6, object.getDescription());
-        ps.setLong(7, object.getId());
+            ps.setNull(3, Types.NVARCHAR);
+        ps.setString(4, object.getTitle());
+        ps.setString(5, object.getDescription());
+        ps.setLong(6, object.getId());
         System.out.println(ps.toString());
 
+        ps.execute();
+    }
+
+    public void updateWithProfileId(Background object) throws SQLException {
+
+        PreparedStatement ps = this.conn.prepareStatement("UPDATE " + this.tableName + "  set backgroundType = ? ," +
+                " startDate = ? , endDate = ? , title = ? , description = ? where id = ? and profileId = ?");
+        ps.setLong(1, object.getBackgroundType());
+        ps.setString(2, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        if (object.getEndDate() != null)
+            ps.setString(3, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+        else
+            ps.setNull(3, Types.NVARCHAR);
+        ps.setString(4, object.getTitle());
+        ps.setString(5, object.getDescription());
+        ps.setLong(6, object.getId());
+        ps.setLong(7, object.getProfileId());
+        System.out.println(ps.toString());
+        ps.execute();
+    }
+
+
+    public void deleteByIdAndProfileId(Background background) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ? and  profileId = ?");
+
+        ps.setLong(1, background.getId());
+        ps.setLong(2, background.getProfileId());
         ps.execute();
     }
 }

@@ -1,13 +1,13 @@
 package com.project.linkedindatabase.controller;
 
-
 import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.Profile;
-import com.project.linkedindatabase.domain.Type.ConnectType;
+import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
 import com.project.linkedindatabase.jsonToPojo.BackgroundJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,18 +19,18 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api")
-public class BackgroundController {
+public class AccomplishmentsController {
 
-    private final BackgroundService backgroundService;
+    private final AccomplishmentService accomplishmentService;
     private final ProfileService profileService ;
 
-    public BackgroundController(BackgroundService backgroundService, ProfileService profileService) {
-        this.backgroundService = backgroundService;
+    public AccomplishmentsController(AccomplishmentService accomplishmentService, ProfileService profileService) {
+        this.accomplishmentService = accomplishmentService;
         this.profileService = profileService;
     }
 
-    @GetMapping("/background")
-    public List<Background> getBackground(@RequestHeader Map<String, Object> jsonHeader) {
+    @GetMapping("/accomplishment")
+    public List<Accomplishment> getAccomplishment(@RequestHeader Map<String, Object> jsonHeader) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 
         try {
@@ -38,7 +38,7 @@ public class BackgroundController {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
 
 
-            return backgroundService.findByProfileId(profile.getId());
+            return accomplishmentService.findByProfileId(profile.getId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(
@@ -48,8 +48,8 @@ public class BackgroundController {
 
     }
 
-    @PostMapping("/background")
-    public void addBackGround(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson) {
+    @PostMapping("/accomplishment")
+    public void addAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -61,9 +61,8 @@ public class BackgroundController {
         }
 
         try {
-            backgroundJson.setProfileId(profile.getId());
-            Background background = backgroundJson.convertToBackGround();
-            backgroundService.save(background);
+            accomplishment.setProfileId(profile.getId());
+            accomplishmentService.save(accomplishment);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -74,8 +73,8 @@ public class BackgroundController {
 
     }
 
-    @PutMapping("/background")
-    public void updateBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson) {
+    @PutMapping("/accomplishment")
+    public void updateAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -87,10 +86,8 @@ public class BackgroundController {
         }
 
         try {
-            backgroundJson.setProfileId(profile.getId());
-            System.out.println();
-            Background background = backgroundJson.convertToBackGround();
-            backgroundService.updateWithProfileId(background);
+            accomplishment.setProfileId(profile.getId());
+            accomplishmentService.updateWithProfileId(accomplishment);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -101,8 +98,8 @@ public class BackgroundController {
 
     }
 
-    @DeleteMapping("/background")
-    public void deleteBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson) {
+    @DeleteMapping("/accomplishment")
+    public void deleteAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -114,8 +111,8 @@ public class BackgroundController {
         }
 
         try {
-            backgroundJson.setProfileId(profile.getId());
-            backgroundService.deleteByIdAndProfileId(backgroundJson.convertToBackGround());
+            accomplishment.setProfileId(profile.getId());
+            accomplishmentService.deleteByIdAndProfileId(accomplishment);
         }catch (Exception e)
         {
             e.printStackTrace();

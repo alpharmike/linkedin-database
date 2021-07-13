@@ -56,4 +56,14 @@ public class BackgroundServiceMap  implements BackgroundService {
     public void update(Background background) throws Exception {
         backgroundRepository.update(background);
     }
+
+    @Override
+    public void updateWithProfileId(Background object) throws Exception {
+        backgroundRepository.updateWithProfileId(object);
+    }
+
+    @Override
+    public void deleteByIdAndProfileId(Background background) throws Exception {
+        backgroundRepository.deleteByIdAndProfileId(background);
+    }
 }

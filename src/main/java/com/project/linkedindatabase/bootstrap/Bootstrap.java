@@ -5,6 +5,7 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -34,13 +35,15 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ProfileService profileService;
     private final BackgroundService backgroundService;
+    private final AccomplishmentService accomplishmentService;
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
                      ConnectTypeService connectTypeService, AccomplishmentTypeService accomplishmentTypeService,
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
-                     LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService, BackgroundService backgroundService) {
+                     LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
+                     BackgroundService backgroundService, AccomplishmentService accomplishmentService) {
 
 
 
@@ -59,6 +62,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
         this.profileService = profileService;
         this.backgroundService = backgroundService;
+        this.accomplishmentService = accomplishmentService;
     }
 
 
@@ -86,7 +90,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 
            this.profileService.createTable();
-            this.backgroundService.createTable();
+           this.backgroundService.createTable();
+           this.accomplishmentService.createTable();
 
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
