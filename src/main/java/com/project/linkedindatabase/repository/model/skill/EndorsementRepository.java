@@ -57,7 +57,7 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
 
     @Override
-    public Endorsement convertSql(ResultSet resultSet) {
+    public Endorsement convertSql(ResultSet resultSet) throws SQLException {
         Endorsement endorsement = new Endorsement();
         try{
             resultSet.first();
@@ -70,6 +70,34 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
             System.out.println(s.getMessage());
         }
         return endorsement;
+    }
+
+    public Endorsement getById(Long id) throws SQLException {
+
+        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE id=?",ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+        retrievePs.setLong(1, id);
+        ResultSet resultSet = retrievePs.executeQuery();
+        return this.convertSql(resultSet);
+    }
+
+    public Endorsement editById(Long id, Long skillId, Long skillLevel, Long relationKnowledge, Long endorserId) throws SQLException {
+
+        PreparedStatement updatePs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET skillId=?," +
+                " skillLevel=?, relationKnowledge=?, endorserId=? WHERE id=?");
+        updatePs.setLong(1, skillId);
+        updatePs.setLong(2, skillLevel);
+        updatePs.setLong(3, relationKnowledge);
+        updatePs.setLong(4, endorserId);
+        updatePs.setLong(5, id);
+        updatePs.executeUpdate();
+        return this.getById(id);
+    }
+
+    public void deleteById(Long id) throws SQLException {
+        PreparedStatement deletePs = this.conn.prepareStatement("DELETE FROM "+this.tableName+" WHERE id=?");
+        deletePs.setLong(1, id);
+        deletePs.execute();
     }
 }
 
