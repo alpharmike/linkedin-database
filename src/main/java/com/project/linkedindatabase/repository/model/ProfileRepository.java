@@ -48,7 +48,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     @Override
     public void save(Profile object) throws SQLException {
 
-        System.out.println(phoneTypeService);
+
 
         DEFAULT_PHONE_TYPE = phoneTypeService.defaultType().getId();
         DEFAULT_INDUSTRY_TYPE = industryService.defaultType().getId();
@@ -159,7 +159,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where username = ?");
         ps.setString(1, username);
         ResultSet resultSet = ps.executeQuery();
-        System.out.println(resultSet.toString());
+
         if (!resultSet.isBeforeFirst())
         {
             return null;

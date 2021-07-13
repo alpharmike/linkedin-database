@@ -50,10 +50,16 @@ public class JwtUserDetailsService implements UserDetailsService {
     public Profile getProfileByHeader(Map<String,Object> jsonHeader)  throws Exception
     {
 
-        String token = (String) jsonHeader.get(JwtTokenUtil.TOKEN);
-        System.out.println(jsonHeader.toString());
+        String token = getTokenByHeader(jsonHeader);
         String username = new JwtTokenUtil().getUsernameFromToken(token);
 
         return loadProfileByUsername( username );
+    }
+
+
+
+    public static String getTokenByHeader(Map<String,Object> jsonHeader)
+    {
+       return (String) jsonHeader.get(JwtTokenUtil.TOKEN);
     }
 }
