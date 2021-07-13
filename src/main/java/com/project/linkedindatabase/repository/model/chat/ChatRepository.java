@@ -62,4 +62,21 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         return chat;
     }
 
+    public Chat getChatByProfileId(long profileId1, long profileId2) throws SQLException {
+        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE (profileId1=? AND profileId2=?) OR " +
+                "(profileId1=? AND profileId2=?)");
+        retrievePs.setLong(1, profileId1);
+        retrievePs.setLong(2, profileId2);
+        retrievePs.setLong(3, profileId2);
+        retrievePs.setLong(4, profileId1);
+        ResultSet resultSet = retrievePs.executeQuery();
+        if(!resultSet.next()){
+            return null;
+        }
+        return this.convertSql(resultSet);
+    }
+    public boolean exists(long profileId1, long profileId2) throws SQLException {
+        return getChatByProfileId(profileId1, profileId2) != null;
+    }
+
 }

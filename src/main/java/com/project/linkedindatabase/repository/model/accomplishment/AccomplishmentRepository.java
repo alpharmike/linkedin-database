@@ -209,7 +209,7 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
 
     public void deleteByIdAndProfileId(Accomplishment accomplishment) throws SQLException {
 
-        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ? and  " + PROFILE_ID +" = ?");
+        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where " + ID + " = ? and  " + PROFILE_ID +" = ?");
 
         ps.setLong(1, accomplishment.getId());
         ps.setLong(2, accomplishment.getProfileId());
