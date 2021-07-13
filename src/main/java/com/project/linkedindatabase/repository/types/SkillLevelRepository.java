@@ -21,24 +21,14 @@ public class SkillLevelRepository extends BaseTypeRepository<SkillLevel> {
     @Override
     public SkillLevel convertSql(ResultSet resultSet) throws SQLException {
         SkillLevel skillLevel = new SkillLevel();
-        try{
-            resultSet.first();
-            String name = resultSet.getString(NAME);
-            Long id = resultSet.getLong(ID);
-            var type = new SkillLevel();
-            skillLevel.setId(id);
-            skillLevel.setName(name);
-        }catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+        String name = resultSet.getString(NAME);
+        Long id = resultSet.getLong(ID);
+        var type = new SkillLevel();
+        skillLevel.setId(id);
+        skillLevel.setName(name);
+
         return skillLevel;
     }
 
-    public SkillLevel getById(long id) throws SQLException {
-        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE id=?",ResultSet.TYPE_SCROLL_INSENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
-        retrievePs.setLong(1, id);
-        ResultSet resultSet = retrievePs.executeQuery();
-        return this.convertSql(resultSet);
-    }
+
 }

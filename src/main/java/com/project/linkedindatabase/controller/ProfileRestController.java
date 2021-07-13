@@ -30,11 +30,13 @@ public class ProfileRestController {
 
     @GetMapping("/profile")
     public Profile getProfile(@RequestHeader Map<String, Object> jsonHeader){
+        log.info(jsonHeader.toString());
         Profile profile;
         try {
             profile = new JwtUserDetailsService().getProfileByHeader(jsonHeader);
         }catch (Exception e)
         {
+            e.printStackTrace();
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
         }

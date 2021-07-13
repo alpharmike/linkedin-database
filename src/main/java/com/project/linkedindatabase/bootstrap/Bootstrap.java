@@ -105,11 +105,13 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 //
            addType();
       } catch (Exception throwables) {
+
            throwables.printStackTrace();
        }
     }
 
     private void addType() throws Exception {
+
 
 
         List<String> accomplishmentType = SaveTypes.readAccomplishmentType();

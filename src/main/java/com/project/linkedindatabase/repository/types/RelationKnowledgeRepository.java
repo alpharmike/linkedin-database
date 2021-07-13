@@ -20,24 +20,15 @@ public class RelationKnowledgeRepository extends BaseTypeRepository<RelationKnow
     @Override
     public RelationKnowledge convertSql(ResultSet resultSet) throws SQLException {
         RelationKnowledge type = new RelationKnowledge();
-        try{
-            resultSet.first();
-            String name = resultSet.getString(NAME);
-            Long id = resultSet.getLong(ID);
-            type = new RelationKnowledge();
-            type.setId(id);
-            type.setName(name);
-        }catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+
+        String name = resultSet.getString(NAME);
+        Long id = resultSet.getLong(ID);
+        type = new RelationKnowledge();
+        type.setId(id);
+        type.setName(name);
+
         return type;
     }
 
-    public RelationKnowledge getById(long id) throws SQLException {
-        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE id=?",ResultSet.TYPE_SCROLL_INSENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
-        retrievePs.setLong(1, id);
-        ResultSet resultSet = retrievePs.executeQuery();
-        return this.convertSql(resultSet);
-    }
+
 }

@@ -18,10 +18,10 @@ public class JwtTokenUtil {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-    public static final String TOKEN = "token";
+    public static final String TOKEN = "authorization";
 
     @Value("${jwt.secret}")
-    private String secret;
+    private String secret = "linkedin";
 
     // Retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -39,7 +39,7 @@ public class JwtTokenUtil {
     }
 
     // For retrieving any information from token we will need the secret key
-    private Claims getAllClaimsFromToken(String token) {
+    private Claims getAllClaimsFromToken(String token) { ;
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
