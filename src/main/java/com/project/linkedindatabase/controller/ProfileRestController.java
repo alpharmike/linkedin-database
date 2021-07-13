@@ -30,7 +30,6 @@ public class ProfileRestController {
         try {
 
             Calendar calendar = DateConverter.parse(signUpData.getDateOfBirth(), "yyyy-MM-dd");
-            //todo change password decoder
             profile = signUpData.convertToProfile();
             profile.setDateOfBirth(calendar);
             profile.setUrlToProfile(profile.getUsername());

@@ -2,6 +2,7 @@
 package com.project.linkedindatabase.jsonToPojo;
 
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.utils.SHAHashing;
 import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -48,8 +49,7 @@ public class SignUpData {
         profile.setIndustry(this.industry);
         profile.setLastName(this.lastName);
         profile.setLocationInCountry(this.locationInCountry);
-        //todo change the function
-        profile.setPassword( new BCryptPasswordEncoder().encode(this.password ));
+        profile.setPassword( SHAHashing.get_SHA_512_SecurePassword(this.password ));
         profile.setPhoneNumber(this.phoneNumber);
 
         return profile;
