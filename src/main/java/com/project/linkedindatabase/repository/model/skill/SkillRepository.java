@@ -57,6 +57,30 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
         }catch (SQLException s){
             System.out.println(s.getMessage());
         }
-        return null;
+        return skill;
+    }
+
+    public Skill getById(long id) throws SQLException {
+        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE id=?",ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+        retrievePs.setLong(1, id);
+        ResultSet resultSet = retrievePs.executeQuery();
+        return this.convertSql(resultSet);
+    }
+
+    public Skill editById(long id, String name, long profileId) throws SQLException {
+        PreparedStatement updatePs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET name=?, profileId=? " +
+                "WHERE id=?");
+        updatePs.setString(1, name);
+        updatePs.setLong(2, profileId);
+        updatePs.setLong(3, id);
+        updatePs.executeUpdate();
+        return this.getById(id);
+    }
+
+    public void deleteById(long id) throws SQLException {
+        PreparedStatement deletePs = this.conn.prepareStatement("DELETE FROM "+this.tableName+" WHERE id=?");
+        deletePs.setLong(1, id);
+        deletePs.execute();
     }
 }
