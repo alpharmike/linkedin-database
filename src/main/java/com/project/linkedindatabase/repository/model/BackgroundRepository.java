@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BackgroundRepository extends BaseRepository<Background,Long>  {
@@ -28,10 +31,13 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         ps.setLong(1, object.getProfileId());
         ps.setLong(2, object.getBackgroundType());
         ps.setString(3, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
-        ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+        if (object.getEndDate() != null)
+            ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+        else
+            ps.setNull(4, Types.NVARCHAR);
         ps.setString(5, object.getTitle());
         ps.setString(6, object.getDescription());
-        ps.executeQuery();
+        ps.execute();
     }
 
     @Override
@@ -41,7 +47,7 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
                 "profileId bigint not null," +
                 "backgroundType bigint not null," +
                 "startDate nvarchar(255) not null," +
-                "endDate nvarchar(255) not null," +
+                "endDate nvarchar(255)," +
                 "title nvarchar(100) not null," +
                 "description TEXT not null," +
                 "foreign key (profileId) references " +  BaseEntity.getTableName(Profile.class) + "(id),"+
@@ -70,5 +76,39 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
             System.out.println(s.getMessage());
         }
         return background;
+    }
+
+    public List<Background> findByProfileId(Long id) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where profileId = ?");
+        ps.setLong(1,id);
+
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Background> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
+    public void update(Background object) throws SQLException {
+
+
+
+        PreparedStatement ps = this.conn.prepareStatement("UPDATE " + this.tableName + " set profileId = ? , backgroundType = ? ," +
+                " startDate = ? , endDate = ? , title = ? , description = ? where id = ?");
+        ps.setLong(1, object.getProfileId());
+        ps.setLong(2, object.getBackgroundType());
+        ps.setString(3, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        if (object.getEndDate() != null)
+            ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+        else
+            ps.setNull(4, Types.NVARCHAR);
+        ps.setString(5, object.getTitle());
+        ps.setString(6, object.getDescription());
+        ps.setLong(7, object.getId());
+        System.out.println(ps.toString());
+
+        ps.execute();
     }
 }

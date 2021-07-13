@@ -46,4 +46,14 @@ public class BackgroundServiceMap  implements BackgroundService {
     public void createTable() throws SQLException {
         backgroundRepository.createTable();
     }
+
+    @Override
+    public List<Background> findByProfileId(Long id) throws Exception {
+        return backgroundRepository.findByProfileId(id);
+    }
+
+    @Override
+    public void update(Background background) throws Exception {
+        backgroundRepository.update(background);
+    }
 }

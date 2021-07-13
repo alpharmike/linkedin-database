@@ -3,6 +3,7 @@ package com.project.linkedindatabase.bootstrap;
 
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +33,14 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 
     private final ProfileService profileService;
+    private final BackgroundService backgroundService;
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
                      ConnectTypeService connectTypeService, AccomplishmentTypeService accomplishmentTypeService,
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
-                     LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService) {
+                     LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService, BackgroundService backgroundService) {
 
 
 
@@ -56,6 +58,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 
         this.profileService = profileService;
+        this.backgroundService = backgroundService;
     }
 
 
@@ -83,7 +86,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 
            this.profileService.createTable();
-
+            this.backgroundService.createTable();
 
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();

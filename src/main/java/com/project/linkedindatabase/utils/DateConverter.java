@@ -17,7 +17,7 @@ public class DateConverter {
 
     public static Calendar parse(String formattedDate, String format) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
-        sdf.setTimeZone(TimeZone.getTimeZone("PST"));
+        sdf.setTimeZone(TimeZone.getDefault());
         Date date = sdf.parse(formattedDate);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

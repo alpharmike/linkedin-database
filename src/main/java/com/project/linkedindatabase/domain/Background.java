@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.linkedindatabase.annotations.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,10 @@ public class Background extends BaseEntity {
 
     private Long backgroundType;// foreign key to background ==>enum
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Calendar startDate;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Calendar endDate;
 
     private String title;

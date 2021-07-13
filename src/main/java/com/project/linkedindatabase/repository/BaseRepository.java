@@ -67,7 +67,7 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
         PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ?");
 
         ps.setLong(1, id);
-        ResultSet resultSet = ps.executeQuery();
+        ps.execute();
     }
 
     abstract public void save(T object) throws SQLException;
