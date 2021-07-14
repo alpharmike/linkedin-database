@@ -31,9 +31,9 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         PreparedStatement ps = this.conn.prepareStatement("INSERT INTO " + this.tableName + " (profileId, backgroundType, startDate, endDate, title, description) VALUES (?, ?, ?, ?, ?, ?)");
         ps.setLong(1, object.getProfileId());
         ps.setLong(2, object.getBackgroundType());
-        ps.setString(3, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        ps.setString(3, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd"));
         if (object.getEndDate() != null)
-            ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+            ps.setString(4, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd"));
         else
             ps.setNull(4, Types.NVARCHAR);
         ps.setString(5, object.getTitle());
@@ -69,9 +69,9 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         background.setId(resultSet.getLong("id"));
         background.setProfileId(resultSet.getLong("profileId"));
         background.setBackgroundType(resultSet.getLong("backgroundType"));
-        background.setStartDate(DateConverter.parse(resultSet.getString("startDate"), "yyyy-MM-dd HH:mm:ss"));
+        background.setStartDate(DateConverter.parse(resultSet.getString("startDate"), "yyyy-MM-dd"));
         if (resultSet.getString("endDate") != null && !resultSet.getString("endDate").equals(""))
-            background.setEndDate(DateConverter.parse(resultSet.getString("endDate"), "yyyy-MM-dd HH:mm:ss"));
+            background.setEndDate(DateConverter.parse(resultSet.getString("endDate"), "yyyy-MM-dd"));
         background.setTitle(resultSet.getString("title"));
         background.setDescription(resultSet.getString("description"));
 
@@ -98,9 +98,9 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         PreparedStatement ps = this.conn.prepareStatement("UPDATE " + this.tableName + " set backgroundType = ? ," +
                 " startDate = ? , endDate = ? , title = ? , description = ? where id = ?");
         ps.setLong(1, object.getBackgroundType());
-        ps.setString(2, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        ps.setString(2, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd"));
         if (object.getEndDate() != null)
-            ps.setString(3, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+            ps.setString(3, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd"));
         else
             ps.setNull(3, Types.NVARCHAR);
         ps.setString(4, object.getTitle());
@@ -116,9 +116,9 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         PreparedStatement ps = this.conn.prepareStatement("UPDATE " + this.tableName + "  set backgroundType = ? ," +
                 " startDate = ? , endDate = ? , title = ? , description = ? where id = ? and profileId = ?");
         ps.setLong(1, object.getBackgroundType());
-        ps.setString(2, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+        ps.setString(2, DateConverter.convertDate(object.getStartDate(), "yyyy-MM-dd"));
         if (object.getEndDate() != null)
-            ps.setString(3, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
+            ps.setString(3, DateConverter.convertDate(object.getEndDate(), "yyyy-MM-dd"));
         else
             ps.setNull(3, Types.NVARCHAR);
         ps.setString(4, object.getTitle());
