@@ -48,6 +48,25 @@ public class BackgroundController {
 
     }
 
+    @GetMapping("/background/{id}")
+    public List<Background> getBackGroundByProfileId(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+
+            return backgroundService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
     @PostMapping("/background")
     public void addBackGround(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);

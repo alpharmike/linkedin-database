@@ -199,14 +199,14 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         String pending = connectTypeService.findByName("accept").getName();
         sendRequest(profileIdRequest,profileIdReceive,pending);
         //todo must bring chat repository to chat
-        ChatRepository chatRepository = new ChatRepository();
-        if(!chatRepository.exists(profileIdRequest, profileIdReceive)){
+
+        if(!chatService.exists(profileIdRequest, profileIdReceive)){
             Chat chat = new Chat();
             chat.setProfileId1(profileIdRequest);
             chat.setProfileId2(profileIdReceive);
             chat.setIsArchive(false);
             chat.setMarkUnread(false);
-            chatRepository.save(chat);
+            chatService.save(chat);
         }
     }
     public void sendRequest(long profileIdRequest, long profileIdReceive, String status) throws SQLException {

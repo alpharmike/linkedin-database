@@ -124,4 +124,21 @@ public class LanguageController {
 
 
     }
+
+    @GetMapping("/language/{id}")
+    public List<Language> getLanguageById(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return languageService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
 }

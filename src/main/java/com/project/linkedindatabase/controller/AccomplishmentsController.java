@@ -48,6 +48,25 @@ public class AccomplishmentsController {
 
     }
 
+
+    @GetMapping("/accomplishment/{id}")
+    public List<Accomplishment> getAccomplishmentByProfileID(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+            return accomplishmentService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
     @PostMapping("/accomplishment")
     public void addAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
