@@ -24,7 +24,7 @@ public class DataSourceConnector {
     static public Connection establishConnection() {
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/linkedin?useSSL=false&serverTimezone=UTC", "root", "");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/linkedin?useSSL=false&serverTimezone=UTC", "root", "1378");
             }
 
             return connection;

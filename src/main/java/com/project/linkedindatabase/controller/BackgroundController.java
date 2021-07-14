@@ -74,8 +74,9 @@ public class BackgroundController {
 
     }
 
-    @PutMapping("/background")
-    public void updateBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson) {
+    @PutMapping("/background/{id}")
+    public void updateBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson
+            ,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -88,8 +89,8 @@ public class BackgroundController {
 
         try {
             backgroundJson.setProfileId(profile.getId());
-            System.out.println();
             Background background = backgroundJson.convertToBackGround();
+            background.setId(id);
             backgroundService.updateWithProfileId(background);
         }catch (Exception e)
         {
@@ -101,8 +102,9 @@ public class BackgroundController {
 
     }
 
-    @DeleteMapping("/background")
-    public void deleteBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson) {
+    @DeleteMapping("/background/{id}")
+    public void deleteBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson,
+                                 @PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -114,7 +116,9 @@ public class BackgroundController {
         }
 
         try {
+
             backgroundJson.setProfileId(profile.getId());
+            backgroundJson.setId(id);
             backgroundService.deleteByIdAndProfileId(backgroundJson.convertToBackGround());
         }catch (Exception e)
         {
