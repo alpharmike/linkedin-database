@@ -49,8 +49,6 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     }
 
 
-
-
     @Override
     public void save(Profile object) throws SQLException {
 
@@ -254,7 +252,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     public boolean uniqueUsernameEmailPhone(String username,String email,String phone) throws SQLException
     {
-        PreparedStatement ps = conn.prepareStatement("select COUNT(*) from " + this.getTableName() + " where username = ? " +
+        PreparedStatement ps = conn.prepareStatement("select COUNT(*) from " + this.tableName + " where username = ? " +
                 "or email = ? or phoneNumber = ?");
         ps.setString(1, username);
         ps.setString(2, email);
