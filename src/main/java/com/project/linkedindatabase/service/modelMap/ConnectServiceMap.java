@@ -64,6 +64,17 @@ public class ConnectServiceMap implements ConnectService {
     }
 
     @Override
+    public void sendRequestAccept(long profileIdRequest, long profileIdReceive) throws Exception {
+        connectRepository.sendRequestAccept(profileIdRequest,profileIdReceive);
+    }
+
+    @Override
+    public void sendRequestBlock(long profileIdRequest, long profileIdReceive) throws Exception {
+        connectRepository.sendRequestBlock(profileIdRequest,profileIdReceive);
+
+    }
+
+    @Override
     public void sendRequest(long profileIdRequest, long profileIdReceive, String status) throws Exception {
         connectRepository.sendRequest(profileIdRequest,profileIdReceive,status);
     }

@@ -25,7 +25,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         ps.setLong(2, object.getProfileId2());
         ps.setBoolean(3, object.getIsArchive());
         ps.setBoolean(4, object.getMarkUnread());
-        ps.executeQuery();
+        ps.execute();
     }
 
     @Override

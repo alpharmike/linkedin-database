@@ -3,6 +3,7 @@ package com.project.linkedindatabase.repository.types;
 import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Type.BackgroundType;
 import com.project.linkedindatabase.domain.Type.ConnectType;
+import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.repository.BaseTypeRepository;
 import com.project.linkedindatabase.service.types.ConnectTypeService;
 
@@ -24,6 +25,12 @@ public class ConnectTypeRepository extends BaseTypeRepository<ConnectType> {
         PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE name=?");
         retrievePs.setString(1, type);
         ResultSet resultSet = retrievePs.executeQuery();
+
+        if (!resultSet.isBeforeFirst())
+        {
+            return null;
+        }
+        resultSet.next();
         return this.convertSql(resultSet);
     }
 
@@ -31,18 +38,14 @@ public class ConnectTypeRepository extends BaseTypeRepository<ConnectType> {
 
     @Override
     public ConnectType convertSql(ResultSet resultSet) throws SQLException {
-        ConnectType type = new ConnectType();
-        if(!resultSet.next()){
-            return null;
-        }
-        try{
-            String name = resultSet.getString(NAME);
-            Long id = resultSet.getLong(ID);
-            type.setId(id);
-            type.setName(name);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+
+
+
+        String name = resultSet.getString(NAME);
+        Long id = resultSet.getLong(ID);
+        var type = new ConnectType();
+        type.setId(id);
+        type.setName(name);
 
 
         return type;
