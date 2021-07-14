@@ -94,5 +94,64 @@ public class ProfileRestController {
         return profile;
     }
 
+    @CrossOrigin(origins = "*")
+    @PutMapping("/profile")
+    public void updateProfile(@RequestHeader Map<String, Object> jsonHeader, @RequestBody SignUpData data){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+            Profile profileForUpdate = data.convertToProfile();
+            profileForUpdate.setId(profile.getId());
+            Calendar calendar = DateConverter.parse(data.getDateOfBirth(), "yyyy-MM-dd");
+            profileForUpdate.setDateOfBirth(calendar);
+            profileService.update(profileForUpdate);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/get-profile")
+    public Profile getProfileById(@RequestHeader Map<String, Object> jsonHeader, @RequestBody SignUpData data){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+
+            return  profileService.findById(data.getId());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
 
 }
