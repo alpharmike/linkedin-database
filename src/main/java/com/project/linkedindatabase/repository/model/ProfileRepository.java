@@ -1,5 +1,6 @@
 package com.project.linkedindatabase.repository.model;
 
+import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
 
 @Slf4j
@@ -58,7 +60,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(username, email, phoneNumber, phoneType, " +
                 "password, firstName, lastName, formerName, formerNameVisibilityType, headline, " +
                 "country, locationInCountry, " +
-                "industry, address, dateOfBirth, about, urlToProfile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                "industry, address, dateOfBirth, about, urlToProfile,showCurrentEducationId,currentEducationId,showCurrentPositionId,currentPositionId) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+
+
         savePs.setString(1, object.getUsername());
         savePs.setString(2, object.getEmail());
         savePs.setString(3, object.getPhoneNumber());
@@ -89,7 +95,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         if (object.getHeadline() != null){
             savePs.setString(10, object.getHeadline());}
         else{
-            savePs.setString(10, " ");
+            savePs.setString(10, "");
         }
         savePs.setString(11, object.getCountry());
         savePs.setString(12, object.getLocationInCountry());
@@ -118,6 +124,36 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         }
 
         savePs.setString(17, object.getUrlToProfile());
+
+        if (object.getShowCurrentEducationId() != null){
+            savePs.setBoolean(18, object.getShowCurrentEducationId());}
+        else
+        {
+            savePs.setBoolean(18, false);
+        }
+
+        if (object.getCurrentEducationId() != null){
+            savePs.setLong(19, object.getCurrentEducationId());}
+        else
+        {
+            savePs.setNull(19, Types.BIGINT);
+        }
+
+        if (object.getShowCurrentPositionId() != null){
+            savePs.setBoolean(20, object.getShowCurrentPositionId());}
+        else
+        {
+            savePs.setBoolean(20, false);
+        }
+
+        if (object.getCurrentPositionId() != null){
+            savePs.setLong(21, object.getCurrentPositionId());}
+        else
+        {
+            savePs.setNull(21, Types.BIGINT);
+        }
+
+
         savePs.execute();
     }
 
@@ -145,6 +181,10 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
                 "dateOfBirth NVARCHAR(255) NOT NULL,"+
                 "about TEXT ,"+
                 "urlToProfile NVARCHAR(255) NOT NULL,"+
+                "showCurrentEducationId BIT ," +
+                "currentEducationId BIGINT ," +
+                "showCurrentPositionId BIT ," +
+                "currentPositionId BIGINT ," +
                 "PRIMARY KEY (id)"+
             ")"
         );
@@ -197,6 +237,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
         profile.setAbout(resultSet.getString("about"));
         profile.setUrlToProfile(resultSet.getString("urlToProfile"));
+
+        profile.setShowCurrentEducationId(resultSet.getBoolean("showCurrentEducationId"));
+        profile.setCurrentEducationId(resultSet.getLong("currentEducationId"));
+        profile.setShowCurrentPositionId(resultSet.getBoolean("showCurrentPositionId"));
+        profile.setCurrentPositionId(resultSet.getLong("currentPositionId"));
 
 
         return profile;
