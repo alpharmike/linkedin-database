@@ -46,4 +46,9 @@ public class SkillServiceMap implements SkillService {
     public void createTable() throws SQLException {
         skillRepository.createTable();
     }
+
+    @Override
+    public void update(Skill skill) throws SQLException {
+        skillRepository.update(skill);
+    }
 }
