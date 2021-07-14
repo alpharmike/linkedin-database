@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.linkedindatabase.annotations.Table;
 import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Profile extends BaseEntity {
 
     private Long phoneType;// foreign key to phoneType ==>enum
 
+    @JsonIgnore
     private String password;
 
     private String firstName;
@@ -58,5 +60,7 @@ public class Profile extends BaseEntity {
     private String about;
 
     private String urlToProfile;
+
+
 
 }

@@ -51,6 +51,15 @@ public class ProfileServiceMap implements ProfileService {
         return profileRepository.findByUsername(username);
     }
 
+    @Override
+    public List<Profile> searchOtherBaseCurrentCompany(Long id,String companyName) throws Exception {
+        return profileRepository.searchOtherBaseCurrentCompany(id,companyName);
+    }
+
+    @Override
+    public void update(Profile profile) throws Exception {
+        profileRepository.update( profile);
+    }
 
 
     @Override

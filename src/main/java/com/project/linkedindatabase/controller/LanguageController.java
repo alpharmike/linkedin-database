@@ -72,8 +72,8 @@ public class LanguageController {
 
     }
 
-    @PutMapping("/language")
-    public void updateLanguage(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Language language) {
+    @PutMapping("/language/{id}")
+    public void updateLanguage(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Language language,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -86,7 +86,7 @@ public class LanguageController {
 
         try {
             language.setProfileId(profile.getId());
-
+            language.setId(id);
             languageService.updateWithProfileId(language);
         }catch (Exception e)
         {
@@ -98,8 +98,8 @@ public class LanguageController {
 
     }
 
-    @DeleteMapping("/language")
-    public void deleteLanguage(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Language language) {
+    @DeleteMapping("/language/{id}")
+    public void deleteLanguage(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Language language,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -112,6 +112,7 @@ public class LanguageController {
 
         try {
             language.setProfileId(profile.getId());
+            language.setId(id);
             languageService.deleteByIdAndProfileId(language);
         }catch (Exception e)
         {

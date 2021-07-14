@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.service.modelMap;
 
 import com.project.linkedindatabase.domain.Background;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.repository.model.BackgroundRepository;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import org.springframework.stereotype.Service;
@@ -66,4 +67,6 @@ public class BackgroundServiceMap  implements BackgroundService {
     public void deleteByIdAndProfileId(Background background) throws Exception {
         backgroundRepository.deleteByIdAndProfileId(background);
     }
+
+
 }

@@ -1,7 +1,9 @@
 package com.project.linkedindatabase.repository.model;
 
+import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.Type.BackgroundType;
 import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.domain.Type.Industry;
 import com.project.linkedindatabase.domain.Type.PhoneType;
@@ -16,7 +18,10 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -35,7 +40,8 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
 
 
-    public ProfileRepository(PhoneTypeService phoneTypeService, IndustryService industryService, FormerNameVisibilityTypeService formerNameVisibilityTypeService) throws SQLException {
+    public ProfileRepository(PhoneTypeService phoneTypeService, IndustryService industryService,
+                             FormerNameVisibilityTypeService formerNameVisibilityTypeService) throws SQLException {
         super(Profile.class);
         this.phoneTypeService = phoneTypeService;
         this.industryService = industryService;
@@ -58,7 +64,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(username, email, phoneNumber, phoneType, " +
                 "password, firstName, lastName, formerName, formerNameVisibilityType, headline, " +
                 "country, locationInCountry, " +
-                "industry, address, dateOfBirth, about, urlToProfile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                "industry, address, dateOfBirth, about, urlToProfile,showCurrentEducationId,currentEducationId,showCurrentPositionId,currentPositionId) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+
+
         savePs.setString(1, object.getUsername());
         savePs.setString(2, object.getEmail());
         savePs.setString(3, object.getPhoneNumber());
@@ -89,7 +99,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         if (object.getHeadline() != null){
             savePs.setString(10, object.getHeadline());}
         else{
-            savePs.setString(10, " ");
+            savePs.setString(10, "");
         }
         savePs.setString(11, object.getCountry());
         savePs.setString(12, object.getLocationInCountry());
@@ -118,6 +128,36 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         }
 
         savePs.setString(17, object.getUrlToProfile());
+
+        if (object.getShowCurrentEducationId() != null){
+            savePs.setBoolean(18, object.getShowCurrentEducationId());}
+        else
+        {
+            savePs.setBoolean(18, false);
+        }
+
+        if (object.getCurrentEducationId() != null){
+            savePs.setLong(19, object.getCurrentEducationId());}
+        else
+        {
+            savePs.setNull(19, Types.BIGINT);
+        }
+
+        if (object.getShowCurrentPositionId() != null){
+            savePs.setBoolean(20, object.getShowCurrentPositionId());}
+        else
+        {
+            savePs.setBoolean(20, false);
+        }
+
+        if (object.getCurrentPositionId() != null){
+            savePs.setLong(21, object.getCurrentPositionId());}
+        else
+        {
+            savePs.setNull(21, Types.BIGINT);
+        }
+
+
         savePs.execute();
     }
 
@@ -145,6 +185,10 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
                 "dateOfBirth NVARCHAR(255) NOT NULL,"+
                 "about TEXT ,"+
                 "urlToProfile NVARCHAR(255) NOT NULL,"+
+                "showCurrentEducationId BIT ," +
+                "currentEducationId BIGINT ," +
+                "showCurrentPositionId BIT ," +
+                "currentPositionId BIGINT ," +
                 "PRIMARY KEY (id)"+
             ")"
         );
@@ -198,6 +242,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         profile.setAbout(resultSet.getString("about"));
         profile.setUrlToProfile(resultSet.getString("urlToProfile"));
 
+        profile.setShowCurrentEducationId(resultSet.getBoolean("showCurrentEducationId"));
+        profile.setCurrentEducationId(resultSet.getLong("currentEducationId"));
+        profile.setShowCurrentPositionId(resultSet.getBoolean("showCurrentPositionId"));
+        profile.setCurrentPositionId(resultSet.getLong("currentPositionId"));
+
 
         return profile;
     }
@@ -223,4 +272,129 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         return (size == 0 );
     }
 
+    public List<Profile> searchOtherBaseCurrentCompany(Long id,String companyName) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select " + this.tableName +".* from "+ this.tableName +" , " +
+                BaseEntity.getTableName(Background.class) + " , "  + BaseEntity.getTableName(BackgroundType.class) + " " +
+                " where "+ this.tableName +".id = " + BaseEntity.getTableName(Background.class) + ".profileId and " +
+                this.tableName +".currentPositionId = " + BaseEntity.getTableName(Background.class) + ".id and" +
+                " " + BaseEntity.getTableName(BackgroundType.class) + ".id = " + BaseEntity.getTableName(Background.class) +
+                ".backgroundType and " + BaseEntity.getTableName(BackgroundType.class) + ".name = 'Work experience' and" +
+                " " + BaseEntity.getTableName(Background.class) + ".title like ?  and "+this.tableName+".id != ?");
+        ps.setString(1, companyName+"%");
+        ps.setLong(2, id);
+        System.out.println(ps.toString());
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+
+    }
+
+    public void update(Profile profile) throws SQLException {
+
+        DEFAULT_PHONE_TYPE = phoneTypeService.defaultType().getId();
+        DEFAULT_INDUSTRY_TYPE = industryService.defaultType().getId();
+        DEFAULT_FORMER_NAME_VISIBILITY_TYPE = formerNameVisibilityTypeService.defaultType().getId();
+
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  set phoneType = ?, " +
+                " firstName = ?, lastName = ? , formerName = ?, formerNameVisibilityType = ? , headline = ?, " +
+                "country = ? , locationInCountry = ? , industry = ?, address = ?, dateOfBirth = ?, about = ?, urlToProfile = ?," +
+                "showCurrentEducationId = ? ,currentEducationId = ?,showCurrentPositionId = ?,currentPositionId = ?" +
+                " where id = ?;");
+
+
+
+
+        if (profile.getPhoneType() != null){
+            savePs.setLong(1, profile.getPhoneType());}
+        else{
+            savePs.setLong(1, DEFAULT_PHONE_TYPE);
+        }
+
+
+        savePs.setString(2, profile.getFirstName());
+        savePs.setString(3, profile.getLastName());
+
+        if (profile.getFormerName() != null){
+            savePs.setString(4, profile.getFormerName());}
+        else{
+            savePs.setString(4, "");
+        }
+
+
+        if (profile.getFormerNameVisibilityType() != null){
+            savePs.setLong(5, profile.getFormerNameVisibilityType());}
+        else{
+            savePs.setLong(5, DEFAULT_FORMER_NAME_VISIBILITY_TYPE);
+        }
+
+        if (profile.getHeadline() != null){
+            savePs.setString(6, profile.getHeadline());}
+        else{
+            savePs.setString(6, "");
+        }
+        savePs.setString(7, profile.getCountry());
+        savePs.setString(8, profile.getLocationInCountry());
+
+        if (profile.getIndustry() != null){
+            savePs.setLong(9, profile.getIndustry());}
+        else
+        {
+            savePs.setLong(9, DEFAULT_INDUSTRY_TYPE);
+        }
+
+        if (profile.getAddress() != null){
+            savePs.setString(10, profile.getAddress());}
+        else
+        {
+            savePs.setString(10, "");
+        }
+
+        savePs.setString(11, DateConverter.convertDate(profile.getDateOfBirth(), "yyyy-MM-dd"));
+
+        if (profile.getAbout() != null){
+            savePs.setString(12, profile.getAbout());}
+        else
+        {
+            savePs.setString(12, "");
+        }
+
+        savePs.setString(13, profile.getUrlToProfile());
+
+        if (profile.getShowCurrentEducationId() != null){
+            savePs.setBoolean(14, profile.getShowCurrentEducationId());}
+        else
+        {
+            savePs.setBoolean(14, false);
+        }
+
+        if (profile.getCurrentEducationId() != null){
+            savePs.setLong(15, profile.getCurrentEducationId());}
+        else
+        {
+            savePs.setNull(15, Types.BIGINT);
+        }
+
+        if (profile.getShowCurrentPositionId() != null){
+            savePs.setBoolean(16, profile.getShowCurrentPositionId());}
+        else
+        {
+            savePs.setBoolean(16, false);
+        }
+
+        if (profile.getCurrentPositionId() != null){
+            savePs.setLong(17, profile.getCurrentPositionId());}
+        else
+        {
+            savePs.setNull(17, Types.BIGINT);
+        }
+
+        savePs.setLong(18, profile.getId());
+
+        System.out.println(savePs.toString());
+        savePs.execute();
+    }
 }
