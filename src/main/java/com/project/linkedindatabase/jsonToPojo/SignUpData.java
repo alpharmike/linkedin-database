@@ -63,9 +63,14 @@ public class SignUpData {
 
     public Profile convertToProfile() throws Exception
     {
+        return this.convertToProfile(false);
+    }
+
+    public Profile convertToProfile(boolean isSignUp) throws Exception
+    {
         // date of birth : because it is different in every situation we won't convert it here
 
-        if (username == null || password == null || email == null|| phoneNumber == null)
+        if ( isSignUp && (username == null || password == null || email == null|| phoneNumber == null))
         {
             throw new Exception("some field are null");
         }

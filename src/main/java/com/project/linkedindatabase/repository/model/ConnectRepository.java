@@ -4,10 +4,9 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.ConnectType;
-import com.project.linkedindatabase.domain.chat.Chat;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.repository.model.chat.ChatRepository;
 import com.project.linkedindatabase.repository.types.ConnectTypeRepository;
+import com.project.linkedindatabase.service.types.ConnectTypeService;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -15,12 +14,16 @@ import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ConnectRepository extends BaseRepository<Connect,Long> {
 
-    public ConnectRepository() throws SQLException {
+    private final ConnectTypeService connectTypeService;
+
+    public ConnectRepository(ConnectTypeService connectTypeService) throws SQLException {
         super(Connect.class);
+        this.connectTypeService = connectTypeService;
     }
 
 
@@ -83,7 +86,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     }
 
-    public ArrayList<Connect> convertAllSql(ResultSet resultSet) throws SQLException {
+    public List<Connect> convertAllSql(ResultSet resultSet) throws SQLException {
         ArrayList<Connect> result = new ArrayList<>();
         while (resultSet.next()){
             Connect connect = new Connect();
@@ -95,6 +98,8 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         }
         return result;
     }
+
+
 
     public Connect getRequest(long profileIdRequest, long profileIdReceive) throws SQLException {
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
@@ -120,7 +125,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return this.convertSql(resultSet);
     }
 
-    public ArrayList<Connect> getSenderRequests(long profileIdRequest, String status) throws SQLException {
+    public List<Connect> getSenderRequestsBaseOnType(long profileIdRequest, String status) throws SQLException {
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
                 "profileIdRequest=? AND connectType IN (SELECT id FROM "+
                 BaseEntity.getTableName(ConnectType.class)+" WHERE name=?)"
@@ -132,7 +137,20 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return this.convertAllSql(resultSet);
     }
 
-    public ArrayList<Connect> getReceiverRequests(long profileIdReceive, String status) throws SQLException {
+    public List<Connect> getSenderRequests(long profileIdRequest) throws SQLException {
+        PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
+                "profileIdRequest=? AND connectType IN (SELECT id FROM "+
+                BaseEntity.getTableName(ConnectType.class)+" )"
+        );
+        getRequestsPs.setLong(1, profileIdRequest);
+
+        ResultSet resultSet = getRequestsPs.executeQuery();
+
+        return this.convertAllSql(resultSet);
+    }
+
+
+    public List<Connect> getReceiverRequestsBaseOnType(long profileIdReceive, String status) throws SQLException {
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
                 "profileIdReceive=? AND connectType IN (SELECT id FROM "+
                 BaseEntity.getTableName(ConnectType.class)+" WHERE name=?)"
@@ -144,6 +162,23 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return this.convertAllSql(resultSet);
     }
 
+    public List<Connect> getReceiverRequests(long profileIdReceive) throws SQLException {
+        PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
+                "profileIdReceive=? AND connectType IN (SELECT id FROM "+
+                BaseEntity.getTableName(ConnectType.class)+" )"
+        );
+        getRequestsPs.setLong(1, profileIdReceive);
+        ResultSet resultSet = getRequestsPs.executeQuery();
+
+        return this.convertAllSql(resultSet);
+    }
+
+    public void sendRequestPending(long profileIdRequest, long profileIdReceive) throws SQLException
+    {
+        String pending = connectTypeService.findByName("pending").getName();
+        sendRequest(profileIdRequest,profileIdReceive,pending);
+    }
+
     public void sendRequest(long profileIdRequest, long profileIdReceive, String status) throws SQLException {
         if(!this.exists(profileIdRequest, profileIdReceive)){
             Connect connect = new Connect();
@@ -153,21 +188,22 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
             this.save(connect);
 
             //don't forget to add chat creation
-            ChatRepository chatRepository = new ChatRepository();
-            if(!chatRepository.exists(profileIdRequest, profileIdReceive)){
-                Chat chat = new Chat();
-                chat.setProfileId1(profileIdRequest);
-                chat.setProfileId2(profileIdReceive);
-                chat.setIsArchive(false);
-                chat.setMarkUnread(false);
-                chatRepository.save(chat);
-            }
+            //todo this chat only create if he accept other one
+//            ChatRepository chatRepository = new ChatRepository();
+//            if(!chatRepository.exists(profileIdRequest, profileIdReceive)){
+//                Chat chat = new Chat();
+//                chat.setProfileId1(profileIdRequest);
+//                chat.setProfileId2(profileIdReceive);
+//                chat.setIsArchive(false);
+//                chat.setMarkUnread(false);
+//                chatRepository.save(chat);
+//            }
         }
         else{
             Connect connect = this.getRequest(profileIdRequest, profileIdReceive);
-            ConnectType rejected = new ConnectTypeRepository().getByType("block");
-            ConnectType accepted = new ConnectTypeRepository().getByType("accept");
-            ConnectType pending = new ConnectTypeRepository().getByType("pending");
+            ConnectType rejected = connectTypeService.findByName("block");
+            ConnectType accepted = connectTypeService.findByName("accept");
+            ConnectType pending = connectTypeService.findByName("pending");
             if(connect.getConnectType() != rejected.getId()){
                 if(connect.getConnectType() == accepted.getId() && status.equals("block")){ // rejecting a request
                     connect.setConnectType(rejected.getId());
@@ -190,6 +226,17 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
                 throw new SQLDataException("This Request has already been rejected");
             }
         }
+    }
+
+    public Long getNumberOfConnection(Long profileId) throws SQLException {
+        PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT count(*) as number FROM "+this.tableName+" WHERE " +
+                "profileIdRequest = ? or profileIdReceive = ? "
+        );
+        getRequestsPs.setLong(1, profileId);
+        getRequestsPs.setLong(2, profileId);
+        ResultSet resultSet = getRequestsPs.executeQuery();
+        resultSet.next();
+        return resultSet.getLong("number");
     }
 
     public boolean exists(long profileIdRequest, long profileIdReceive) throws SQLException {

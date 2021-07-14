@@ -50,7 +50,7 @@ public class ProfileRestController {
         try {
 
             Calendar calendar = DateConverter.parse(signUpData.getDateOfBirth(), "yyyy-MM-dd");
-            profile = signUpData.convertToProfile();
+            profile = signUpData.convertToProfile(true);
             profile.setDateOfBirth(calendar);
             profile.setUrlToProfile(profile.getUsername());
 

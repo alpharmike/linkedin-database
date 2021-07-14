@@ -13,8 +13,9 @@ public class ConnectServiceMap implements ConnectService {
 
     private final ConnectRepository connectRepository;
 
-    public ConnectServiceMap() throws SQLException {
-        this.connectRepository = new ConnectRepository();
+    public ConnectServiceMap(ConnectRepository connectRepository) throws SQLException {
+
+        this.connectRepository = connectRepository;
     }
 
     @Override
@@ -45,5 +46,40 @@ public class ConnectServiceMap implements ConnectService {
     @Override
     public void createTable() throws SQLException {
         connectRepository.createTable();
+    }
+
+    @Override
+    public List<Connect> getReceiverRequestsBaseOnType(long profileIdReceive, String status) throws Exception {
+        return connectRepository.getReceiverRequestsBaseOnType(profileIdReceive,status);
+    }
+
+    @Override
+    public List<Connect> getReceiverRequests(long profileIdReceive) throws Exception {
+        return connectRepository.getReceiverRequests(profileIdReceive);
+    }
+
+    @Override
+    public void sendRequestPending(long profileIdRequest, long profileIdReceive) throws Exception {
+        connectRepository.sendRequestPending(profileIdRequest,profileIdReceive);
+    }
+
+    @Override
+    public void sendRequest(long profileIdRequest, long profileIdReceive, String status) throws Exception {
+        connectRepository.sendRequest(profileIdRequest,profileIdReceive,status);
+    }
+
+    @Override
+    public List<Connect> getSenderRequestsBaseOnType(long profileIdRequest, String status) throws Exception {
+        return connectRepository.getSenderRequestsBaseOnType(profileIdRequest,status);
+    }
+
+    @Override
+    public List<Connect> getSenderRequests(long profileIdRequest) throws Exception {
+        return connectRepository.getSenderRequests(profileIdRequest);
+    }
+
+    @Override
+    public Long getNumberOfConnection(Long profileId) throws Exception {
+        return connectRepository.getNumberOfConnection(profileId);
     }
 }

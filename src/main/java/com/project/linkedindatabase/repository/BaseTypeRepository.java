@@ -60,4 +60,5 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
         );
         ps.execute();
     }
+
 }
