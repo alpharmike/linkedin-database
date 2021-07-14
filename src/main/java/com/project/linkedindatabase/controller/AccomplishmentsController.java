@@ -73,8 +73,9 @@ public class AccomplishmentsController {
 
     }
 
-    @PutMapping("/accomplishment")
-    public void updateAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment) {
+    @PutMapping("/accomplishment/{id}")
+    public void updateAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment,
+                                     @PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -86,6 +87,7 @@ public class AccomplishmentsController {
         }
 
         try {
+            accomplishment.setId(id);
             accomplishment.setProfileId(profile.getId());
             accomplishmentService.updateWithProfileId(accomplishment);
         }catch (Exception e)
@@ -98,8 +100,9 @@ public class AccomplishmentsController {
 
     }
 
-    @DeleteMapping("/accomplishment")
-    public void deleteAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment) {
+    @DeleteMapping("/accomplishment/{id}")
+    public void deleteAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment
+                                    ,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -111,6 +114,7 @@ public class AccomplishmentsController {
         }
 
         try {
+            accomplishment.setId(id);
             accomplishment.setProfileId(profile.getId());
             accomplishmentService.deleteByIdAndProfileId(accomplishment);
         }catch (Exception e)
