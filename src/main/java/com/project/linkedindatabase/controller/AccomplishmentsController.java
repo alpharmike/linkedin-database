@@ -101,7 +101,7 @@ public class AccomplishmentsController {
     }
 
     @DeleteMapping("/accomplishment/{id}")
-    public void deleteAccomplishment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Accomplishment accomplishment
+    public void deleteAccomplishment(@RequestHeader Map<String, Object> jsonHeader
                                     ,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
@@ -114,6 +114,7 @@ public class AccomplishmentsController {
         }
 
         try {
+            Accomplishment accomplishment = new Accomplishment();
             accomplishment.setId(id);
             accomplishment.setProfileId(profile.getId());
             accomplishmentService.deleteByIdAndProfileId(accomplishment);

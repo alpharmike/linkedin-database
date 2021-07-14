@@ -103,7 +103,7 @@ public class BackgroundController {
     }
 
     @DeleteMapping("/background/{id}")
-    public void deleteBackground(@RequestHeader Map<String, Object> jsonHeader,@RequestBody BackgroundJson backgroundJson,
+    public void deleteBackground(@RequestHeader Map<String, Object> jsonHeader,
                                  @PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
@@ -116,10 +116,10 @@ public class BackgroundController {
         }
 
         try {
-
-            backgroundJson.setProfileId(profile.getId());
-            backgroundJson.setId(id);
-            backgroundService.deleteByIdAndProfileId(backgroundJson.convertToBackGround());
+            Background background = new Background();
+            background.setProfileId(profile.getId());
+            background.setId(id);
+            backgroundService.deleteByIdAndProfileId(background);
         }catch (Exception e)
         {
             e.printStackTrace();
