@@ -84,6 +84,7 @@ public class ConnectController {
         try {
             Long profileId = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
 
+            System.out.println(profileId);
             List<Connect> connects = connectService.getSenderRequests(profileId);
             List<ConnectType> types = connectTypeService.findAll();
 
@@ -106,11 +107,13 @@ public class ConnectController {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 
         try {
-            Long ProfileIdSender = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
+            Long profileIdSender = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
 
             Long ProfileIdReceiver = connect.getProfileIdReceive();
 
-            connectService.sendRequestPending(ProfileIdSender,ProfileIdReceiver);
+            if (ProfileIdReceiver == profileIdSender)
+                throw new Exception("they share same id");
+            connectService.sendRequestPending(profileIdSender,ProfileIdReceiver);
 
 
 
@@ -118,6 +121,49 @@ public class ConnectController {
             e.printStackTrace();
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+    @PostMapping("/accept-reject-connection")
+    public void AcceptOrRejectConnection(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Connect connect) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Long profileIdReceiver;
+        try {
+            profileIdReceiver= new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+            Long profileIdSender = connect.getProfileIdRequest();
+
+            if (profileIdReceiver == profileIdSender)
+                throw new Exception("they share same id");
+
+            Long accept = connectTypeService.findByName("accept").getId();
+            Long block = connectTypeService.findByName("block").getId();
+            if (accept == connect.getConnectType()){
+            connectService.sendRequestAccept(profileIdSender,profileIdReceiver);}
+            else if (block == connect.getConnectType()){
+                connectService.sendRequestBlock(profileIdSender,profileIdReceiver);}
+            else
+            {
+                throw new Exception("it is not a valid type");
+            }
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
         }
 
 
@@ -144,6 +190,8 @@ public class ConnectController {
                     break;
                 }
             }
+
+            map.add(item);
 
         }
         return map;

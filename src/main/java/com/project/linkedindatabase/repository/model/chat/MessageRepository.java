@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 @Service
 public class MessageRepository extends BaseRepository<Message,Long>  {
@@ -67,6 +68,22 @@ public class MessageRepository extends BaseRepository<Message,Long>  {
             System.out.println(s.getMessage());
         }
         return message;
+    }
+
+
+    public ArrayList<Message> convertAllSql(ResultSet resultSet) throws SQLException, ParseException {
+        ArrayList<Message> result = new ArrayList<>();
+        while (resultSet.next()){
+            Message message = new Message();
+            message.setId(resultSet.getLong("id"));
+            message.setChatId(resultSet.getLong("chatId"));
+            message.setSenderId(resultSet.getLong("senderId"));
+            message.setBody(resultSet.getString("body"));
+            message.setIsUnread(resultSet.getBoolean("isUnread"));
+            message.setCreatedDate(DateConverter.parse(resultSet.getString("createdDate"), "yyyy-mm-dd hh:mm:ss"));
+            result.add(message);
+        }
+        return result;
     }
 
 }

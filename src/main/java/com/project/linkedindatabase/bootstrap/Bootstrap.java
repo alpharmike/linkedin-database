@@ -8,6 +8,7 @@ import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
+import com.project.linkedindatabase.service.model.chat.ChatService;
 import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -40,6 +41,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final AccomplishmentService accomplishmentService;
     private final LanguageService languageService;
     private final ConnectService connectService;
+    private final ChatService chatService;
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
@@ -47,7 +49,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
                      LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
-                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService) {
+                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService) {
 
 
 
@@ -69,6 +71,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.accomplishmentService = accomplishmentService;
         this.languageService = languageService;
         this.connectService = connectService;
+        this.chatService = chatService;
     }
 
 
@@ -100,6 +103,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.accomplishmentService.createTable();
            this.languageService.createTable();
            this.connectService.createTable();
+           chatService.createTable();
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
 //            new IndustryRepository().createTable();
@@ -141,6 +145,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         List<String> connectType = SaveTypes.readConnectType();
         for (String name : connectType)
         {
+            System.out.println(name);
             connectTypeService.saveIfNotExist(name);
         }
 

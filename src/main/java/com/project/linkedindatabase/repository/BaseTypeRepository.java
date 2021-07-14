@@ -34,6 +34,7 @@ public abstract class BaseTypeRepository<T extends BaseType> extends BaseReposit
 
         T obj = findByName(name);
         if (obj == null) {
+
             PreparedStatement ps = this.conn.prepareStatement("insert into " + this.getTableName() + " (" + NAME + ") values (?) ;");
 
             ps.setString(1, name);

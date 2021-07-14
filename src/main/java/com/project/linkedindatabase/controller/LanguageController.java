@@ -99,7 +99,7 @@ public class LanguageController {
     }
 
     @DeleteMapping("/language/{id}")
-    public void deleteLanguage(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Language language,@PathVariable(name = "id") Long id) {
+    public void deleteLanguage(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -111,6 +111,7 @@ public class LanguageController {
         }
 
         try {
+            Language language = new Language();
             language.setProfileId(profile.getId());
             language.setId(id);
             languageService.deleteByIdAndProfileId(language);
@@ -119,6 +120,23 @@ public class LanguageController {
             e.printStackTrace();
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @GetMapping("/language/{id}")
+    public List<Language> getLanguageById(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return languageService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
         }
 
 

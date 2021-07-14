@@ -126,8 +126,8 @@ public class ProfileRestController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/get-profile")
-    public Profile getProfileById(@RequestHeader Map<String, Object> jsonHeader, @RequestBody SignUpData data){
+    @GetMapping("/get-profile/id/{id}")
+    public Profile getProfileById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long id){
         log.info(jsonHeader.toString());
         Profile profile;
         try {
@@ -142,7 +142,34 @@ public class ProfileRestController {
 
         try {
 
-            return  profileService.findById(data.getId());
+            return  profileService.findById(id);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @GetMapping("/get-profile/username/{username}")
+    public Profile getProfileByUsername(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "username") String userName){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+
+            return  profileService.findByUsername(userName);
         }catch (Exception e)
         {
             e.printStackTrace();
