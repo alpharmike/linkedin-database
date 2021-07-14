@@ -4,6 +4,7 @@ package com.project.linkedindatabase.bootstrap;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.service.model.BackgroundService;
+import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
@@ -38,6 +39,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final BackgroundService backgroundService;
     private final AccomplishmentService accomplishmentService;
     private final LanguageService languageService;
+    private final ConnectService connectService;
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
@@ -45,7 +47,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
                      LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
-                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService) {
+                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService) {
 
 
 
@@ -66,6 +68,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.backgroundService = backgroundService;
         this.accomplishmentService = accomplishmentService;
         this.languageService = languageService;
+        this.connectService = connectService;
     }
 
 
@@ -96,6 +99,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.backgroundService.createTable();
            this.accomplishmentService.createTable();
            this.languageService.createTable();
+           this.connectService.createTable();
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
 //            new IndustryRepository().createTable();
