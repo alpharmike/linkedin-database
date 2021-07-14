@@ -1,4 +1,3 @@
-
 package com.project.linkedindatabase.jsonToPojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -61,12 +60,10 @@ public class SignUpData {
 
     private String urlToProfile;
 
-    public Profile convertToProfile() throws Exception
-    {
+    public Profile convertToProfile() throws Exception {
         // date of birth : because it is different in every situation we won't convert it here
 
-        if (username == null || password == null || email == null|| phoneNumber == null)
-        {
+        if (username == null || password == null || email == null || phoneNumber == null) {
             throw new Exception("some field are null");
         }
         Profile profile = new Profile();
@@ -75,7 +72,7 @@ public class SignUpData {
         profile.setEmail(this.email);
         profile.setPhoneNumber(this.phoneNumber);
         profile.setPhoneType(getPhoneType());
-        profile.setPassword( new BCryptPasswordEncoder().encode( (this.password )));
+        profile.setPassword(new BCryptPasswordEncoder().encode((this.password)));
         profile.setFirstName(this.firstName);
         profile.setLastName(this.lastName);
         profile.setFormerName(getFormerName());

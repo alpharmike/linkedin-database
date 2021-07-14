@@ -132,7 +132,7 @@ public class TypeController {
 
     }
 
-    @GetMapping("/accomplishment-type-service")
+    @GetMapping("/accomplishment-type")
     public List<AccomplishmentType> getAccomplishmentType(@RequestHeader Map<String, Object> jsonHeader) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 
