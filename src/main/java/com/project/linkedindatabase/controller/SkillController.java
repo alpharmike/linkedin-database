@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -45,8 +47,8 @@ public class SkillController {
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Skill skill = new Skill();
-            skill.setName(jsonBody.get("name"));
-            skill.setProfileId(jsonBody.get("profileId"));
+            skill.setName((String) jsonBody.get("name"));
+            skill.setProfileId((long) jsonBody.get("profileId"));
             skillService.save(skill);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,14 +56,16 @@ public class SkillController {
     }
 
     @CrossOrigin(origins = "*")
-    @PutMapping("/skill")
-    public void putSkill(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody){
+    @PutMapping("/skill/{id}/{name}/{profileId}")
+    public void putSkill(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
+                            @PathVariable long id, @PathVariable String name, @PathVariable long profileId){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try{
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Skill skill = new Skill();
-            skill.setName(jsonBody.get("name"));
-            skill.setProfileId((long) jsonBody.get("profileId"));
+            skill.setId(id);
+            skill.setName(name);
+            skill.setProfileId(profileId);
             skillService.update(skill);
         } catch (Exception e) {
             e.printStackTrace();
@@ -70,16 +74,28 @@ public class SkillController {
 
 
     @CrossOrigin(origins = "*")
-    @DeleteMapping("/skill")
-    public void delete(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody){
+    @DeleteMapping("/skill/{id}")
+    public void delete(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
+                       @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            skillService.deleteById((long) jsonBody.get("id"));
+            skillService.deleteById(id);
         }catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
+    @CrossOrigin(origins = "*")
+    @GetMapping("/skills")
+    public List<Skill> getSkills(@RequestHeader Map<String, Object> jsonHeader){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return skillService.findAll();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -86,9 +86,10 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
 
     public void update(Skill skill) throws SQLException {
         PreparedStatement updatePs = this.conn.prepareStatement("UPDATE "+ this.tableName +" SET " +
-                "name=?, profileId=?");
+                "name=?, profileId=? WHERE id=?");
         updatePs.setString(1, skill.getName());
         updatePs.setLong(2, skill.getProfileId());
+        updatePs.setLong(3, skill.getId());
         updatePs.executeUpdate();
     }
 }
