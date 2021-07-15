@@ -256,11 +256,13 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT count(*) as number FROM "+this.tableName+" WHERE " +
                 "profileIdRequest = ? or profileIdReceive = ?  and connectType in " +
                 "( select "+ BaseEntity.getTableName(ConnectType.class)+".id from " + BaseEntity.getTableName(ConnectType.class)+
-                " where " + BaseEntity.getTableName(ConnectType.class)+".name = accept)"
+                " where " + BaseEntity.getTableName(ConnectType.class)+".name = 'accept')"
         );
         getRequestsPs.setLong(1, profileId);
         getRequestsPs.setLong(2, profileId);
+
         ResultSet resultSet = getRequestsPs.executeQuery();
+
         resultSet.next();
         return resultSet.getLong("number");
     }
