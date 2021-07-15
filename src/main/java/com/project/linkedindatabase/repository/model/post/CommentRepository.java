@@ -8,11 +8,14 @@ import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.utils.DateConverter;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +40,16 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
                 " VALUES(?,?,?,?,?)");
         savingPs.setLong(1, object.getProfileId());
         savingPs.setLong(2, object.getPostId());
-        savingPs.setLong(3, object.getReCommentId());
+        if (object.getReCommentId() != null){
+            savingPs.setLong(3, object.getReCommentId());}
+        else
+        {
+            savingPs.setNull(3, Types.BIGINT);
+        }
         savingPs.setString(4, object.getBody());
         savingPs.setString(5, DateConverter.convertDate(object.getCreatedDate(), "yyyy-MM-dd HH:mm:ss"));
 
-        savingPs.executeQuery();
+        savingPs.execute();
     }
 
     @Override
@@ -63,11 +71,11 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
     }
 
 
+    @SneakyThrows
     @Override
     public Comment convertSql(ResultSet resultSet) throws SQLException {
         Comment comment = new Comment();
-        try {
-            resultSet.first();
+
             comment.setId(resultSet.getLong("id"));
             comment.setProfileId(resultSet.getLong("profileId"));
             comment.setPostId(resultSet.getLong("postId"));
@@ -75,9 +83,7 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
             comment.setBody( resultSet.getString("body"));
             comment.setCreatedDate(DateConverter.parse(resultSet.getString("createdDate"), "yyyy-MM-dd HH:mm:ss"));
 
-        } catch (SQLException  | ParseException s){
-            System.out.println(s.getMessage());
-        }
+
         return comment;
     }
 
@@ -102,6 +108,7 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
 
         for (Comment i : allObject)
         {
+
             CommentJson commentJson = CommentJson.convertToJson(i);
             likeCommentService.setAllLikeComment(commentJson);
             commentJsonList.add(commentJson);

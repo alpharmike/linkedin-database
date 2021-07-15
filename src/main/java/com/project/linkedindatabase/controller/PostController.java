@@ -1,7 +1,11 @@
 package com.project.linkedindatabase.controller;
 
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.domain.post.Comment;
+import com.project.linkedindatabase.domain.post.LikeComment;
+import com.project.linkedindatabase.domain.post.LikePost;
 import com.project.linkedindatabase.domain.post.Post;
+import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.jsonToPojo.PostJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
@@ -14,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -55,14 +60,17 @@ public class PostController {
 
 
     @PostMapping("/post")
-    public void createPost(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Post post) {
+    public void createPost(@RequestHeader Map<String, Object> jsonHeader,@RequestBody PostJson postJson) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 
         try {
 
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            post.setProfileId(profile.getId());
+            postJson.setProfileId(profile.getId());
+            Post  post = postJson.convertPost();
+            System.out.println("here");
             postService.save(post);
+            System.out.println("here");
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(
@@ -108,6 +116,160 @@ public class PostController {
 
 
     }
+
+    @PostMapping("/post/comment")
+    public void createComment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody CommentJson commentJson) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            commentJson.setProfileId(profile.getId());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+        try {
+            commentService.save(commentJson.convertToComment());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @PostMapping("/post/Like")
+    public void createLikePost(@RequestHeader Map<String, Object> jsonHeader,@RequestBody LikePost likePost) throws SQLException {
+
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            likePost.setProfileId(profile.getId());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        boolean duplicate = false;
+        try {
+            if(likePostService.isThereALike(likePost))
+            {
+                duplicate =true;
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+       if (duplicate)
+           throw new ResponseStatusException(
+                   HttpStatus.BAD_REQUEST, "you cant like it twice ", new Exception("duplicate"));
+
+       try {
+           likePostService.save(likePost);
+       }catch (Exception e)
+       {
+           e.printStackTrace();
+           throw new ResponseStatusException(
+                   HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+       }
+
+
+
+    }
+
+    @DeleteMapping("/post/Like/{id}")
+    public void deleteLikePost(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            Long profileId = profile.getId();
+            likePostService.deleteByIdAndProfileId(id,profileId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+
+    @PostMapping("/post/comment/Like")
+    public void createLikeComment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody LikeComment likeComment) {
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            likeComment.setProfileId(profile.getId());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        boolean duplicate = false;
+        try {
+            if(likeCommentService.isThereALike(likeComment))
+            {
+                duplicate =true;
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+        if (duplicate)
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "you cant like it twice ", new Exception("duplicate"));
+
+        try {
+            likeCommentService.save(likeComment);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @DeleteMapping("/post/comment/Like/{id}")
+    public void deleteLikeComment(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            Long profileId = profile.getId();
+            likeCommentService.deleteByIdAndProfileId(id,profileId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+
+
 
 
 }

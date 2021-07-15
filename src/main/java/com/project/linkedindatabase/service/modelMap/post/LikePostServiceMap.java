@@ -52,4 +52,14 @@ public class LikePostServiceMap  implements LikePostService {
     public List<LikePost> getLikeByPostId(Long id) throws SQLException {
         return likePostRepository.getLikeByPostId(id);
     }
+
+    @Override
+    public void deleteByIdAndProfileId(Long id, Long profileId) throws SQLException {
+        likePostRepository.deleteByIdAndProfileId( id,  profileId);
+    }
+
+    @Override
+    public boolean isThereALike(LikePost likePost) throws SQLException {
+        return likePostRepository.isThereALike(likePost);
+    }
 }

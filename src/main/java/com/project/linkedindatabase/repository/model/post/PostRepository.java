@@ -16,9 +16,12 @@ import com.project.linkedindatabase.utils.DateConverter;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,15 +46,29 @@ public class PostRepository extends BaseRepository<Post,Long>  {
     public void save(Post object) throws SQLException {
 
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+" (profileId, sharedId, showPostType, " +
-                "body, createdDate, file) VALUES(?, ?, ?, ?, ?, ?,?)");
+                "body, createdDate, file , title) VALUES(?, ?, ?, ?, ?, ?,?)");
         savePs.setLong(1, object.getProfileId());
-        savePs.setLong(2, object.getSharedId());
+
+
+        if (object.getSharedId() != null ){
+            savePs.setLong(2, object.getSharedId());}
+        else {
+            savePs.setNull(2, Types.BIGINT);
+        }
         savePs.setLong(3, object.getShowPostType());
         savePs.setString(4, object.getBody());
         savePs.setString(5, DateConverter.convertDate(object.getCreatedDate(), "yyyy-MM-dd hh:mm:ss"));
-        savePs.setBytes(6, object.getFile());
+
+        if (object.getFile() != null ){
+            savePs.setBinaryStream(6,  new ByteArrayInputStream(object.getFile()));
+        }
+        else {
+            savePs.setNull(6, Types.BLOB);
+        }
+
         savePs.setString(7, object.getTitle());
-        savePs.executeQuery();
+        System.out.println(savePs.toString());
+        savePs.execute();
     }
 
     @Override
@@ -86,7 +103,13 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         post.setShowPostType(resultSet.getLong("showPostType"));
         post.setBody(resultSet.getString("body"));
         post.setCreatedDate(DateConverter.parse(resultSet.getString("createdDate"), "yyyy-MM-dd hh:mm:ss"));
-        post.setFile(resultSet.getBytes("file"));
+
+        InputStream fileStream = resultSet.getBinaryStream("file");
+        byte[] bytes = null;
+        if (fileStream != null)
+            bytes = fileStream.readAllBytes();
+
+        post.setFile(bytes);
         post.setTitle(resultSet.getString("title"));
 
 
@@ -156,9 +179,10 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         //todo
         postJson.setShowPostTypeName(showPostTypeService.findById(post.getShowPostType()).getName());
 
-        if (post.getSharedId() == null || post.getSharedId() == 0  )
+        if (post.getSharedId() != null && post.getSharedId() != 0  )
         {
             Post sharePost = findById(post.getSharedId());
+
             postJson.setSharedIdJson(PostJson.convertTOJson(sharePost));
         }
 

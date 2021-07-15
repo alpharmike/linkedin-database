@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -59,5 +60,18 @@ public class PostJson {
         return postJson;
 
 
+    }
+
+    public Post convertPost() throws ParseException {
+        Post post = new Post();
+        post.setId(getId());
+        post.setTitle(getTitle());
+        post.setProfileId(getProfileId());
+        post.setSharedId(getSharedId());
+        post.setShowPostType(getShowPostType());
+        post.setBody(getBody());
+        post.setCreatedDate(DateConverter.parse(getCreatedDate(),"yyyy-MM-dd hh:mm:ss"));
+        post.setFile(getFile());
+        return post;
     }
 }
