@@ -80,7 +80,9 @@ public class SignUpData {
         profile.setEmail(this.email);
         profile.setPhoneNumber(this.phoneNumber);
         profile.setPhoneType(getPhoneType());
-        profile.setPassword( new BCryptPasswordEncoder().encode( (this.password )));
+        if (isSignUp) {
+            profile.setPassword( new BCryptPasswordEncoder().encode( (this.password )));
+        }
         profile.setFirstName(this.firstName);
         profile.setLastName(this.lastName);
         profile.setFormerName(getFormerName());
