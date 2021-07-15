@@ -57,7 +57,7 @@ public class SkillController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/skill/all")
+    @PostMapping("/skill/add-all")
     public void saveMultipleSkill(@RequestHeader Map<String, Object> jsonHeader, @RequestBody List<String> skills) throws SQLException {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {

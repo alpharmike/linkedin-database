@@ -14,6 +14,8 @@ import com.project.linkedindatabase.service.model.post.CommentService;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
 import com.project.linkedindatabase.service.model.post.PostService;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
+import com.project.linkedindatabase.service.model.skill.SkillService;
 import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -55,6 +57,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final LikePostService likePostService;
     private final PostService postService;
 
+    private final SkillService skillService;
+    private final EndorsementService endorsementService;
+
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
@@ -65,7 +70,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                      BackgroundService backgroundService, AccomplishmentService accomplishmentService
             , LanguageService languageService, ConnectService connectService, ChatService chatService,
                      MessageService messageService, LikeCommentService likeCommentService,
-                     CommentService commentService, LikePostService likePostService, PostService postService) {
+                     CommentService commentService, LikePostService likePostService, PostService postService,
+                     SkillService skillService, EndorsementService endorsementService) {
 
 
 
@@ -93,6 +99,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.commentService = commentService;
         this.likePostService = likePostService;
         this.postService = postService;
+        this.skillService = skillService;
+        this.endorsementService = endorsementService;
     }
 
 
@@ -132,6 +140,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.likePostService.createTable();
            this.commentService.createTable();
            this.likeCommentService.createTable();
+
+           this.skillService.createTable();
+           this.endorsementService.createTable();
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
 //            new IndustryRepository().createTable();

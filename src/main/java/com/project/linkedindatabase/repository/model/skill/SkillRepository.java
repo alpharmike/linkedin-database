@@ -32,7 +32,7 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
                 "?, ?)");
         savePs.setString(1, object.getName());
         savePs.setLong(2, object.getProfileId());
-        savePs.executeQuery();
+        savePs.execute();
     }
 
     @Override
@@ -50,16 +50,13 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
     }
 
     @Override
-    public Skill convertSql(ResultSet resultSet) {
+    public Skill convertSql(ResultSet resultSet) throws SQLException {
         Skill skill = new Skill();
-        try{
-            resultSet.first();
-            skill.setId(resultSet.getLong("id"));
-            skill.setName(resultSet.getString("name"));
-            skill.setProfileId(resultSet.getLong("profileId"));
-        }catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+
+        skill.setId(resultSet.getLong("id"));
+        skill.setName(resultSet.getString("name"));
+        skill.setProfileId(resultSet.getLong("profileId"));
+
         return skill;
     }
 
@@ -127,7 +124,7 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
     public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName() +" where profileId = ?");
 
-
+        ps.setLong(1,profileId);
         ResultSet resultSet = ps.executeQuery();
         List<Skill> allObject = new ArrayList<>();
         while (resultSet.next()) {
