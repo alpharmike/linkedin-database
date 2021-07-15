@@ -1,12 +1,11 @@
 package com.project.linkedindatabase.repository.model.skill;
 
 import com.project.linkedindatabase.domain.BaseEntity;
-import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Skill;
+import com.project.linkedindatabase.jsonToPojo.SkillPoJo;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.model.NotificationService;
-import com.project.linkedindatabase.service.model.skill.SkillService;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -18,8 +17,11 @@ import java.util.List;
 @Service
 public class SkillRepository extends BaseRepository<Skill,Long>  {
 
-    public SkillRepository() throws SQLException {
+    private final EndorsementService endorsementService;
+
+    public SkillRepository(EndorsementService endorsementService) throws SQLException {
         super(Skill.class);
+        this.endorsementService = endorsementService;
     }
 
 
@@ -30,17 +32,17 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
                 "?, ?)");
         savePs.setString(1, object.getName());
         savePs.setLong(2, object.getProfileId());
-        savePs.executeQuery();
+        savePs.execute();
     }
 
     @Override
     public void createTable() throws SQLException {
-        System.out.println("SKILL CREATE");
-        PreparedStatement createTablePs = this.conn.prepareStatement("create table if not exists " + this.tableName + "(" +
-                "id bigint primary key not null auto_increment,"+
-                "name nvarchar(255) not null,"+
-                "profileId BIGINT not null," +
-                "foreign key (profileId) references " +  BaseEntity.getTableName(Profile.class) + "(id)"+
+        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + this.tableName + "(" +
+                "id BIGINT NOT NULL AUTO_INCREMENT,"+
+                "name NVARCHAR(255) NOT NULL,"+
+                "profileId BIGINT NOT NULL," +
+                "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
+                "PRIMARY KEY (id)"+
             ")"
         );
 
@@ -48,16 +50,13 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
     }
 
     @Override
-    public Skill convertSql(ResultSet resultSet) {
+    public Skill convertSql(ResultSet resultSet) throws SQLException {
         Skill skill = new Skill();
-        try{
-            resultSet.first();
-            skill.setId(resultSet.getLong("id"));
-            skill.setName(resultSet.getString("name"));
-            skill.setProfileId(resultSet.getLong("profileId"));
-        }catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+
+        skill.setId(resultSet.getLong("id"));
+        skill.setName(resultSet.getString("name"));
+        skill.setProfileId(resultSet.getLong("profileId"));
+
         return skill;
     }
 
@@ -94,11 +93,38 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
         updatePs.executeUpdate();
     }
 
-    public List<Skill> findByProfileId(Long id) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where profileId = ?");
-        ps.setLong(1,id);
+    public void saveMultipleSkill(List<String> skills,Profile profile) throws SQLException {
+        Long profileId = profile.getId();
+        for (String i : skills)
+        {
+            Skill skill = new Skill();
+            skill.setName(i);
+            skill.setProfileId(profileId);
+            save(skill);
+        }
+    }
 
+    public List<SkillPoJo> getAllSkillByProfileJson(Long profileId) throws SQLException {
+        List<Skill> skills= getAllSkillByProfile(profileId);
+        List<SkillPoJo> skillPoJos = new ArrayList<>();
 
+        for (Skill i : skills)
+        {
+            SkillPoJo skillPoJo = SkillPoJo.convertTOJson(i);
+            var endorsment = endorsementService.getAllBySkillIdJson(skillPoJo.getId());
+            skillPoJo.setEndorsementPoJoList(endorsment);
+
+            skillPoJos.add(skillPoJo);
+        }
+
+        return skillPoJos;
+
+    }
+
+    public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName() +" where profileId = ?");
+
+        ps.setLong(1,profileId);
         ResultSet resultSet = ps.executeQuery();
         List<Skill> allObject = new ArrayList<>();
         while (resultSet.next()) {

@@ -1,8 +1,10 @@
 package com.project.linkedindatabase.service.modelMap.skill;
 
-import com.project.linkedindatabase.domain.Background;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Skill;
+import com.project.linkedindatabase.jsonToPojo.SkillPoJo;
 import com.project.linkedindatabase.repository.model.skill.SkillRepository;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +16,8 @@ public class SkillServiceMap implements SkillService {
 
     private final SkillRepository skillRepository;
 
-    public SkillServiceMap() throws SQLException {
-        this.skillRepository = new SkillRepository();
+    public SkillServiceMap(EndorsementService endorsementService) throws SQLException {
+        this.skillRepository = new SkillRepository(endorsementService);
     }
 
     @Override
@@ -54,7 +56,17 @@ public class SkillServiceMap implements SkillService {
     }
 
     @Override
-    public List<Skill> findByProfileId(Long id) throws Exception {
-        return skillRepository.findByProfileId(id);
+    public void saveMultipleSkill(List<String> skills, Profile profile) throws SQLException {
+        skillRepository.saveMultipleSkill(skills,profile);
+    }
+
+    @Override
+    public List<SkillPoJo> getAllSkillByProfileJson(Long profileId) throws SQLException {
+        return skillRepository.getAllSkillByProfileJson(profileId);
+    }
+
+    @Override
+    public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException {
+        return skillRepository.getAllSkillByProfile(profileId);
     }
 }

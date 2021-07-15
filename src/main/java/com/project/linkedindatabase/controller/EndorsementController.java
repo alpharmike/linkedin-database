@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -47,7 +48,7 @@ public class EndorsementController {
             endorsement.setSkillId((long) jsonBody.get("skillId"));
             endorsement.setSkillLevel((long) jsonBody.get("skillLevel"));
             endorsement.setRelationKnowledge((long) jsonBody.get("relationKnowledge"));
-            endorsement.setEndorserId((long) jsonBody.get("endorserId"));
+            endorsement.setEndorserId(profile.getId());
             endorsementService.save(endorsement);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,14 +56,15 @@ public class EndorsementController {
     }
 
     @CrossOrigin(origins = "*")
-    @PutMapping("/endorsement/{id}/{skillId}/{skillLevel}/{relationKnowledge}/{endorserId}")
-    public void edit(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
-                     @PathVariable long id, @PathVariable long skillId, @PathVariable long relationKnowledge,
-                     @PathVariable long endorserId, @PathVariable long skillLevel){
+    @PutMapping("/endorsement/{id}")
+    public void edit(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Endorsement endorsement,
+                     @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            endorsementService.editById(id, skillId, skillLevel, relationKnowledge, endorserId);
+            endorsement.setEndorserId(profile.getId());
+            endorsement.setId(id);
+            endorsementService.updateWithProfileId(endorsement);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,7 +85,7 @@ public class EndorsementController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/endorsements/{id}")
-    public ArrayList<Endorsement> getAllEndorsementsBySkillId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
+    public List<Endorsement> getAllEndorsementsBySkillId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
                                                          @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
@@ -97,7 +99,7 @@ public class EndorsementController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/endorsements-profile/{profileId}")
-    public ArrayList<Endorsement> getAllEndorsementsByProfileId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
+    public List<Endorsement> getAllEndorsementsByProfileId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
                                                                 @PathVariable long profileId){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {

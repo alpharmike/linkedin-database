@@ -5,6 +5,7 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.post.LikePost;
 import com.project.linkedindatabase.domain.post.Post;
+import com.project.linkedindatabase.jsonToPojo.LikeJson;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,7 +30,7 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(postId, profileId) VALUES(?, ?)");
         savePs.setLong(1, object.getPostId());
         savePs.setLong(2, object.getProfileId());
-        savePs.executeQuery();
+        savePs.execute();
     }
 
     @Override
@@ -49,17 +51,28 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
 
 
     @Override
-    public LikePost convertSql(ResultSet resultSet) {
+    public LikePost convertSql(ResultSet resultSet) throws SQLException {
         LikePost likePost = new LikePost();
-        try {
-            resultSet.first();
-            likePost.setId(resultSet.getLong("id"));
-            likePost.setProfileId(resultSet.getLong("profileId"));
-            likePost.setPostId(resultSet.getLong("postId"));
-        }catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+
+        likePost.setId(resultSet.getLong("id"));
+        likePost.setProfileId(resultSet.getLong("profileId"));
+        likePost.setPostId(resultSet.getLong("postId"));
+
         return likePost;
     }
+
+    public List<LikePost> getLikeByPostId(Long postId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+ " where postId = ?");
+        ps.setLong(1,postId);
+
+        ResultSet resultSet = ps.executeQuery();
+        List<LikePost> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
+
 }
 

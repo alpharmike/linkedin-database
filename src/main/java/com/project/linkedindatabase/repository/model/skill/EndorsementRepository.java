@@ -1,15 +1,17 @@
 package com.project.linkedindatabase.repository.model.skill;
 
 import com.project.linkedindatabase.domain.BaseEntity;
-import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.RelationKnowledge;
 import com.project.linkedindatabase.domain.Type.SkillLevel;
 import com.project.linkedindatabase.domain.skill.Endorsement;
 import com.project.linkedindatabase.domain.skill.Skill;
+import com.project.linkedindatabase.jsonToPojo.EndorsementPoJo;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.model.ConnectService;
-import com.project.linkedindatabase.service.model.skill.EndorsementService;
+import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.types.RelationKnowledgeService;
+import com.project.linkedindatabase.service.types.SkillLevelService;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -21,8 +23,15 @@ import java.util.List;
 @Service
 public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
-    public EndorsementRepository() throws SQLException {
+    private final SkillLevelService skillLevelService;
+    private final RelationKnowledgeService relationKnowledgeService;
+    private final ProfileService profileService;
+
+    public EndorsementRepository(SkillLevelService skillLevelService, RelationKnowledgeService relationKnowledgeService, ProfileService profileService) throws SQLException {
         super(Endorsement.class);
+        this.skillLevelService = skillLevelService;
+        this.relationKnowledgeService = relationKnowledgeService;
+        this.profileService = profileService;
     }
 
 
@@ -73,6 +82,8 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         return endorsement;
     }
 
+    
+
     public ArrayList<Endorsement> convertAllSql(ResultSet resultSet) throws SQLException{
         ArrayList<Endorsement> result = new ArrayList<>();
         while (resultSet.next()){
@@ -115,19 +126,77 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
     }
 
 
-    public ArrayList<Endorsement> getAllById(long id) throws SQLException {
+    public List<Endorsement> getAllById(long id) throws SQLException {
         PreparedStatement retrieveAllPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE skillId=?");
         retrieveAllPs.setLong(1, id);
         ResultSet resultSet = retrieveAllPs.executeQuery();
         return this.convertAllSql(resultSet);
     }
 
-    public ArrayList<Endorsement> getAllByProfileId(long profileId) throws SQLException {
+    public List<Endorsement> getAllByProfileId(long profileId) throws SQLException {
         PreparedStatement retrieveAllPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE skillId IN" +
                 "(SELECT id FROM "+BaseEntity.getTableName(Skill.class)+" WHERE profileId=?)");
         retrieveAllPs.setLong(1, profileId);
         ResultSet resultSet = retrieveAllPs.executeQuery();
         return this.convertAllSql(resultSet);
     }
+
+    public List<Endorsement> getAllBySkillId(long skillId) throws SQLException {
+        PreparedStatement retrieveAllPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE skillId IN" +
+                "(SELECT id FROM "+BaseEntity.getTableName(Skill.class)+" WHERE skillId=?)");
+        retrieveAllPs.setLong(1, skillId);
+        ResultSet resultSet = retrieveAllPs.executeQuery();
+        return this.convertAllSql(resultSet);
+    }
+
+    public List<EndorsementPoJo> getAllBySkillIdJson(long skillId) throws SQLException {
+        var endorsements = getAllBySkillId(skillId);
+
+        var result = new ArrayList<EndorsementPoJo>();
+
+        List<RelationKnowledge> relationKnowledges = relationKnowledgeService.findAll();
+        List<SkillLevel> skillLevels = skillLevelService.findAll();
+
+        for (Endorsement endorsement: endorsements) {
+            var item = EndorsementPoJo.convertToJson(endorsement);
+            for (SkillLevel i : skillLevels)
+            {
+                if (i.getId() == item.getSkillLevel())
+                {
+                    item.setSkillLevelName(i.getName());
+                    break;
+                }
+            }
+
+            for (RelationKnowledge i : relationKnowledges)
+            {
+                if (i.getId() == item.getRelationKnowledge())
+                {
+                    item.setSkillLevelName(i.getName());
+                    break;
+                }
+            }
+
+            Profile profile = profileService.findById(item.getEndorserId());
+            item.setProfileJson(ProfileJson.convertToJson(profile));
+            result.add(item);
+        }
+
+        return result;
+
+    }
+
+    public void updateWithProfileId(Endorsement endorsement) throws SQLException {
+        PreparedStatement updatePs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET skillId = ?," +
+                " skillLevel = ?, relationKnowledge = ?  WHERE id = ? and endorserId = ?");
+        updatePs.setLong(1, endorsement.getSkillId());
+        updatePs.setLong(2, endorsement.getSkillId());
+        updatePs.setLong(3, endorsement.getRelationKnowledge());
+        updatePs.setLong(4, endorsement.getId());
+        updatePs.setLong(5, endorsement.getEndorserId());
+        updatePs.execute();
+    }
+
+
 }
 

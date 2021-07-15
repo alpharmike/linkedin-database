@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.service.modelMap.post;
 
 import com.project.linkedindatabase.domain.post.LikeComment;
+import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.repository.model.post.LikeCommentRepository;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,10 @@ public class LikeCommentServiceMap implements LikeCommentService {
     @Override
     public void createTable() throws SQLException {
         likeCommentRepository.createTable();
+    }
+
+    @Override
+    public CommentJson setAllLikeComment(CommentJson commentJson) throws SQLException {
+        return likeCommentRepository.setAllLikeComment(commentJson);
     }
 }

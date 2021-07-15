@@ -9,6 +9,13 @@ import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
+import com.project.linkedindatabase.service.model.chat.MessageService;
+import com.project.linkedindatabase.service.model.post.CommentService;
+import com.project.linkedindatabase.service.model.post.LikeCommentService;
+import com.project.linkedindatabase.service.model.post.LikePostService;
+import com.project.linkedindatabase.service.model.post.PostService;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
+import com.project.linkedindatabase.service.model.skill.SkillService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
@@ -44,11 +51,21 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final LanguageService languageService;
     private final ConnectService connectService;
     private final ChatService chatService;
+    private final MessageService messageService;
+
+    private final LikeCommentService likeCommentService;
+    private final CommentService commentService;
+    private final LikePostService likePostService;
+    private final PostService postService;
+
+    private final SkillService skillService;
+    private final EndorsementService endorsementService;
+
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
                      ConnectTypeService connectTypeService, AccomplishmentTypeService accomplishmentTypeService,
-                     BackgroundTypeService backgroundTypeService, SkillService skillService, SkillLevelService skillLevelService,
+                     BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
                      LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
                      BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService) {
@@ -75,6 +92,13 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.languageService = languageService;
         this.connectService = connectService;
         this.chatService = chatService;
+        this.messageService = messageService;
+        this.likeCommentService = likeCommentService;
+        this.commentService = commentService;
+        this.likePostService = likePostService;
+        this.postService = postService;
+        this.skillService = skillService;
+        this.endorsementService = endorsementService;
     }
 
 

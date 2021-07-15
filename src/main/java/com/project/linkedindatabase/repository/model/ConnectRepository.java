@@ -252,10 +252,11 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
     }
 
     public Long getNumberOfConnection(Long profileId) throws SQLException {
+
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT count(*) as number FROM "+this.tableName+" WHERE " +
                 "profileIdRequest = ? or profileIdReceive = ?  and connectType in " +
                 "( select "+ BaseEntity.getTableName(ConnectType.class)+".id from " + BaseEntity.getTableName(ConnectType.class)+
-                " where connectType = "+ BaseEntity.getTableName(ConnectType.class)+".id)"
+                " where " + BaseEntity.getTableName(ConnectType.class)+".name = accept)"
         );
         getRequestsPs.setLong(1, profileId);
         getRequestsPs.setLong(2, profileId);
