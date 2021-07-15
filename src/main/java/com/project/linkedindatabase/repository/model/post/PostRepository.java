@@ -67,7 +67,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         }
 
         savePs.setString(7, object.getTitle());
-        System.out.println(savePs.toString());
+
         savePs.execute();
     }
 

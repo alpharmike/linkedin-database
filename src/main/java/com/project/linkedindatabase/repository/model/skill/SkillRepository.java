@@ -112,7 +112,7 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
         {
             SkillPoJo skillPoJo = SkillPoJo.convertTOJson(i);
             var endorsment = endorsementService.getAllBySkillIdJson(skillPoJo.getId());
-            skillPoJo.setEndorsementPoJoList(endorsment);
+            skillPoJo.setEndorsementList(endorsment);
 
             skillPoJos.add(skillPoJo);
         }

@@ -20,7 +20,7 @@ public class SkillPoJo {
 
     private Long profileId;
 
-    private List<EndorsementPoJo> endorsementPoJoList = new ArrayList<>();
+    private List<EndorsementPoJo> endorsementList = new ArrayList<>();
 
     public static SkillPoJo convertTOJson(Skill skill)
     {

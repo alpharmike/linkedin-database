@@ -68,9 +68,9 @@ public class PostController {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             postJson.setProfileId(profile.getId());
             Post  post = postJson.convertPost();
-            System.out.println("here");
+
             postService.save(post);
-            System.out.println("here");
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(
