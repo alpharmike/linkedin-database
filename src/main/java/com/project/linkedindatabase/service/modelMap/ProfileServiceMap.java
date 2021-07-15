@@ -61,6 +61,11 @@ public class ProfileServiceMap implements ProfileService {
         profileRepository.update( profile);
     }
 
+    @Override
+    public List<Profile> searchOtherBaseLanguage(Long profileId, String language) throws SQLException {
+        return profileRepository.searchOtherBaseLanguage( profileId, language) ;
+    }
+
 
     @Override
     public boolean uniqueUsernameEmailPhone(String username, String email, String phone) throws SQLException{

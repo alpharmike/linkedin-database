@@ -57,4 +57,36 @@ public class searchUserController {
 
 
     }
+
+
+    /*
+    language = key
+
+     */
+    @PostMapping("/search-language")
+    public List<Profile> getBaseLanguage(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String,Object> search) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+
+            Long profileId = profile.getId();
+            String language = (String) search.get("language");
+            return profileService.searchOtherBaseLanguage(profileId,language);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
 }
