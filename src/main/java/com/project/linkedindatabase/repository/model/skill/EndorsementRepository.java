@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -72,6 +73,19 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         return endorsement;
     }
 
+    public ArrayList<Endorsement> convertAllSql(ResultSet resultSet) throws SQLException{
+        ArrayList<Endorsement> result = new ArrayList<>();
+        while (resultSet.next()){
+            Endorsement endorsement = new Endorsement();
+            endorsement.setId(resultSet.getLong("id"));
+            endorsement.setSkillId(resultSet.getLong("skillId"));
+            endorsement.setSkillLevel(resultSet.getLong("skillLevel"));
+            endorsement.setRelationKnowledge(resultSet.getLong("relationKnowledge"));
+            endorsement.setEndorserId(resultSet.getLong("endorserId"));
+            result.add(endorsement);
+        }
+        return result;
+    }
     public Endorsement getById(Long id) throws SQLException {
 
         PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE id=?",ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -94,10 +108,26 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         return this.getById(id);
     }
 
-    public void deleteById(Long id) throws SQLException {
+    public void deleteById(long id) throws SQLException {
         PreparedStatement deletePs = this.conn.prepareStatement("DELETE FROM "+this.tableName+" WHERE id=?");
         deletePs.setLong(1, id);
         deletePs.execute();
+    }
+
+
+    public ArrayList<Endorsement> getAllById(long id) throws SQLException {
+        PreparedStatement retrieveAllPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE skillId=?");
+        retrieveAllPs.setLong(1, id);
+        ResultSet resultSet = retrieveAllPs.executeQuery();
+        return this.convertAllSql(resultSet);
+    }
+
+    public ArrayList<Endorsement> getAllByProfileId(long profileId) throws SQLException {
+        PreparedStatement retrieveAllPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE skillId IN" +
+                "(SELECT id FROM "+BaseEntity.getTableName(Skill.class)+" WHERE profileId=?)");
+        retrieveAllPs.setLong(1, profileId);
+        ResultSet resultSet = retrieveAllPs.executeQuery();
+        return this.convertAllSql(resultSet);
     }
 }
 
