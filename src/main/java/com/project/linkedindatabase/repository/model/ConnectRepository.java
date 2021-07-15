@@ -77,10 +77,10 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     @Override
     public Connect convertSql(ResultSet resultSet) throws SQLException {
-
-        if(!resultSet.next()){
+        // TODO: CHECK FOR CORRECTION
+        /*if(!resultSet.next()){
             return null;
-        }
+        }*/
         Connect connect = new Connect();
         try {
             connect.setId(resultSet.getLong("id"));
@@ -115,12 +115,13 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     public Connect getRequest(long profileIdRequest, long profileIdReceive) throws SQLException {
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
-                "profileIdRequest=? AND profileIdReceive=?"
+                "profileIdRequest = ? AND profileIdReceive = ?"
         );
         getRequestsPs.setLong(1, profileIdRequest);
         getRequestsPs.setLong(2, profileIdReceive);
         ResultSet resultSet = getRequestsPs.executeQuery();
-
+        // TODO: ADDED FOR get-pending API ERROR
+        resultSet.next();
         return this.convertSql(resultSet);
     }
 
@@ -194,24 +195,24 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     public void sendRequestBlock(long profileIdRequest, long profileIdReceive) throws SQLException
     {
-        String pending = connectTypeService.findByName("block").getName();
-        sendRequest(profileIdRequest,profileIdReceive,pending);
+        String block = connectTypeService.findByName("block").getName();
+        sendRequest(profileIdRequest,profileIdReceive,block);
     }
 
     public void sendRequestAccept(long profileIdRequest, long profileIdReceive) throws SQLException
     {
-        String pending = connectTypeService.findByName("accept").getName();
-        sendRequest(profileIdRequest,profileIdReceive,pending);
+        String accept = connectTypeService.findByName("accept").getName();
+        sendRequest(profileIdRequest,profileIdReceive,accept);
         //todo must bring chat repository to chat
 
-        if(!chatService.exists(profileIdRequest, profileIdReceive)){
+        /*if(!chatService.exists(profileIdRequest, profileIdReceive)){
             Chat chat = new Chat();
             chat.setProfileId1(profileIdRequest);
             chat.setProfileId2(profileIdReceive);
             chat.setIsArchive(false);
             chat.setMarkUnread(false);
             chatService.save(chat);
-        }
+        }*/
     }
     public void sendRequest(long profileIdRequest, long profileIdReceive, String status) throws SQLException {
 
@@ -258,7 +259,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
     public Long getNumberOfConnection(Long profileId) throws SQLException {
 
         PreparedStatement getRequestsPs = this.conn.prepareStatement("SELECT count(*) as number FROM "+this.tableName+" WHERE " +
-                "profileIdRequest = ? or profileIdReceive = ?  and connectType in " +
+                "(profileIdRequest = ? or profileIdReceive = ?)  and connectType in " +
                 "( select "+ BaseEntity.getTableName(ConnectType.class)+".id from " + BaseEntity.getTableName(ConnectType.class)+
                 " where " + BaseEntity.getTableName(ConnectType.class)+".name = 'accept')"
         );
@@ -273,7 +274,9 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     private ConnectJson convertToJson(Connect connect) throws SQLException {
         ConnectJson connectJson = ConnectJson.convertToJson(connect);
-
+        System.out.println(connect.getProfileIdReceive());
+        System.out.println(connect.getProfileIdRequest());
+        System.out.println(connect.getConnectType());
         Profile profileReceiver = profileService.findById(connectJson.getProfileIdReceive());
         Profile profileRequest = profileService.findById(connectJson.getProfileIdRequest());
         String name = connectTypeService.findById(connectJson.getConnectType()).getName();
@@ -301,9 +304,9 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
 
     public List<Connect> findAllPending(Long profileIdReceiver) throws SQLException {
-        PreparedStatement ps = this.conn.prepareStatement("select * from connect  as cn where " +
-                "cn.profileIdReceive = ? and cn.connectType in" +
-                "(select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')"
+        PreparedStatement ps = this.conn.prepareStatement("select * from " + this.tableName +  " as cn where " +
+                "cn.profileIdReceive = ? and cn.connectType in " +
+                "(select cn_t.id from connect_type as cn_t where cn_t.name = 'pending')"
         );
 
         ps.setLong(1,profileIdReceiver);
