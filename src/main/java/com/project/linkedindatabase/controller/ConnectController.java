@@ -4,6 +4,7 @@ package com.project.linkedindatabase.controller;
 import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.ConnectType;
+import com.project.linkedindatabase.jsonToPojo.ConnectJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.ProfileService;
@@ -81,6 +82,26 @@ public class ConnectController {
             List<Map<String, Object>> map = convertToApiData(connects,types);
 
             return map;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+    @GetMapping("/get-pending")
+    public List<ConnectJson> getPending(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+            Long profileId = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
+
+            List<ConnectJson> connectJsons = connectService.getAllPending(profileId);
+
+            return connectJsons;
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -74,6 +74,11 @@ public class EndorsementServiceMap  implements EndorsementService {
     }
 
     @Override
+    public void deleteAllBySkillId(Long skillId) throws SQLException {
+        endorsementRepository.deleteAllBySkillId(skillId);
+    }
+
+    @Override
     public void createTable() throws SQLException {
         endorsementRepository.createTable();
     }

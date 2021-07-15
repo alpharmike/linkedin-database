@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.service.modelMap;
 
 import com.project.linkedindatabase.domain.Connect;
+import com.project.linkedindatabase.jsonToPojo.ConnectJson;
 import com.project.linkedindatabase.repository.model.ConnectRepository;
 import com.project.linkedindatabase.service.model.ConnectService;
 import org.springframework.stereotype.Service;
@@ -92,5 +93,10 @@ public class ConnectServiceMap implements ConnectService {
     @Override
     public Long getNumberOfConnection(Long profileId) throws Exception {
         return connectRepository.getNumberOfConnection(profileId);
+    }
+
+    @Override
+    public List<ConnectJson> getAllPending(Long profileIdReceiver) throws SQLException {
+        return connectRepository.getAllPending(profileIdReceiver);
     }
 }

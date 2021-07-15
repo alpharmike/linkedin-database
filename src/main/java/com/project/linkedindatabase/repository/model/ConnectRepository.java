@@ -5,9 +5,11 @@ import com.project.linkedindatabase.domain.Connect;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.ConnectType;
 import com.project.linkedindatabase.domain.chat.Chat;
+import com.project.linkedindatabase.jsonToPojo.ConnectJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.repository.model.chat.ChatRepository;
 import com.project.linkedindatabase.repository.types.ConnectTypeRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
 import com.project.linkedindatabase.service.types.ConnectTypeService;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,13 @@ import java.util.List;
 public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     private final ConnectTypeService connectTypeService;
+    private final ProfileService profileService;
     private final ChatService chatService;
 
-    public ConnectRepository(ConnectTypeService connectTypeService, ChatService chatService) throws SQLException {
+    public ConnectRepository(ConnectTypeService connectTypeService, ProfileService profileService, ChatService chatService) throws SQLException {
         super(Connect.class);
         this.connectTypeService = connectTypeService;
+        this.profileService = profileService;
         this.chatService = chatService;
     }
 
@@ -267,6 +271,52 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return resultSet.getLong("number");
     }
 
+    private ConnectJson convertToJson(Connect connect) throws SQLException {
+        ConnectJson connectJson = ConnectJson.convertToJson(connect);
+
+        Profile profileReceiver = profileService.findById(connectJson.getProfileIdReceive());
+        Profile profileRequest = profileService.findById(connectJson.getProfileIdRequest());
+        String name = connectTypeService.findById(connectJson.getConnectType()).getName();
+
+        connectJson.setConnectTypeName(name);
+        connectJson.setProfileReceiver(ProfileJson.convertToJson(profileReceiver));
+        connectJson.setProfileRequest(ProfileJson.convertToJson(profileRequest));
+
+        return connectJson;
+
+    }
+
+
+    public List<ConnectJson> getAllPending(Long profileIdReceiver) throws SQLException
+    {
+        List<Connect> connects = findAllPending(profileIdReceiver);
+        List<ConnectJson> connectJsons = new ArrayList<>();
+        for (Connect i : connects)
+        {
+            ConnectJson connectJson = convertToJson(i);
+            connectJsons.add(connectJson);
+        }
+        return connectJsons;
+    }
+
+
+    public List<Connect> findAllPending(Long profileIdReceiver) throws SQLException {
+        PreparedStatement ps = this.conn.prepareStatement("select * from connect  as cn where " +
+                "cn.profileIdReceive = ? and cn.connectType in" +
+                "(select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')"
+        );
+
+        ps.setLong(1,profileIdReceiver);
+
+        ResultSet resultSet = ps.executeQuery();
+
+        List<Connect> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+
+    }
     public boolean exists(long profileIdRequest, long profileIdReceive) throws SQLException {
         return getRequest(profileIdRequest, profileIdReceive) != null;
     }

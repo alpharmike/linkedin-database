@@ -6,12 +6,12 @@ import com.project.linkedindatabase.domain.skill.Skill;
 import com.project.linkedindatabase.jsonToPojo.SkillPoJo;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +21,13 @@ import java.util.Map;
 public class SkillController {
     private final SkillService skillService;
     private final ProfileService profileService;
+    private final EndorsementService endorsementService;
 
-    public SkillController(SkillService skillService, ProfileService profileService) {
+
+    public SkillController(SkillService skillService, ProfileService profileService, EndorsementService endorsementService) {
         this.skillService = skillService;
         this.profileService = profileService;
+        this.endorsementService = endorsementService;
     }
 
     @CrossOrigin(origins = "*")
@@ -94,8 +97,15 @@ public class SkillController {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            skillService.deleteById(id);
+            Skill skill = skillService.findById(id);
+            if (profile.getId() == skill.getProfileId()) {
+                skillService.deleteById(id);
+                endorsementService.deleteAllBySkillId(id);
+            }
+
+
         }catch (Exception e) {
+
             e.printStackTrace();
         }
     }

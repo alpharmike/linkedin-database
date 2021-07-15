@@ -14,4 +14,6 @@ public interface ProfileService extends BaseService<Profile,Long> {
     public List<Profile> searchOtherBaseCurrentCompany(Long id,String companyName) throws Exception;
 
     public void update(Profile profileForUpdate) throws Exception;
+
+    public List<Profile> searchOtherBaseLanguage(Long profileId, String language) throws SQLException;
 }

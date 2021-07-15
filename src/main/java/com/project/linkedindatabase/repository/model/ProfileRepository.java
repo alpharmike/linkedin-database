@@ -7,6 +7,7 @@ import com.project.linkedindatabase.domain.Type.BackgroundType;
 import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.domain.Type.Industry;
 import com.project.linkedindatabase.domain.Type.PhoneType;
+import com.project.linkedindatabase.domain.accomplishment.Language;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.types.FormerNameVisibilityTypeService;
 import com.project.linkedindatabase.service.types.IndustryService;
@@ -394,5 +395,20 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
         System.out.println(savePs.toString());
         savePs.execute();
+    }
+
+    public List<Profile> searchOtherBaseLanguage(Long profileId, String language) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.tableName+" as pof where exists " +
+                "(select * from "+BaseEntity.getTableName(Language.class)+" as lan where lan.language like ? and lan.profile_id = ? )");
+        ps.setString(1, language+"%");
+        ps.setLong(2, profileId);
+
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
     }
 }

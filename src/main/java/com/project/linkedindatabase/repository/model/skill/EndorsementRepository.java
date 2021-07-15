@@ -216,6 +216,13 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
     }
 
 
+    public void deleteAllBySkillId(Long skillId) throws SQLException {
+        PreparedStatement deletePs = this.conn.prepareStatement("DELETE FROM "+this.tableName+" WHERE skillId = ?");
+        deletePs.setLong(1, skillId);
+        deletePs.execute();
+    }
+
+
 
 }
 
