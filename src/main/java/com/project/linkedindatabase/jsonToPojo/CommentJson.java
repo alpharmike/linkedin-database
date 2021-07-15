@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -47,5 +48,16 @@ public class CommentJson {
         return commentJson;
     }
 
+    public  Comment convertToComment() throws ParseException {
+        Comment comment = new Comment();
+        comment.setId(getId());
+        comment.setProfileId(getProfileId());
+        comment.setPostId(getPostId());
+        comment.setReCommentId(getReCommentId());
+        comment.setBody(getBody());
+        comment.setCreatedDate(DateConverter.parse(getCreatedDate(), "yyyy-MM-dd HH:mm:ss"));
+
+        return comment;
+    }
 
 }

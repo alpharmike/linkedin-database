@@ -69,6 +69,11 @@ public class EndorsementServiceMap  implements EndorsementService {
     }
 
     @Override
+    public boolean isThereAnotherEndorsement(Endorsement endorsement) throws SQLException {
+        return endorsementRepository.isThereAnotherEndorsement(endorsement);
+    }
+
+    @Override
     public void createTable() throws SQLException {
         endorsementRepository.createTable();
     }

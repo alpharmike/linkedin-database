@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface LikePostService extends BaseService<LikePost,Long> {
     public List<LikePost> getLikeByPostId(Long id) throws SQLException;
+
+    public void deleteByIdAndProfileId(Long id, Long profileId) throws SQLException;
+    public boolean isThereALike(LikePost likePost) throws SQLException;
 }

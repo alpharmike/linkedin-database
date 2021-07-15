@@ -6,6 +6,7 @@ import com.project.linkedindatabase.repository.model.post.LikeCommentRepository;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -51,5 +52,16 @@ public class LikeCommentServiceMap implements LikeCommentService {
     @Override
     public CommentJson setAllLikeComment(CommentJson commentJson) throws SQLException {
         return likeCommentRepository.setAllLikeComment(commentJson);
+    }
+
+    @Override
+    public void deleteByIdAndProfileId(Long id, Long profileId) throws SQLException {
+        likeCommentRepository.deleteByIdAndProfileId(id,profileId);
+
+    }
+
+    @Override
+    public boolean isThereALike(LikeComment likeComment) throws SQLException {
+        return likeCommentRepository.isThereALike( likeComment);
     }
 }

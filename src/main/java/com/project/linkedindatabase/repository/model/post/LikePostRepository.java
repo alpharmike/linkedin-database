@@ -30,6 +30,7 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(postId, profileId) VALUES(?, ?)");
         savePs.setLong(1, object.getPostId());
         savePs.setLong(2, object.getProfileId());
+
         savePs.execute();
     }
 
@@ -74,5 +75,26 @@ public class LikePostRepository extends BaseRepository<LikePost,Long>   {
     }
 
 
+    public void deleteByIdAndProfileId(Long id, Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ? and profileId = ?");
+
+        ps.setLong(1, id);
+        ps.setLong(2, profileId);
+        ps.execute();
+    }
+
+    public boolean isThereALike(LikePost likePost) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select *  from "+this.getTableName()+" where postId = ? and profileId = ?");
+        ps.setLong(1, likePost.getPostId());
+        ps.setLong(2, likePost.getProfileId());
+        ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst() ) {
+            return false;
+        }else
+        {
+            return true;
+        }
+        // return resultSet.isBeforeFirst();
+    }
 }
 

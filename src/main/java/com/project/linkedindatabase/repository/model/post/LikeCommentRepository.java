@@ -88,4 +88,25 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
     }
 
+    public void deleteByIdAndProfileId(Long id, Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ? and profileId = ?");
+
+        ps.setLong(1, id);
+        ps.setLong(2, profileId);
+        ps.execute();
+    }
+
+    public boolean isThereALike(LikeComment likeComment) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select *  from "+this.getTableName()+" where commentId = ? and profileId = ?");
+        ps.setLong(1, likeComment.getCommentId());
+        ps.setLong(2, likeComment.getProfileId());
+        ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst() ) {
+            return false;
+        }else
+        {
+            return true;
+        }
+        // return resultSet.isBeforeFirst();
+    }
 }

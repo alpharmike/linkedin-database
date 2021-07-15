@@ -43,7 +43,7 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         savePs.setLong(2, object.getSkillLevel());
         savePs.setLong(3, object.getRelationKnowledge());
         savePs.setLong(4, object.getEndorserId());
-        savePs.executeQuery();
+        savePs.execute();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         return endorsement;
     }
 
-    
+
 
     public ArrayList<Endorsement> convertAllSql(ResultSet resultSet) throws SQLException{
         ArrayList<Endorsement> result = new ArrayList<>();
@@ -190,12 +190,31 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         PreparedStatement updatePs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET skillId = ?," +
                 " skillLevel = ?, relationKnowledge = ?  WHERE id = ? and endorserId = ?");
         updatePs.setLong(1, endorsement.getSkillId());
-        updatePs.setLong(2, endorsement.getSkillId());
+        updatePs.setLong(2, endorsement.getSkillLevel());
         updatePs.setLong(3, endorsement.getRelationKnowledge());
         updatePs.setLong(4, endorsement.getId());
         updatePs.setLong(5, endorsement.getEndorserId());
         updatePs.execute();
     }
+
+    public boolean isThereAnotherEndorsement(Endorsement endorsement) throws SQLException {
+
+
+
+        PreparedStatement ps = conn.prepareStatement("select *  from "+this.getTableName()+" where skillId = ? and endorserId = ?");
+        ps.setLong(1, endorsement.getSkillId());
+        ps.setLong(2, endorsement.getEndorserId());
+        ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst() ) {
+            return false;
+        }else
+        {
+            return true;
+        }
+        // return resultSet.isBeforeFirst();
+
+    }
+
 
 
 }

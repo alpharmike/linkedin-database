@@ -16,4 +16,5 @@ public interface EndorsementService extends BaseService<Endorsement,Long> {
     public List<Endorsement> getAllByProfileId(long profileId) throws SQLException;
     public List<Endorsement> getAllBySkillId(long skillId) throws SQLException;
     public List<EndorsementPoJo> getAllBySkillIdJson(long skillId) throws SQLException;
+    public boolean isThereAnotherEndorsement(Endorsement endorsement) throws SQLException;
 }
