@@ -84,7 +84,7 @@ public class ConnectController {
         try {
             Long profileId = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
 
-            System.out.println(profileId);
+
             List<Connect> connects = connectService.getSenderRequests(profileId);
             List<ConnectType> types = connectTypeService.findAll();
 

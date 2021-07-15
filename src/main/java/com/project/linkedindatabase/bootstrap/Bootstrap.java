@@ -173,7 +173,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         List<String> connectType = SaveTypes.readConnectType();
         for (String name : connectType)
         {
-            System.out.println(name);
+
             connectTypeService.saveIfNotExist(name);
         }
 

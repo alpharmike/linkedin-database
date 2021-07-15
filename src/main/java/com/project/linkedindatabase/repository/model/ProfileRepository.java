@@ -280,7 +280,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
                 " " + BaseEntity.getTableName(Background.class) + ".title like ?  and "+this.tableName+".id != ?");
         ps.setString(1, companyName+"%");
         ps.setLong(2, id);
-        System.out.println(ps.toString());
+
 
         ResultSet resultSet = ps.executeQuery();
         List<Profile> allObject = new ArrayList<>();
