@@ -46,7 +46,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ProfileService profileService;
     private final BackgroundService backgroundService;
-    private final SkillService skillService;
     private final AccomplishmentService accomplishmentService;
     private final LanguageService languageService;
     private final ConnectService connectService;
@@ -68,7 +67,10 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
                      LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
-                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService) {
+                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService,
+                     MessageService messageService, LikeCommentService likeCommentService,
+                     CommentService commentService, LikePostService likePostService, PostService postService,
+                     SkillService skillService, EndorsementService endorsementService) {
 
 
 
@@ -88,7 +90,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.profileService = profileService;
         this.backgroundService = backgroundService;
         this.accomplishmentService = accomplishmentService;
-        this.skillService = skillService;
         this.languageService = languageService;
         this.connectService = connectService;
         this.chatService = chatService;
@@ -131,6 +132,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.skillService.createTable();
            this.languageService.createTable();
            this.connectService.createTable();
+           this.endorsementService.createTable();
            chatService.createTable();
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();

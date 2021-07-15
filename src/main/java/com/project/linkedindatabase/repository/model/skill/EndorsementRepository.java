@@ -37,8 +37,8 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
     @Override
     public void save(Endorsement object) throws SQLException {
-        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+this.tableName+"(skillId, skillLevel," +
-                " relationKnowledge, endorserId) VALUES(?, ?, ?, ?)");
+        PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO "+ this.tableName + " (skillId, skillLevel," +
+                " relationKnowledge, endorserId) VALUES (?, ?, ?, ?)");
         savePs.setLong(1, object.getSkillId());
         savePs.setLong(2, object.getSkillLevel());
         savePs.setLong(3, object.getRelationKnowledge());

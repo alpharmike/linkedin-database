@@ -50,6 +50,20 @@ public class ConnectController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
         }
+    }
+
+    @GetMapping("/number-connection/{id}")
+    public Long getProfileNumberOfConnection(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long profileId) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return connectService.getNumberOfConnection(profileId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
 
 
     }
