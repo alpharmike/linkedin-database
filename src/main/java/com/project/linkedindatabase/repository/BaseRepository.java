@@ -5,6 +5,7 @@ import com.project.linkedindatabase.connection.DataSourceConnector;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.BaseType;
 import com.project.linkedindatabase.domain.Type.LanguageLevel;
+import com.project.linkedindatabase.domain.skill.Endorsement;
 import com.project.linkedindatabase.service.BaseService;
 import com.project.linkedindatabase.utils.AnnotationValueGetter;
 import lombok.Getter;
@@ -75,6 +76,8 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Long>   {
     abstract public void createTable() throws SQLException;
 
     abstract public T convertSql(ResultSet resultSet) throws SQLException;
+
+
 }
 
 

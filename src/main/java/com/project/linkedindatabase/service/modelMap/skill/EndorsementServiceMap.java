@@ -77,4 +77,9 @@ public class EndorsementServiceMap  implements EndorsementService {
     public Endorsement editById(Long id, Long skillId, Long skillLevel, Long relationKnowledge, Long endorserId) throws SQLException {
         return endorsementRepository.editById(id, skillId, skillLevel, relationKnowledge, endorserId);
     }
+
+    @Override
+    public void updateWithProfileId(Endorsement endorsement) throws SQLException {
+        endorsementRepository.updateWithProfileId(endorsement);
+    }
 }

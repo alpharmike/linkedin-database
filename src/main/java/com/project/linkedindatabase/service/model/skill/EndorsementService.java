@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface EndorsementService extends BaseService<Endorsement,Long> {
     public Endorsement editById(Long id, Long skillId, Long skillLevel, Long relationKnowledge, Long endorserId) throws SQLException;
+    public void updateWithProfileId(Endorsement endorsement) throws SQLException;
     public void deleteById(Long id) throws SQLException;
     public List<Endorsement> getAllById(long id) throws SQLException;
     public List<Endorsement> getAllByProfileId(long profileId) throws SQLException;

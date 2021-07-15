@@ -82,6 +82,8 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
         return endorsement;
     }
 
+    
+
     public ArrayList<Endorsement> convertAllSql(ResultSet resultSet) throws SQLException{
         ArrayList<Endorsement> result = new ArrayList<>();
         while (resultSet.next()){
@@ -182,6 +184,17 @@ public class EndorsementRepository extends BaseRepository<Endorsement,Long>  {
 
         return result;
 
+    }
+
+    public void updateWithProfileId(Endorsement endorsement) throws SQLException {
+        PreparedStatement updatePs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET skillId = ?," +
+                " skillLevel = ?, relationKnowledge = ?  WHERE id = ? and endorserId = ?");
+        updatePs.setLong(1, endorsement.getSkillId());
+        updatePs.setLong(2, endorsement.getSkillId());
+        updatePs.setLong(3, endorsement.getRelationKnowledge());
+        updatePs.setLong(4, endorsement.getId());
+        updatePs.setLong(5, endorsement.getEndorserId());
+        updatePs.execute();
     }
 
 

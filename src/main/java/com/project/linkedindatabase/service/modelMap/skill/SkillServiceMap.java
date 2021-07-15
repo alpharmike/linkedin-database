@@ -4,6 +4,7 @@ import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Skill;
 import com.project.linkedindatabase.jsonToPojo.SkillPoJo;
 import com.project.linkedindatabase.repository.model.skill.SkillRepository;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import org.springframework.stereotype.Service;
 
@@ -13,59 +14,59 @@ import java.util.List;
 @Service
 public class SkillServiceMap implements SkillService {
 
-    private final SkillService skillService;
+    private final SkillRepository skillRepository;
 
-    public SkillServiceMap(SkillService skillService) throws SQLException {
-        this.skillService = skillService;
+    public SkillServiceMap(EndorsementService endorsementService) throws SQLException {
+        this.skillRepository = new SkillRepository(endorsementService);
     }
 
     @Override
     public Skill findById(Long aLong) throws SQLException {
-        return skillService.findById(aLong);
+        return skillRepository.findById(aLong);
     }
 
     @Override
     public void save(Skill object) throws SQLException {
-        skillService.save(object);
+        skillRepository.save(object);
     }
 
     @Override
     public List<Skill> findAll() throws SQLException {
-        return skillService.findAll();
+        return skillRepository.findAll();
     }
 
     @Override
     public void deleteByObject(Skill object) throws SQLException {
-        skillService.deleteByObject(object);
+        skillRepository.deleteByObject(object);
     }
 
     @Override
     public void deleteById(Long aLong) throws SQLException {
-        skillService.deleteById(aLong);
+        skillRepository.deleteById(aLong);
     }
 
     @Override
     public void createTable() throws SQLException {
-        skillService.createTable();
+        skillRepository.createTable();
     }
 
     @Override
     public void update(Skill skill) throws SQLException {
-        skillService.update(skill);
+        skillRepository.update(skill);
     }
 
     @Override
     public void saveMultipleSkill(List<String> skills, Profile profile) throws SQLException {
-        skillService.saveMultipleSkill(skills,profile);
+        skillRepository.saveMultipleSkill(skills,profile);
     }
 
     @Override
     public List<SkillPoJo> getAllSkillByProfileJson(Long profileId) throws SQLException {
-        return skillService.getAllSkillByProfileJson(profileId);
+        return skillRepository.getAllSkillByProfileJson(profileId);
     }
 
     @Override
     public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException {
-        return skillService.getAllSkillByProfile(profileId);
+        return skillRepository.getAllSkillByProfile(profileId);
     }
 }
