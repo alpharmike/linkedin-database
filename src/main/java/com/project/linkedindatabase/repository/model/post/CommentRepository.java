@@ -1,35 +1,32 @@
 package com.project.linkedindatabase.repository.model.post;
 
 import com.project.linkedindatabase.domain.BaseEntity;
-import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.post.Comment;
 import com.project.linkedindatabase.domain.post.Post;
+import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.model.NotificationService;
-import com.project.linkedindatabase.service.model.post.CommentService;
+import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.utils.DateConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.parsers.SAXParser;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CommentRepository extends BaseRepository<Comment,Long>  {
 
+    private final LikeCommentService likeCommentService;
 
 
-    public CommentRepository() throws SQLException {
+    public CommentRepository(LikeCommentService likeCommentService) throws SQLException {
         super(Comment.class);
 
+        this.likeCommentService = likeCommentService;
     }
 
 
@@ -55,7 +52,7 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
                 "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
                 "postId BIGINT NOT NULL," +
                 "FOREIGN KEY (postId) REFERENCES " +  BaseEntity.getTableName(Post.class) + "(id),"+
-                "reCommentId BIGINT NOT NULL," +
+                "reCommentId BIGINT ," +
                 "FOREIGN KEY (reCommentId) REFERENCES " +  BaseEntity.getTableName(Comment.class) + "(id),"+
                 "body TEXT NOT NULL,"+
                 "createdDate NVARCHAR(255) NOT NULL,"+
@@ -82,5 +79,58 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
             System.out.println(s.getMessage());
         }
         return comment;
+    }
+
+    public List<Comment> findByPostId(Long postId) throws SQLException {
+
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+ " where postId = ?");
+        ps.setLong(1,postId);
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Comment> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+
+    }
+
+    public List<CommentJson> findByPostIdJson(Long id) throws SQLException {
+        List<Comment> allObject = findByPostId(id);
+
+        List<CommentJson> commentJsonList = new ArrayList<>();
+
+        for (Comment i : allObject)
+        {
+            CommentJson commentJson = CommentJson.convertToJson(i);
+            likeCommentService.setAllLikeComment(commentJson);
+            commentJsonList.add(commentJson);
+        }
+
+        //create tree
+        List<CommentJson> tree = new ArrayList<>();
+
+        //simple explanation
+        // if it has reComment -> it has father so we find it and add to father
+        // if it has not reComment id -> it is root so we add to tree
+        for (CommentJson i :commentJsonList)
+        {
+            if (i.getReCommentId() == null || i.getReCommentId() == 0)
+            {
+                tree.add(i);
+                continue;
+            }
+
+            for (CommentJson j : commentJsonList)
+            {
+                if (j.getId() == i.getReCommentId())
+                {
+                    j.getCommentJsonsChild().add(i);
+                }
+            }
+        }
+
+        return tree;
+
     }
 }

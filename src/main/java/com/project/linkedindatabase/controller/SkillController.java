@@ -3,6 +3,7 @@ package com.project.linkedindatabase.controller;
 
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Skill;
+import com.project.linkedindatabase.jsonToPojo.SkillPoJo;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
@@ -48,7 +49,7 @@ public class SkillController {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Skill skill = new Skill();
             skill.setName((String) jsonBody.get("name"));
-            skill.setProfileId((long) jsonBody.get("profileId"));
+            skill.setProfileId(profile.getId());
             skillService.save(skill);
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,16 +57,29 @@ public class SkillController {
     }
 
     @CrossOrigin(origins = "*")
-    @PutMapping("/skill/{id}/{name}/{profileId}")
-    public void putSkill(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
-                            @PathVariable long id, @PathVariable String name, @PathVariable long profileId){
+    @PostMapping("/skill/all")
+    public void saveMultipleSkill(@RequestHeader Map<String, Object> jsonHeader, @RequestBody List<String> skills) throws SQLException {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+            skillService.saveMultipleSkill(skills,profile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @CrossOrigin(origins = "*")
+    @PutMapping("/skill/{id}")
+    public void putSkill(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Skill skill,
+                            @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try{
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            Skill skill = new Skill();
             skill.setId(id);
-            skill.setName(name);
-            skill.setProfileId(profileId);
+            skill.setProfileId(profile.getId());
             skillService.update(skill);
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +106,46 @@ public class SkillController {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            return skillService.findAll();
+            return skillService.getAllSkillByProfile(profile.getId());
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/skills/{id}")
+    public List<Skill> getSkillsByProfileId(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return skillService.getAllSkillByProfile(id);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/skills-json")
+    public List<SkillPoJo> getSkillsJson(@RequestHeader Map<String, Object> jsonHeader){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return skillService.getAllSkillByProfileJson(profile.getId());
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/skills-json/{id}")
+    public List<SkillPoJo> getSkillsJsonByProfileId(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return skillService.getAllSkillByProfileJson(id);
         }catch (Exception e) {
             e.printStackTrace();
             return null;

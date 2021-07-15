@@ -2,7 +2,7 @@ package com.project.linkedindatabase.controller;
 
 
 import com.project.linkedindatabase.domain.Profile;
-import com.project.linkedindatabase.jsonToPojo.SignUpData;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.utils.DateConverter;
@@ -45,12 +45,12 @@ public class ProfileRestController {
     }
 
     @PostMapping("/sign-up")
-    public Profile newEmployee(@RequestBody SignUpData signUpData) throws SQLException {
+    public Profile newEmployee(@RequestBody ProfileJson profileJson) throws SQLException {
         Profile profile;
         try {
 
-            Calendar calendar = DateConverter.parse(signUpData.getDateOfBirth(), "yyyy-MM-dd");
-            profile = signUpData.convertToProfile(true);
+            Calendar calendar = DateConverter.parse(profileJson.getDateOfBirth(), "yyyy-MM-dd");
+            profile = profileJson.convertToProfile(true);
             profile.setDateOfBirth(calendar);
             profile.setUrlToProfile(profile.getUsername());
 
@@ -96,7 +96,7 @@ public class ProfileRestController {
 
     @CrossOrigin(origins = "*")
     @PutMapping("/profile")
-    public void updateProfile(@RequestHeader Map<String, Object> jsonHeader, @RequestBody SignUpData data){
+    public void updateProfile(@RequestHeader Map<String, Object> jsonHeader, @RequestBody ProfileJson data){
         log.info(jsonHeader.toString());
         Profile profile;
         try {

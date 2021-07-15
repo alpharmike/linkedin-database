@@ -5,6 +5,8 @@ import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.post.Comment;
 import com.project.linkedindatabase.domain.post.LikeComment;
 import com.project.linkedindatabase.domain.post.LikePost;
+import com.project.linkedindatabase.jsonToPojo.CommentJson;
+import com.project.linkedindatabase.jsonToPojo.LikeJson;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,7 +32,7 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
         PreparedStatement savePs = this.conn.prepareStatement("INSERT INTO " + this.tableName + "(commentId, profileId) VALUES(?, ?)");
         savePs.setLong(1, object.getCommentId());
         savePs.setLong(2, object.getProfileId());
-        savePs.executeQuery();
+        savePs.execute();
     }
 
     @Override
@@ -49,17 +52,40 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
 
 
     @Override
-    public LikeComment convertSql(ResultSet resultSet) {
+    public LikeComment convertSql(ResultSet resultSet) throws SQLException {
         LikeComment likeComment = new LikeComment();
-        try {
-            resultSet.first();
-            likeComment.setId(resultSet.getLong("id"));
-            likeComment.setProfileId(resultSet.getLong("profileId"));
-            likeComment.setCommentId(resultSet.getLong("commentId"));
-        }catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+
+
+        likeComment.setId(resultSet.getLong("id"));
+        likeComment.setProfileId(resultSet.getLong("profileId"));
+        likeComment.setCommentId(resultSet.getLong("commentId"));
+
         return likeComment;
+    }
+
+    public List<LikeComment> getLikeByCommendId(Long commentId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName()+ " where commentId = ?");
+        ps.setLong(1,commentId);
+
+        ResultSet resultSet = ps.executeQuery();
+        List<LikeComment> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
+
+    public CommentJson  setAllLikeComment(CommentJson commentJson) throws SQLException {
+        List<LikeComment> like = getLikeByCommendId(commentJson.getId());
+
+        for (LikeComment i : like)
+        {
+            commentJson.getLikeJsons().add(LikeJson.convertToJsonComment(i));
+        }
+
+        return commentJson;
+
     }
 
 }

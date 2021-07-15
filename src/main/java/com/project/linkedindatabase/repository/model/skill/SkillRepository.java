@@ -1,24 +1,27 @@
 package com.project.linkedindatabase.repository.model.skill;
 
 import com.project.linkedindatabase.domain.BaseEntity;
-import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Skill;
+import com.project.linkedindatabase.jsonToPojo.SkillPoJo;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.model.NotificationService;
-import com.project.linkedindatabase.service.model.skill.SkillService;
+import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class SkillRepository extends BaseRepository<Skill,Long>  {
 
-    public SkillRepository() throws SQLException {
+    private final EndorsementService endorsementService;
+
+    public SkillRepository(EndorsementService endorsementService) throws SQLException {
         super(Skill.class);
+        this.endorsementService = endorsementService;
     }
 
 
@@ -91,5 +94,45 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
         updatePs.setLong(2, skill.getProfileId());
         updatePs.setLong(3, skill.getId());
         updatePs.executeUpdate();
+    }
+
+    public void saveMultipleSkill(List<String> skills,Profile profile) throws SQLException {
+        Long profileId = profile.getId();
+        for (String i : skills)
+        {
+            Skill skill = new Skill();
+            skill.setName(i);
+            skill.setProfileId(profileId);
+            save(skill);
+        }
+    }
+
+    public List<SkillPoJo> getAllSkillByProfileJson(Long profileId) throws SQLException {
+        List<Skill> skills= getAllSkillByProfile(profileId);
+        List<SkillPoJo> skillPoJos = new ArrayList<>();
+
+        for (Skill i : skills)
+        {
+            SkillPoJo skillPoJo = SkillPoJo.convertTOJson(i);
+            var endorsment = endorsementService.getAllBySkillIdJson(skillPoJo.getId());
+            skillPoJo.setEndorsementPoJoList(endorsment);
+
+            skillPoJos.add(skillPoJo);
+        }
+
+        return skillPoJos;
+
+    }
+
+    public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.getTableName() +" where profileId = ?");
+
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Skill> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
     }
 }

@@ -22,6 +22,8 @@ public class Post extends BaseEntity {
 
     private String body;
 
+    private String title;
+
     private Calendar createdDate;
 
     private byte[] file;

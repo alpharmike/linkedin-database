@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -83,7 +84,7 @@ public class EndorsementController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/endorsements/{id}")
-    public ArrayList<Endorsement> getAllEndorsementsBySkillId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
+    public List<Endorsement> getAllEndorsementsBySkillId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
                                                          @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
@@ -97,7 +98,7 @@ public class EndorsementController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/endorsements-profile/{profileId}")
-    public ArrayList<Endorsement> getAllEndorsementsByProfileId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
+    public List<Endorsement> getAllEndorsementsByProfileId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
                                                                 @PathVariable long profileId){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {

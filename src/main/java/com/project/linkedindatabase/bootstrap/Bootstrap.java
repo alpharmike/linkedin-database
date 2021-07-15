@@ -9,6 +9,11 @@ import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
+import com.project.linkedindatabase.service.model.chat.MessageService;
+import com.project.linkedindatabase.service.model.post.CommentService;
+import com.project.linkedindatabase.service.model.post.LikeCommentService;
+import com.project.linkedindatabase.service.model.post.LikePostService;
+import com.project.linkedindatabase.service.model.post.PostService;
 import com.project.linkedindatabase.service.types.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -41,7 +46,15 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final AccomplishmentService accomplishmentService;
     private final LanguageService languageService;
     private final ConnectService connectService;
+
     private final ChatService chatService;
+    private final MessageService messageService;
+
+    private final LikeCommentService likeCommentService;
+    private final CommentService commentService;
+    private final LikePostService likePostService;
+    private final PostService postService;
+
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
@@ -49,7 +62,10 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
                      LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
-                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService) {
+                     BackgroundService backgroundService, AccomplishmentService accomplishmentService
+            , LanguageService languageService, ConnectService connectService, ChatService chatService,
+                     MessageService messageService, LikeCommentService likeCommentService,
+                     CommentService commentService, LikePostService likePostService, PostService postService) {
 
 
 
@@ -72,6 +88,11 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.languageService = languageService;
         this.connectService = connectService;
         this.chatService = chatService;
+        this.messageService = messageService;
+        this.likeCommentService = likeCommentService;
+        this.commentService = commentService;
+        this.likePostService = likePostService;
+        this.postService = postService;
     }
 
 
@@ -103,7 +124,14 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.accomplishmentService.createTable();
            this.languageService.createTable();
            this.connectService.createTable();
-           chatService.createTable();
+
+           this.chatService.createTable();
+           this.messageService.createTable();
+
+           this.postService.createTable();
+           this.likePostService.createTable();
+           this.commentService.createTable();
+           this.likeCommentService.createTable();
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
 //            new IndustryRepository().createTable();

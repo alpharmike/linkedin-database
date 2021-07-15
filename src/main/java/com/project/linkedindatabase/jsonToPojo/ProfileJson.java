@@ -14,7 +14,7 @@ import java.util.Calendar;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpData {
+public class ProfileJson {
 
     private Long id;
 
@@ -100,6 +100,37 @@ public class SignUpData {
 
 
         return profile;
+    }
+
+    public static ProfileJson convertToJson(Profile profile)
+    {
+        ProfileJson profileJson = new ProfileJson();
+
+
+        profileJson.setId(profile.getId());
+        profileJson.setUsername(profile.getUsername());
+        profileJson.setEmail(profile.getEmail());
+        profileJson.setPhoneNumber(profile.getPhoneNumber());
+        profileJson.setPhoneType(profile.getPhoneType());
+
+        profileJson.setFirstName(profile.getFirstName());
+        profileJson.setLastName(profile.getLastName());
+        profileJson.setFormerName(profile.getFormerName());
+        profileJson.setFormerNameVisibilityType(profile.getFormerNameVisibilityType());
+        profileJson.setHeadline(profile.getHeadline());
+        profileJson.setCurrentPositionId(profile.getCurrentPositionId());
+        profileJson.setShowCurrentPositionId(profile.getShowCurrentPositionId());
+        profileJson.setCurrentEducationId(profile.getCurrentEducationId());
+        profileJson.setShowCurrentEducationId(profile.getShowCurrentEducationId());
+        profileJson.setCountry(profile.getCountry());
+        profileJson.setLocationInCountry(profile.getLocationInCountry());
+        profileJson.setIndustry(profile.getIndustry());
+        profileJson.setAddress(profile.getAddress());
+
+        profileJson.setAbout(profile.getAbout());
+        profileJson.setUrlToProfile(profile.getUrlToProfile());
+        return profileJson;
+
     }
 
 }
