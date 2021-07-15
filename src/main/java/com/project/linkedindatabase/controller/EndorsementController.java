@@ -6,7 +6,9 @@ import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,19 +42,49 @@ public class EndorsementController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/endorsement")
-    public void save(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody){
+    public void save(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Endorsement endorsement){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            Endorsement endorsement = new Endorsement();
-            endorsement.setSkillId((long) jsonBody.get("skillId"));
-            endorsement.setSkillLevel((long) jsonBody.get("skillLevel"));
-            endorsement.setRelationKnowledge((long) jsonBody.get("relationKnowledge"));
+
             endorsement.setEndorserId(profile.getId());
-            endorsementService.save(endorsement);
+
         } catch (Exception e) {
             e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
         }
+        boolean duplicate = false;
+
+        try {
+            if(endorsementService.isThereAnotherEndorsement(endorsement))
+            {
+                duplicate = true;
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ",e);
+        }
+        if (duplicate)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "you have endorsement it before ",new Exception("duplicate"));
+        }
+
+        try {
+            endorsementService.save(endorsement);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ",e);
+        }
+
+
+
     }
 
     @CrossOrigin(origins = "*")
@@ -64,6 +96,7 @@ public class EndorsementController {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             endorsement.setEndorserId(profile.getId());
             endorsement.setId(id);
+
             endorsementService.updateWithProfileId(endorsement);
         } catch (Exception e) {
             e.printStackTrace();
