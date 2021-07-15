@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,12 +35,12 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
 
     @Override
     public void createTable() throws SQLException {
-        PreparedStatement createTablePs = this.conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + this.tableName + "(" +
-                "id BIGINT NOT NULL AUTO_INCREMENT,"+
-                "name NVARCHAR(255) NOT NULL,"+
-                "profileId BIGINT NOT NULL," +
-                "FOREIGN KEY (profileId) REFERENCES " +  BaseEntity.getTableName(Profile.class) + "(id),"+
-                "PRIMARY KEY (id)"+
+        System.out.println("SKILL CREATE");
+        PreparedStatement createTablePs = this.conn.prepareStatement("create table if not exists " + this.tableName + "(" +
+                "id bigint primary key not null auto_increment,"+
+                "name nvarchar(255) not null,"+
+                "profileId BIGINT not null," +
+                "foreign key (profileId) references " +  BaseEntity.getTableName(Profile.class) + "(id)"+
             ")"
         );
 
@@ -91,5 +92,18 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
         updatePs.setLong(2, skill.getProfileId());
         updatePs.setLong(3, skill.getId());
         updatePs.executeUpdate();
+    }
+
+    public List<Skill> findByProfileId(Long id) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where profileId = ?");
+        ps.setLong(1,id);
+
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Skill> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
     }
 }

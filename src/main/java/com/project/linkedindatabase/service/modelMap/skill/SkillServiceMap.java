@@ -1,5 +1,6 @@
 package com.project.linkedindatabase.service.modelMap.skill;
 
+import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.skill.Skill;
 import com.project.linkedindatabase.repository.model.skill.SkillRepository;
 import com.project.linkedindatabase.service.model.skill.SkillService;
@@ -50,5 +51,10 @@ public class SkillServiceMap implements SkillService {
     @Override
     public void update(Skill skill) throws SQLException {
         skillRepository.update(skill);
+    }
+
+    @Override
+    public List<Skill> findByProfileId(Long id) throws Exception {
+        return skillRepository.findByProfileId(id);
     }
 }
