@@ -4,6 +4,7 @@ package com.project.linkedindatabase.jsonToPojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.utils.DateConverter;
 import com.project.linkedindatabase.utils.SHAHashing;
 import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -134,7 +135,7 @@ public class ProfileJson {
         profileJson.setLocationInCountry(profile.getLocationInCountry());
         profileJson.setIndustry(profile.getIndustry());
         profileJson.setAddress(profile.getAddress());
-
+        profileJson.setDateOfBirth(DateConverter.convertDate(profile.getDateOfBirth(), "yyy-MM-dd"));
         profileJson.setAbout(profile.getAbout());
         profileJson.setUrlToProfile(profile.getUrlToProfile());
         return profileJson;

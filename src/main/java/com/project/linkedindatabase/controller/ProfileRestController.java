@@ -59,7 +59,7 @@ public class ProfileRestController {
         }
         ProfileJson profileJson;
         try {
-            profileJson = profileService.getProfileByIdJson(profile.getId());
+            profileJson = profileService.getProfileByIdJson(profile.getId());;
         }catch (Exception e)
         {
             e.printStackTrace();
