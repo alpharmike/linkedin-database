@@ -1,8 +1,11 @@
 package com.project.linkedindatabase.service.modelMap.accomplishment;
 
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
+import com.project.linkedindatabase.jsonToPojo.AccomplishmentJson;
 import com.project.linkedindatabase.repository.model.accomplishment.AccomplishmentRepository;
 import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
+import com.project.linkedindatabase.service.types.AccomplishmentTypeService;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -13,8 +16,8 @@ public class AccomplishmentServiceMap implements AccomplishmentService {
 
     private final AccomplishmentRepository accomplishmentRepository;
 
-    public AccomplishmentServiceMap() throws SQLException {
-        this.accomplishmentRepository = new AccomplishmentRepository();
+    public AccomplishmentServiceMap(AccomplishmentTypeService accomplishmentTypeService) throws SQLException {
+        this.accomplishmentRepository = new AccomplishmentRepository(accomplishmentTypeService);
     }
 
     @Override
@@ -65,5 +68,10 @@ public class AccomplishmentServiceMap implements AccomplishmentService {
     @Override
     public void deleteByIdAndProfileId(Accomplishment accomplishment) throws Exception {
         accomplishmentRepository.deleteByIdAndProfileId(accomplishment);
+    }
+
+    @Override
+    public List<AccomplishmentJson> getAllByProfileIdJson(Long profileId) throws SQLException {
+        return accomplishmentRepository.getAllByProfileIdJson(profileId);
     }
 }

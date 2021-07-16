@@ -463,6 +463,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     }
 
     public void setCurrentPosition(Profile profile) throws Exception {
+        BackgroundJson backgroundJson = backgroundService.findByIdAndProfileIdJson(profile.getId(),profile.getCurrentPositionId());
+        if (backgroundJson == null)
+            return;
+        if (!backgroundJson.getBackgroundTypeName().equals("Work experience"))
+            return;
         PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentPositionId = ?" +
                 " where id = ?;");
 
@@ -473,6 +478,11 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     }
     public void setCurrentEducation(Profile profile) throws Exception {
+        BackgroundJson backgroundJson = backgroundService.findByIdAndProfileIdJson(profile.getId(),profile.getCurrentEducationId());
+        if (backgroundJson == null)
+            return;
+        if (!backgroundJson.getBackgroundTypeName().equals("Education"))
+            return;
         PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set  currentEducationId = ?" +
                 " where id = ?;");
         savePs.setLong(1,profile.getCurrentEducationId());
