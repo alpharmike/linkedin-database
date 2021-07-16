@@ -114,7 +114,7 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/search-user/{searchKey}")
-    public ArrayList<Chat> search(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
+    public ArrayList<Chat> searchForUser(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
@@ -126,7 +126,7 @@ public class ChatController {
     }
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/search-messages/{searchKey}")
-    public ArrayList<Chat> search(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
+    public ArrayList<Chat> searchForMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
