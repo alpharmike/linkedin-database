@@ -63,6 +63,11 @@ public class ProfileServiceMap implements ProfileService {
     }
 
     @Override
+    public List<Profile> searchOtherBaseName(String name) throws Exception {
+        return profileRepository.searchOtherBaseName(name);
+    }
+
+    @Override
     public List<Profile> searchOtherBaseLanguage( String language) throws SQLException {
         return profileRepository.searchOtherBaseLanguage( language) ;
     }

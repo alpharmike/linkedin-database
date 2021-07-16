@@ -1,21 +1,17 @@
 package com.project.linkedindatabase.repository.model.accomplishment;
 
-import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.LanguageLevel;
-import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
 import com.project.linkedindatabase.domain.accomplishment.Language;
+import com.project.linkedindatabase.jsonToPojo.LanguageJson;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
-import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
+import com.project.linkedindatabase.service.types.LanguageLevelService;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +24,11 @@ public class LanguageRepository extends BaseRepository<Language,Long>  {
     protected static final String LANGUAGE = "language";
     protected static final String LANGUAGE_LEVEL = "language_level";
 
-    public LanguageRepository() throws SQLException {
+    private final LanguageLevelService languageLevelService;
+
+    public LanguageRepository(LanguageLevelService languageLevelService) throws SQLException {
         super(Language.class);
+        this.languageLevelService = languageLevelService;
     }
 
 
@@ -134,5 +133,28 @@ public class LanguageRepository extends BaseRepository<Language,Long>  {
         ps.setLong(1, language.getId());
         ps.setLong(2, language.getProfileId());
         ps.execute();
+    }
+
+
+    public List<LanguageJson> getAllByProfileIdJson(Long profileId) throws SQLException {
+        List<Language> languageList = findByProfileId(profileId);
+
+        List<LanguageJson> languageJsonList = new ArrayList<>();
+
+        for (Language i: languageList)
+        {
+            languageJsonList.add(convertToJson(i));
+        }
+
+        return languageJsonList;
+    }
+
+    public LanguageJson convertToJson(Language language) throws SQLException
+    {
+        LanguageJson languageJson = LanguageJson.convertToJson(language);
+        String name = languageLevelService.findById(languageJson.getLanguageLevel()).getName();
+        languageJson.setLanguageLevelName(name);
+        return languageJson;
+
     }
 }

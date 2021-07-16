@@ -117,4 +117,36 @@ public class searchUserController {
 
 
     }
+
+     /*
+    name = key
+
+     */
+
+    @PostMapping("/search-name")
+    public List<Profile> getBaseName(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String,Object> search) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+
+            Long profileId = profile.getId();
+            String name = (String) search.get("name");
+            return profileService.searchOtherBaseName(name);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
 }

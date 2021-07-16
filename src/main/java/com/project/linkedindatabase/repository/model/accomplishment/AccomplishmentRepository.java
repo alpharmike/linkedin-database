@@ -1,17 +1,13 @@
 package com.project.linkedindatabase.repository.model.accomplishment;
 
-import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.AccomplishmentType;
 import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
-import com.project.linkedindatabase.domain.accomplishment.Language;
+import com.project.linkedindatabase.jsonToPojo.AccomplishmentJson;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.service.model.BackgroundService;
-import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import com.project.linkedindatabase.service.types.AccomplishmentTypeService;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -34,8 +30,11 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
     protected static final String ACCOMPLISHMENT_TYPE = "accomplishment_type";
     protected static final String FILE = "file";
 
-    public AccomplishmentRepository() throws SQLException {
+    private final AccomplishmentTypeService accomplishmentTypeService;
+
+    public AccomplishmentRepository(AccomplishmentTypeService accomplishmentTypeService) throws SQLException {
         super(Accomplishment.class);
+        this.accomplishmentTypeService = accomplishmentTypeService;
     }
 
 
@@ -214,5 +213,27 @@ public class AccomplishmentRepository extends BaseRepository<Accomplishment,Long
         ps.setLong(1, accomplishment.getId());
         ps.setLong(2, accomplishment.getProfileId());
         ps.execute();
+    }
+
+    public List<AccomplishmentJson> getAllByProfileIdJson(Long profileId) throws SQLException {
+        List<Accomplishment> accomplishmentList = findByProfileId(profileId);
+
+        List<AccomplishmentJson> accomplishmentJsons = new ArrayList<>();
+
+        for (Accomplishment i: accomplishmentList)
+        {
+            accomplishmentJsons.add(convertToJson(i));
+        }
+
+        return accomplishmentJsons;
+    }
+
+    public AccomplishmentJson convertToJson(Accomplishment accomplishment) throws SQLException
+    {
+        AccomplishmentJson accomplishmentJson = AccomplishmentJson.convertToJson(accomplishment);
+        String name = accomplishmentTypeService.findById(accomplishmentJson.getAccomplishmentType()).getName();
+        accomplishmentJson.setAccomplishmentTypeName(name);
+        return accomplishmentJson;
+
     }
 }

@@ -433,6 +433,23 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         return allObject;
     }
 
+    public List<Profile> searchOtherBaseName(String name) throws SQLException {
+
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.tableName+" where firstName like ? " +
+                "or lastName like ? or CONCAT( firstName,' ', lastName) like ? or username like ?");
+        ps.setString(1, name+"%");
+        ps.setString(2, name+"%");
+        ps.setString(3, name+"%");
+        ps.setString(4, name+"%");
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
 
     public ProfileJson getProfileByIdJson(Long id) throws Exception
     {
@@ -443,6 +460,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     public ProfileJson convertToJson(Profile profile) throws Exception {
         ProfileJson profileJson = ProfileJson.convertToJson(profile);
+
         if(profileJson.getCurrentEducationId() != null) {
             BackgroundJson education = backgroundService.findByIdAndProfileIdJson(profileJson.getId(), profileJson.getCurrentEducationId());
             profileJson.setCurrentEducation(education);
@@ -462,7 +480,12 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     }
 
     public void setCurrentPosition(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+        BackgroundJson backgroundJson = backgroundService.findByIdAndProfileIdJson(profile.getId(),profile.getCurrentPositionId());
+        if (backgroundJson == null)
+            return;
+        if (!backgroundJson.getBackgroundTypeName().equals("Work experience"))
+            return;
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentPositionId = ?" +
                 " where id = ?;");
 
         savePs.setLong(1,profile.getCurrentPositionId());
@@ -472,7 +495,12 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     }
     public void setCurrentEducation(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentEducationId = ?" +
+        BackgroundJson backgroundJson = backgroundService.findByIdAndProfileIdJson(profile.getId(),profile.getCurrentEducationId());
+        if (backgroundJson == null)
+            return;
+        if (!backgroundJson.getBackgroundTypeName().equals("Education"))
+            return;
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set  currentEducationId = ?" +
                 " where id = ?;");
         savePs.setLong(1,profile.getCurrentEducationId());
         savePs.setLong(2,profile.getId());
@@ -481,26 +509,25 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     }
     public void removeCurrentPosition(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentPositionId = ? " +
                 " where id = ?;");
 
-        savePs.setLong(1,0);
+        savePs.setLong(1,0L);
         savePs.setLong(2,profile.getId());
+
 
         savePs.execute();
     }
     public void removeCurrentEducation(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentEducationId = ?" +
                 " where id = ?;");
 
-        savePs.setLong(1,0);
+        savePs.setLong(1,0L);
         savePs.setLong(2,profile.getId());
-
+        System.out.println(savePs.toString());
         savePs.execute();
 
     }
-
-
 
 
 

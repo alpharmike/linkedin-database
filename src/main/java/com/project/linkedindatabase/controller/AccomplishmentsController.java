@@ -3,6 +3,7 @@ package com.project.linkedindatabase.controller;
 import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.accomplishment.Accomplishment;
+import com.project.linkedindatabase.jsonToPojo.AccomplishmentJson;
 import com.project.linkedindatabase.jsonToPojo.BackgroundJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.BackgroundService;
@@ -48,6 +49,25 @@ public class AccomplishmentsController {
 
     }
 
+    @GetMapping("/accomplishment-json")
+    public List<AccomplishmentJson> getAccomplishmentJson(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+
+            return accomplishmentService.getAllByProfileIdJson(profile.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
 
     @GetMapping("/accomplishment/{id}")
     public List<Accomplishment> getAccomplishmentByProfileID(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
@@ -58,6 +78,24 @@ public class AccomplishmentsController {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
 
             return accomplishmentService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+    @GetMapping("/accomplishment-json/{id}")
+    public List<AccomplishmentJson> getAccomplishmentByProfileIDJson(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+            return accomplishmentService.getAllByProfileIdJson(id);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(

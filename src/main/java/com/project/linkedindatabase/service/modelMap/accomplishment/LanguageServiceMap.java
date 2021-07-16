@@ -1,8 +1,10 @@
 package com.project.linkedindatabase.service.modelMap.accomplishment;
 
 import com.project.linkedindatabase.domain.accomplishment.Language;
+import com.project.linkedindatabase.jsonToPojo.LanguageJson;
 import com.project.linkedindatabase.repository.model.accomplishment.LanguageRepository;
 import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
+import com.project.linkedindatabase.service.types.LanguageLevelService;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -13,8 +15,8 @@ public class LanguageServiceMap implements LanguageService {
 
     private final LanguageRepository languageRepository;
 
-    public LanguageServiceMap() throws SQLException {
-        this.languageRepository = new LanguageRepository();
+    public LanguageServiceMap(LanguageLevelService languageLevelService) throws SQLException {
+        this.languageRepository = new LanguageRepository(languageLevelService);
     }
 
     @Override
@@ -59,11 +61,17 @@ public class LanguageServiceMap implements LanguageService {
 
     @Override
     public void updateWithProfileId(Language language) throws Exception {
-        languageRepository.updateWithProfileId( language);
+        languageRepository.updateWithProfileId(language);
     }
 
     @Override
     public void deleteByIdAndProfileId(Language language) throws Exception {
-        languageRepository.deleteByIdAndProfileId( language);
+        languageRepository.deleteByIdAndProfileId(language);
+    }
+
+    @Override
+    public List<LanguageJson> getAllByProfileIdJson(Long profileId) throws SQLException
+    {
+        return languageRepository.getAllByProfileIdJson(profileId);
     }
 }
