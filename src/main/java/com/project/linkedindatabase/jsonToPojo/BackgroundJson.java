@@ -37,7 +37,7 @@ public class BackgroundJson {
         background.setId(getId());
         background.setStartDate(DateConverter.parse(getStartDate(),"yyyy-MM-dd"));
         if (endDate != null && !endDate.equals(""))
-            background.setStartDate(DateConverter.parse(getEndDate(),"yyyy-MM-dd"));
+            background.setEndDate(DateConverter.parse(getEndDate(),"yyyy-MM-dd"));
         return background;
     }
 

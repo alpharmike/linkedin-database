@@ -233,4 +233,116 @@ public class ProfileRestController {
     }
 
 
+    @CrossOrigin(origins = "*")
+    @PutMapping("/profile/current-education/{id}")
+    public void setCurrentEducation(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+            profile.setCurrentEducationId(id);
+            profileService.setCurrentEducation(profile);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("/profile/current-education")
+    public void removeCurrentEducation(@RequestHeader Map<String, Object> jsonHeader){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+            profileService.removeCurrentEducation(profile);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+
+    @CrossOrigin(origins = "*")
+    @PutMapping("/profile/current-position/{id}")
+    public void setCurrentPosition(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+            profile.setCurrentPositionId(id);
+            profileService.setCurrentPosition(profile);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("/profile/current-position")
+    public void removeCurrentPosition(@RequestHeader Map<String, Object> jsonHeader){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        try {
+            profileService.setCurrentPosition(profile);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+
 }
