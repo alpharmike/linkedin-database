@@ -77,6 +77,26 @@ public class ProfileServiceMap implements ProfileService {
         return profileRepository.getProfileByIdJson(id);
     }
 
+    @Override
+    public void setCurrentEducation(Profile profile) throws Exception {
+        profileRepository.setCurrentEducation(profile);
+    }
+
+    @Override
+    public void removeCurrentPosition(Profile profile) throws Exception {
+        profileRepository.removeCurrentPosition(profile);
+    }
+
+    @Override
+    public void removeCurrentEducation(Profile profile) throws Exception {
+        profileRepository.removeCurrentEducation(profile);
+    }
+
+    @Override
+    public void setCurrentPosition(Profile profile) throws Exception {
+        profileRepository.setCurrentPosition(profile);
+    }
+
 
     @Override
     public boolean uniqueUsernameEmailPhone(String username, String email, String phone) throws SQLException{

@@ -461,6 +461,44 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     }
 
+    public void setCurrentPosition(Profile profile) throws Exception {
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+                " where id = ?;");
+
+        savePs.setLong(1,profile.getCurrentPositionId());
+        savePs.setLong(2,profile.getId());
+
+        savePs.execute();
+
+    }
+    public void setCurrentEducation(Profile profile) throws Exception {
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentEducationId = ?" +
+                " where id = ?;");
+        savePs.setLong(1,profile.getCurrentEducationId());
+        savePs.setLong(2,profile.getId());
+
+        savePs.execute();
+
+    }
+    public void removeCurrentPosition(Profile profile) throws Exception {
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+                " where id = ?;");
+
+        savePs.setLong(1,0);
+        savePs.setLong(2,profile.getId());
+
+        savePs.execute();
+    }
+    public void removeCurrentEducation(Profile profile) throws Exception {
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+                " where id = ?;");
+
+        savePs.setLong(1,0);
+        savePs.setLong(2,profile.getId());
+
+        savePs.execute();
+
+    }
 
 
 
