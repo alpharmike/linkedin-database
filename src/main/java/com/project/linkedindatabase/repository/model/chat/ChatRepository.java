@@ -9,6 +9,7 @@ import com.project.linkedindatabase.repository.model.ProfileRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
 import org.springframework.stereotype.Service;
 
+import javax.print.attribute.standard.PresentationDirection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -182,5 +183,16 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
             }
         }
         return result;
+    }
+
+    public Chat findByProfileIds(long profileId1, long profileId2) throws SQLException {
+        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
+                "(profileId1=? AND profileId2=?) OR  (profileId1=? AND profileId2=?)");
+        retrievePs.setLong(1, profileId1);
+        retrievePs.setLong(2, profileId2);
+        retrievePs.setLong(3, profileId2);
+        retrievePs.setLong(4, profileId1);
+        ResultSet resultSet = retrievePs.executeQuery();
+        return this.convertSql(resultSet);
     }
 }

@@ -4,6 +4,7 @@ package com.project.linkedindatabase.controller;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
+import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.utils.DateConverter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,11 @@ import java.util.Map;
 public class ProfileRestController {
 
     private final ProfileService profileService ;
+    private final NotificationService notificationService;
 
-    public ProfileRestController(ProfileService profileService) {
+    public ProfileRestController(ProfileService profileService, NotificationService notificationService) {
         this.profileService = profileService;
+        this.notificationService = notificationService;
     }
 
     @CrossOrigin(origins = "*")
@@ -86,6 +89,7 @@ public class ProfileRestController {
         ProfileJson profileJson;
         try {
             profileJson = profileService.getProfileByIdJson(id);
+            notificationService.saveProfileVisitNotification(profile.getId(), id);
         }catch (Exception e)
         {
             e.printStackTrace();

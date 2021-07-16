@@ -3,10 +3,10 @@ package com.project.linkedindatabase.controller;
 
 import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.Profile;
-import com.project.linkedindatabase.domain.Type.ConnectType;
 import com.project.linkedindatabase.jsonToPojo.BackgroundJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.BackgroundService;
+import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,10 +23,12 @@ public class BackgroundController {
 
     private final BackgroundService backgroundService;
     private final ProfileService profileService ;
+    private final NotificationService notificationService;
 
-    public BackgroundController(BackgroundService backgroundService, ProfileService profileService) {
+    public BackgroundController(BackgroundService backgroundService, ProfileService profileService, NotificationService notificationService) {
         this.backgroundService = backgroundService;
         this.profileService = profileService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/background")
@@ -149,6 +151,7 @@ public class BackgroundController {
             Background background = backgroundJson.convertToBackGround();
             background.setId(id);
             backgroundService.updateWithProfileId(background);
+            notificationService.saveChangedWorkExperienceNotification(profile.getId());
         }catch (Exception e)
         {
             e.printStackTrace();

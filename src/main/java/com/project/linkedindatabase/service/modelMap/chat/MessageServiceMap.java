@@ -6,6 +6,8 @@ import com.project.linkedindatabase.service.model.chat.MessageService;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class MessageServiceMap implements MessageService {
@@ -44,5 +46,10 @@ public class MessageServiceMap implements MessageService {
     @Override
     public void createTable() throws SQLException {
         messageRepository.createTable();
+    }
+
+    @Override
+    public ArrayList<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException {
+        return messageRepository.getMessagesByChatId(chatId);
     }
 }

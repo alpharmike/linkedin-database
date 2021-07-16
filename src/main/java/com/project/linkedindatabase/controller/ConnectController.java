@@ -43,8 +43,6 @@ public class ConnectController {
         try {
 
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-
-
             return connectService.getNumberOfConnection(profile.getId());
         } catch (Exception e) {
             e.printStackTrace();

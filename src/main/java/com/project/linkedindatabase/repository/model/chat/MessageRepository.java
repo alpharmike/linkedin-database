@@ -86,4 +86,12 @@ public class MessageRepository extends BaseRepository<Message,Long>  {
         return result;
     }
 
+
+    public ArrayList<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException {
+        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE chatId=?");
+        retrievePs.setLong(1, chatId);
+        ResultSet resultSet = retrievePs.executeQuery();
+        return this.convertAllSql(resultSet);
+    }
+
 }

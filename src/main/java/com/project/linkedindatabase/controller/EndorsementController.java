@@ -3,6 +3,7 @@ package com.project.linkedindatabase.controller;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.skill.Endorsement;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
+import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +20,12 @@ import java.util.Map;
 public class EndorsementController {
     private final EndorsementService endorsementService;
     private final ProfileService profileService;
+    private final NotificationService notificationService;
 
-    public EndorsementController(EndorsementService endorsementService, ProfileService profileService) {
+    public EndorsementController(EndorsementService endorsementService, ProfileService profileService, NotificationService notificationService) {
         this.endorsementService = endorsementService;
         this.profileService = profileService;
+        this.notificationService = notificationService;
     }
 
     @CrossOrigin(origins = "*")
@@ -46,7 +48,6 @@ public class EndorsementController {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-
             endorsement.setEndorserId(profile.getId());
 
         } catch (Exception e) {
@@ -71,12 +72,12 @@ public class EndorsementController {
         if (duplicate)
         {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "you have endorsement it before ",new Exception("duplicate"));
+                    HttpStatus.BAD_REQUEST, "You have already endorsed it before ",new Exception("duplicate"));
         }
 
         try {
             endorsementService.save(endorsement);
-
+            notificationService.saveEndorsementNotification(endorsement.getEndorserId(), endorsement.getSkillId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(

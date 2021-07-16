@@ -12,6 +12,6 @@ public interface SkillService extends BaseService<Skill,Long> {
     public void update(Skill skill) throws SQLException;
     public void  saveMultipleSkill(List<String> skills, Profile profile) throws SQLException;
     public List<SkillPoJo> getAllSkillByProfileJson(Long profileId) throws SQLException;
-
+    public Skill getById(long id) throws SQLException;
     public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException;
 }
