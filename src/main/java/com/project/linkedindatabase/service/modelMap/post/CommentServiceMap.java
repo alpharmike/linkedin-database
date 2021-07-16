@@ -17,7 +17,7 @@ public class CommentServiceMap implements CommentService {
     private final CommentRepository commentRepository;
 
     public CommentServiceMap(LikeCommentService likeCommentService) throws SQLException {
-        this.commentRepository = new CommentRepository(likeCommentService);
+        this.commentRepository = new CommentRepository(likeCommentService, profileService);
     }
 
     @Override

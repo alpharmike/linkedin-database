@@ -5,18 +5,18 @@ import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.post.Comment;
 import com.project.linkedindatabase.domain.post.Post;
 import com.project.linkedindatabase.jsonToPojo.CommentJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import com.project.linkedindatabase.utils.DateConverter;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +24,14 @@ import java.util.List;
 public class CommentRepository extends BaseRepository<Comment,Long>  {
 
     private final LikeCommentService likeCommentService;
+    private final ProfileService profileService;
 
 
-    public CommentRepository(LikeCommentService likeCommentService) throws SQLException {
+    public CommentRepository(LikeCommentService likeCommentService, ProfileService profileService) throws SQLException {
         super(Comment.class);
 
         this.likeCommentService = likeCommentService;
+        this.profileService = profileService;
     }
 
 
@@ -111,6 +113,8 @@ public class CommentRepository extends BaseRepository<Comment,Long>  {
 
             CommentJson commentJson = CommentJson.convertToJson(i);
             likeCommentService.setAllLikeComment(commentJson);
+            Profile profile = profileService.findById(commentJson.getProfileId());
+            commentJson.setProfileJson(ProfileJson.convertToJson(profile));
             commentJsonList.add(commentJson);
         }
 

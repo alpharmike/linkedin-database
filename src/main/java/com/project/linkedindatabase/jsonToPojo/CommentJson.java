@@ -22,6 +22,7 @@ public class CommentJson {
     private Long id;
 
     private Long profileId;
+    private ProfileJson profileJson;
 
     private Long postId;
 
@@ -34,6 +35,8 @@ public class CommentJson {
     private String body;
 
     private String createdDate;
+
+
 
     public static CommentJson convertToJson(Comment comment)
     {
