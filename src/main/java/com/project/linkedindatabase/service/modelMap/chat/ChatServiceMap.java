@@ -103,4 +103,9 @@ public class ChatServiceMap implements ChatService {
     public HashMap<Chat, Message> searchMessages(String searchKey, long id) throws SQLException, ParseException {
         return chatRepository.searchMessages(searchKey, id);
     }
+
+    @Override
+    public Chat findByProfileIds(long profileId1, long profileId2) throws SQLException {
+        return chatRepository.findByProfileIds(profileId1, profileId2);
+    }
 }
