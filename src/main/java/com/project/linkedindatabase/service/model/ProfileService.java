@@ -17,6 +17,7 @@ public interface ProfileService extends BaseService<Profile,Long> {
 
     public void update(Profile profileForUpdate) throws Exception;
 
+    public List<Profile> searchOtherBaseName(String name)throws Exception;
     public List<Profile> searchOtherBaseLanguage( String language) throws SQLException;
     public List<Profile> searchOtherBaseLocation( String location) throws SQLException;
     public ProfileJson getProfileByIdJson(Long id) throws Exception;
@@ -25,4 +26,5 @@ public interface ProfileService extends BaseService<Profile,Long> {
     public void removeCurrentPosition(Profile profile) throws Exception ;
     public void removeCurrentEducation(Profile profile) throws Exception ;
     public void setCurrentPosition(Profile profile) throws Exception;
+
 }

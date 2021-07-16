@@ -433,6 +433,23 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         return allObject;
     }
 
+    public List<Profile> searchOtherBaseName(String name) throws SQLException {
+
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.tableName+" where firstName like ? " +
+                "or lastName like ? or CONCAT( firstName,' ', lastName) like ? or username like ?");
+        ps.setString(1, name+"%");
+        ps.setString(2, name+"%");
+        ps.setString(3, name+"%");
+        ps.setString(4, name+"%");
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
 
     public ProfileJson getProfileByIdJson(Long id) throws Exception
     {
@@ -511,8 +528,6 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         savePs.execute();
 
     }
-
-
 
 
 
