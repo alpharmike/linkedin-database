@@ -48,6 +48,25 @@ public class BackgroundController {
 
     }
 
+    @GetMapping("/background-json")
+    public List<BackgroundJson> getBackgroundJson(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+            List<BackgroundJson> backgroundJsonList = backgroundService.findByProfileIdJson(profile.getId());
+            return backgroundJsonList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
     @GetMapping("/background/{id}")
     public List<Background> getBackGroundByProfileId(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
@@ -58,6 +77,25 @@ public class BackgroundController {
 
 
             return backgroundService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+    @GetMapping("/background-json/{id}")
+    public List<BackgroundJson> getBackgroundJsonByProfileId(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+            List<BackgroundJson> backgroundJsonList = backgroundService.findByProfileIdJson(id);
+            return backgroundJsonList;
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(

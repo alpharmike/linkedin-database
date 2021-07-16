@@ -306,6 +306,7 @@ public class ProfileRestController {
 
         try {
             profile.setCurrentPositionId(id);
+
             profileService.setCurrentPosition(profile);
         }catch (Exception e)
         {
@@ -333,7 +334,7 @@ public class ProfileRestController {
         }
 
         try {
-            profileService.setCurrentPosition(profile);
+            profileService.removeCurrentPosition(profile);
         }catch (Exception e)
         {
             e.printStackTrace();

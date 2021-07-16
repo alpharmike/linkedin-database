@@ -146,16 +146,20 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
 
     //check for not be null
     public BackgroundJson findByIdAndProfileIdJson(Long profileId,Long id) throws Exception {
+
         PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where id = ? and profileId = ?");
+
         ps.setLong(1,id);
         ps.setLong(2,profileId);
         ResultSet resultSet = ps.executeQuery();
+
         if (!resultSet.isBeforeFirst())
         {
             return null;
         }
         resultSet.next();
         Background background = convertSql(resultSet);
+
         if (background == null)
             return null;
         return convertToJson(background);

@@ -14,6 +14,7 @@ import java.util.Calendar;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ProfileJson {
 
     private Long id;

@@ -443,6 +443,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     public ProfileJson convertToJson(Profile profile) throws Exception {
         ProfileJson profileJson = ProfileJson.convertToJson(profile);
+
         if(profileJson.getCurrentEducationId() != null) {
             BackgroundJson education = backgroundService.findByIdAndProfileIdJson(profileJson.getId(), profileJson.getCurrentEducationId());
             profileJson.setCurrentEducation(education);
@@ -462,7 +463,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     }
 
     public void setCurrentPosition(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentPositionId = ?" +
                 " where id = ?;");
 
         savePs.setLong(1,profile.getCurrentPositionId());
@@ -472,7 +473,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     }
     public void setCurrentEducation(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentEducationId = ?" +
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set  currentEducationId = ?" +
                 " where id = ?;");
         savePs.setLong(1,profile.getCurrentEducationId());
         savePs.setLong(2,profile.getId());
@@ -481,21 +482,22 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
     }
     public void removeCurrentPosition(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentPositionId = ? " +
                 " where id = ?;");
 
-        savePs.setLong(1,0);
+        savePs.setLong(1,0L);
         savePs.setLong(2,profile.getId());
+
 
         savePs.execute();
     }
     public void removeCurrentEducation(Profile profile) throws Exception {
-        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + "  currentPositionId = ?" +
+        PreparedStatement savePs = this.conn.prepareStatement("UPDATE " + this.tableName + " set currentEducationId = ?" +
                 " where id = ?;");
 
-        savePs.setLong(1,0);
+        savePs.setLong(1,0L);
         savePs.setLong(2,profile.getId());
-
+        System.out.println(savePs.toString());
         savePs.execute();
 
     }
