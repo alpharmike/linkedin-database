@@ -66,6 +66,11 @@ public class SkillServiceMap implements SkillService {
     }
 
     @Override
+    public Skill getById(long id) throws SQLException {
+        return skillRepository.getById(id);
+    }
+
+    @Override
     public List<Skill> getAllSkillByProfile(Long profileId) throws SQLException {
         return skillRepository.getAllSkillByProfile(profileId);
     }
