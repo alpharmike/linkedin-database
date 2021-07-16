@@ -204,6 +204,62 @@ public class ConnectController {
 
     }
 
+    @GetMapping("/people-you-might-know")
+    public List<Profile> peopleYouMightKnow(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Long profileId;
+        try {
+            profileId = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+
+            return connectService.profileYouMightKnow(profileId);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @GetMapping("/network")
+    public List<Profile> getYourNetWork(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Long profileId;
+        try {
+            profileId = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+
+            return connectService.getAllPeopleInConnection(profileId);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
     private List<Map<String, Object>> convertToApiData( List<Connect> connects,List<ConnectType> types) throws Exception {
 
         List<Map<String,Object>> map = new ArrayList<>();

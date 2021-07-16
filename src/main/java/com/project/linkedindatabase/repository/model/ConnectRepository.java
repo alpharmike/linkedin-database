@@ -12,6 +12,7 @@ import com.project.linkedindatabase.repository.types.ConnectTypeRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
 import com.project.linkedindatabase.service.types.ConnectTypeService;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -19,7 +20,9 @@ import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConnectRepository extends BaseRepository<Connect,Long> {
@@ -302,6 +305,106 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return connectJsons;
     }
 
+    public List<Profile> profileYouMightKnow(Long id) throws Exception {
+        PreparedStatement ps = this.conn.prepareStatement(
+                "select * from profile as pf where pf.id not in (" +
+                        " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )" +
+                        ") and  " +
+                "exists (select * from connect as ct where  " +
+                "((ct.profileIdReceive = pf.id and ct.profileIdRequest in (" +
+                        " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )" +
+                        ")) or (ct.profileIdRequest = pf.id and ct.profileIdReceive in (" +
+                        " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )" +
+                        ")))  " +
+                "and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept'));"
+        );
+
+        ps.setLong(1,id);
+        ps.setLong(2,id);
+        ps.setLong(3,id);
+        ps.setLong(4,id);
+        ps.setLong(5,id);
+        ps.setLong(6,id);
+        ps.setLong(7,id);
+        ps.setLong(8,id);
+        ps.setLong(9,id);
+
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(profileService.convertSql(resultSet));
+        }
+        return allObject;
+
+
+    }
+
+    public List<Map<String,Object>> searchBaseOfConnection(Long id, String name) throws Exception {
+        PreparedStatement ps = this.conn.prepareStatement("((select profile.*,(RT.num +LF.num) as num from\n" +
+                "\n" +
+                "(select search.profileIdRequest as ser , count(goal.id) as num from connect as search,connect_type,connect as goal,profile as pf\n" +
+                "where search.profileIdRequest = ? and\n" +//1 id
+                "((search.profileIdReceive = goal.profileIdReceive and pf.id = goal.profileIdRequest and \n" +
+                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?))\n" +//2 3 4 5 name
+                "or (search.profileIdReceive = goal.profileIdRequest and pf.id = goal.profileIdReceive and \n" +
+                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?)))\n" +//6 7 8 9 name
+                "and search.profileIdRequest != goal.profileIdRequest and search.connectType = connect_type.id\n" +
+                "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdRequest) as LF ,\n" +
+                "\n" +
+                "(select search.profileIdReceive as ser , count(goal.id) as num from connect as search,connect_type,connect as goal,profile as pf\n" +
+                "where search.profileIdReceive = ? and\n" +//10 id
+                "((search.profileIdRequest = goal.profileIdReceive and pf.id = goal.profileIdRequest and \n" +
+                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?))\n" +// 11 12 13 14 name
+                "or (search.profileIdRequest = goal.profileIdRequest and pf.id = goal.profileIdReceive and \n" +
+                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?)))\n" +// 15 16 17 18 name
+                "and search.profileIdReceive != goal.profileIdReceive and search.connectType = connect_type.id\n" +
+                "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdReceive) as RT,profile\n" +
+                "where profile.id = RT.ser and RT.ser = LF.ser )\n" +
+                "union\n" +
+                "(select pf.*,0 as num from profile as pf where pf.id not in\n" +
+                " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )\n" +//19 20 21 id
+                ")) order by num"
+        );
+
+        ps.setLong(1,id);
+        ps.setString(2,name+"%");
+        ps.setString(3,name+"%");
+        ps.setString(4,name+"%");
+        ps.setString(5,name+"%");
+        ps.setString(6,name+"%");
+        ps.setString(7,name+"%");
+        ps.setString(8,name+"%");
+        ps.setString(9,name+"%");
+
+        ps.setLong(10,id);
+        ps.setString(11,name+"%");
+        ps.setString(12,name+"%");
+        ps.setString(13,name+"%");
+        ps.setString(14,name+"%");
+        ps.setString(15,name+"%");
+        ps.setString(16,name+"%");
+        ps.setString(17,name+"%");
+        ps.setString(18,name+"%");
+
+        ps.setLong(19,id);
+        ps.setLong(20,id);
+        ps.setLong(21,id);
+
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Map<String,Object> >allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            Map<String,Object>  objectMap = new HashMap<>();
+            objectMap.put("person",profileService.convertSql(resultSet));
+            Long mutualConnectionsCount = resultSet.getLong("num");
+            objectMap.put("mutualConnectionsCount",mutualConnectionsCount);
+            allObject.add(objectMap);
+        }
+        return allObject;
+
+
+    }
 
     public List<Connect> findAllPending(Long profileIdReceiver) throws SQLException {
         PreparedStatement ps = this.conn.prepareStatement("select * from " + this.tableName +  " as cn where " +
@@ -320,6 +423,30 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return allObject;
 
     }
+
+    @SneakyThrows
+    public List<Profile> getAllPeopleInConnection(Long profileId) throws SQLException {
+
+        PreparedStatement ps = this.conn.prepareStatement(
+                "select * from profile as p where p.id in " +
+                        "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
+                        " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') " +
+                        " union " +
+                        "select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in" +
+                        "  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') );"
+        );
+
+        ps.setLong(1,profileId);
+        ps.setLong(2,profileId);
+
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(profileService.convertSql(resultSet));
+        }
+        return allObject;
+    }
+
     public boolean exists(long profileIdRequest, long profileIdReceive) throws SQLException {
         return getRequest(profileIdRequest, profileIdReceive) != null;
     }

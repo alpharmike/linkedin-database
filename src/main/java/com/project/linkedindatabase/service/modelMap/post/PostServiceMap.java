@@ -9,7 +9,10 @@ import com.project.linkedindatabase.service.model.post.PostService;
 import com.project.linkedindatabase.service.types.ShowPostTypeService;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -64,5 +67,19 @@ public class PostServiceMap implements PostService {
     @Override
     public void DeleteByProfileId(Long profileId, Long id) throws Exception {
         postRepository.DeleteByProfileId(profileId,id);
+    }
+
+    @Override
+    public List<PostJson> getPostOfConnection(Long profileId) throws SQLException {
+
+        return postRepository.getPostOfConnection(profileId);
+    }
+    @Override
+    public List<PostJson> getPostOfConnectionLike(Long profileId) throws SQLException {
+        return postRepository.getPostOfConnectionLike(profileId);
+    }
+    @Override
+    public List<PostJson> getPostOfConnectionComment(Long profileId) throws SQLException {
+        return postRepository.getPostOfConnectionComment(profileId);
     }
 }

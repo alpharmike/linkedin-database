@@ -58,6 +58,57 @@ public class PostController {
 
     }
 
+    @GetMapping("/post/network")
+    public List<PostJson> getPostNetwork(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return postService.getPostOfConnection(profile.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+    @GetMapping("/post/network-comment")
+    public List<PostJson> getPostNetworkComment(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return postService.getPostOfConnectionComment(profile.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
+    @GetMapping("/post/network-like")
+    public List<PostJson> getPostNetworkLike(@RequestHeader Map<String, Object> jsonHeader) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return postService.getPostOfConnectionLike(profile.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+    }
+
 
     @PostMapping("/post")
     public void createPost(@RequestHeader Map<String, Object> jsonHeader,@RequestBody PostJson postJson) {

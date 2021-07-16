@@ -201,4 +201,64 @@ public class PostRepository extends BaseRepository<Post,Long>  {
 
         return postJson;
     }
+
+    public List<PostJson> getPostOfConnection(Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.profileId in" +
+                "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in " +
+                "(select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') " +
+                "union" +
+                " select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in " +
+                " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') );");
+        ps.setLong(1,profileId);
+        ps.setLong(2,profileId);
+        ResultSet resultSet = ps.executeQuery();
+        List<Post> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        List<PostJson> postJsonList = getAllDetailOfPost(allObject);
+
+        return postJsonList;
+    }
+    public List<PostJson> getPostOfConnectionLike(Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.profileId in " +
+                "(select lp.postId from like_post as lp where lp.profileId in" +
+                "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
+                " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')" +
+                " union" +
+                " select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in" +
+                "  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') )" +
+                ");");
+        ps.setLong(1,profileId);
+        ps.setLong(2,profileId);
+        ResultSet resultSet = ps.executeQuery();
+        List<Post> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        List<PostJson> postJsonList = getAllDetailOfPost(allObject);
+
+        return postJsonList;
+    }
+    public List<PostJson> getPostOfConnectionComment(Long profileId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.profileId in " +
+                "(select cmt.postId from comment as cmt where cmt.profileId in " +
+                "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
+                " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') " +
+                "union " +
+                "select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in" +
+                "  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') )" +
+                ");");
+        ps.setLong(1,profileId);
+        ps.setLong(2,profileId);
+        ResultSet resultSet = ps.executeQuery();
+        List<Post> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        List<PostJson> postJsonList = getAllDetailOfPost(allObject);
+
+        return postJsonList;
+    }
 }
+

@@ -6,6 +6,7 @@ import com.project.linkedindatabase.repository.model.ProfileRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -60,6 +61,11 @@ public class ProfileServiceMap implements ProfileService {
     @Override
     public void update(Profile profile) throws Exception {
         profileRepository.update( profile);
+    }
+
+    @Override
+    public Profile convertSql(ResultSet resultSet) throws Exception {
+        return profileRepository.convertSql(resultSet);
     }
 
     @Override

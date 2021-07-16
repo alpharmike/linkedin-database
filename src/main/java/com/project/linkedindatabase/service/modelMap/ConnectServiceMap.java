@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.service.modelMap;
 
 import com.project.linkedindatabase.domain.Connect;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.jsonToPojo.ConnectJson;
 import com.project.linkedindatabase.repository.model.ConnectRepository;
 import com.project.linkedindatabase.service.model.ConnectService;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConnectServiceMap implements ConnectService {
@@ -98,5 +100,22 @@ public class ConnectServiceMap implements ConnectService {
     @Override
     public List<ConnectJson> getAllPending(Long profileIdReceiver) throws SQLException {
         return connectRepository.getAllPending(profileIdReceiver);
+    }
+
+    @Override
+    public List<Profile> profileYouMightKnow(Long id) throws Exception
+    {
+        return connectRepository.profileYouMightKnow(id);
+    }
+
+    @Override
+    public  List<Map<String,Object>> searchBaseOfConnection(Long id, String name) throws Exception {
+        return connectRepository.searchBaseOfConnection(id,name);
+    }
+
+    @Override
+    public List<Profile> getAllPeopleInConnection(Long profileId) throws SQLException
+    {
+        return connectRepository.getAllPeopleInConnection(profileId);
     }
 }

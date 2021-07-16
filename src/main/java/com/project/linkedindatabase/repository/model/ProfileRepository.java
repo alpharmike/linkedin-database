@@ -478,7 +478,6 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         return profileJson;
 
     }
-
     public void setCurrentPosition(Profile profile) throws Exception {
         BackgroundJson backgroundJson = backgroundService.findByIdAndProfileIdJson(profile.getId(),profile.getCurrentPositionId());
         if (backgroundJson == null)

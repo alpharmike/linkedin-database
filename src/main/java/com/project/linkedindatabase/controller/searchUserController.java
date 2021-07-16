@@ -4,6 +4,7 @@ package com.project.linkedindatabase.controller;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.BackgroundService;
+import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,12 @@ import java.util.Map;
 public class searchUserController {
 
     private final ProfileService profileService;
+    private final ConnectService connectService;
     private final BackgroundService backgroundService;
 
-    public searchUserController(ProfileService profileService, BackgroundService backgroundService) {
+    public searchUserController(ProfileService profileService, ConnectService connectService, BackgroundService backgroundService) {
         this.profileService = profileService;
+        this.connectService = connectService;
         this.backgroundService = backgroundService;
     }
 
@@ -151,6 +154,37 @@ public class searchUserController {
 
     }
 
+    /*
+    sortedName = key
+
+     */
+    @PostMapping("/search-sortedName")
+    public List<Map<String,Object>> getBaseSortedName(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String,Object> search) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+
+            Long profileId = profile.getId();
+            String name = (String) search.get("sortedName");
+            return connectService.searchBaseOfConnection(profileId,name);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
     @PostMapping("/search")
     public List<Profile> filterUsers(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String,Object> search) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
@@ -178,6 +212,7 @@ public class searchUserController {
                     return profileService.searchOtherBaseLanguage(keyword);
                 case "name":
                     return profileService.searchOtherBaseName(keyword);
+
                 default:
                     return new ArrayList<>();
             }

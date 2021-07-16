@@ -5,6 +5,7 @@ import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.service.BaseService;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface ProfileService extends BaseService<Profile,Long> {
     public List<Profile> searchOtherBaseCurrentCompany(String companyName) throws Exception;
 
     public void update(Profile profileForUpdate) throws Exception;
+    public Profile convertSql(ResultSet resultSet) throws Exception;
+
 
     public List<Profile> searchOtherBaseName(String name)throws Exception;
     public List<Profile> searchOtherBaseLanguage( String language) throws SQLException;

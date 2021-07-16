@@ -1,11 +1,13 @@
 package com.project.linkedindatabase.service.model;
 
 import com.project.linkedindatabase.domain.Connect;
+import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.jsonToPojo.ConnectJson;
 import com.project.linkedindatabase.service.BaseService;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public interface ConnectService extends BaseService<Connect,Long> {
 
@@ -23,6 +25,10 @@ public interface ConnectService extends BaseService<Connect,Long> {
     public Long getNumberOfConnection(Long profileId) throws Exception;
 
     public List<ConnectJson> getAllPending(Long profileIdReceiver) throws SQLException;
+    public List<Profile> profileYouMightKnow(Long id) throws Exception;
+    public List<Map<String,Object>> searchBaseOfConnection(Long id, String name) throws Exception;
+
+    public List<Profile> getAllPeopleInConnection(Long profileId) throws SQLException;
 
 
 
