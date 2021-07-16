@@ -1,6 +1,7 @@
 package com.project.linkedindatabase.service.modelMap;
 
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.model.ProfileRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
 import org.springframework.stereotype.Service;
@@ -52,8 +53,8 @@ public class ProfileServiceMap implements ProfileService {
     }
 
     @Override
-    public List<Profile> searchOtherBaseCurrentCompany(Long id,String companyName) throws Exception {
-        return profileRepository.searchOtherBaseCurrentCompany(id,companyName);
+    public List<Profile> searchOtherBaseCurrentCompany(String companyName) throws Exception {
+        return profileRepository.searchOtherBaseCurrentCompany(companyName);
     }
 
     @Override
@@ -62,8 +63,18 @@ public class ProfileServiceMap implements ProfileService {
     }
 
     @Override
-    public List<Profile> searchOtherBaseLanguage(Long profileId, String language) throws SQLException {
-        return profileRepository.searchOtherBaseLanguage( profileId, language) ;
+    public List<Profile> searchOtherBaseLanguage( String language) throws SQLException {
+        return profileRepository.searchOtherBaseLanguage( language) ;
+    }
+
+    @Override
+    public List<Profile> searchOtherBaseLocation(String location) throws SQLException {
+        return profileRepository.searchOtherBaseLocation(location);
+    }
+
+    @Override
+    public ProfileJson getProfileByIdJson(Long id) throws Exception {
+        return profileRepository.getProfileByIdJson(id);
     }
 
 

@@ -8,7 +8,10 @@ import com.project.linkedindatabase.domain.Type.FormerNameVisibilityType;
 import com.project.linkedindatabase.domain.Type.Industry;
 import com.project.linkedindatabase.domain.Type.PhoneType;
 import com.project.linkedindatabase.domain.accomplishment.Language;
+import com.project.linkedindatabase.jsonToPojo.BackgroundJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.types.FormerNameVisibilityTypeService;
 import com.project.linkedindatabase.service.types.IndustryService;
 import com.project.linkedindatabase.service.types.PhoneTypeService;
@@ -20,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
     private final PhoneTypeService phoneTypeService;
     private final IndustryService industryService;
     private final FormerNameVisibilityTypeService formerNameVisibilityTypeService;
+    private final BackgroundService backgroundService;
 
 
 
@@ -42,11 +45,12 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
 
     public ProfileRepository(PhoneTypeService phoneTypeService, IndustryService industryService,
-                             FormerNameVisibilityTypeService formerNameVisibilityTypeService) throws SQLException {
+                             FormerNameVisibilityTypeService formerNameVisibilityTypeService, BackgroundService backgroundService) throws SQLException {
         super(Profile.class);
         this.phoneTypeService = phoneTypeService;
         this.industryService = industryService;
         this.formerNameVisibilityTypeService = formerNameVisibilityTypeService;
+        this.backgroundService = backgroundService;
     }
 
 
@@ -271,17 +275,18 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         return (size == 0 );
     }
 
-    public List<Profile> searchOtherBaseCurrentCompany(Long id,String companyName) throws SQLException {
+    public List<Profile> searchOtherBaseCurrentCompany(String companyName) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select " + this.tableName +".* from "+ this.tableName +" , " +
                 BaseEntity.getTableName(Background.class) + " , "  + BaseEntity.getTableName(BackgroundType.class) + " " +
                 " where "+ this.tableName +".id = " + BaseEntity.getTableName(Background.class) + ".profileId and " +
                 this.tableName +".currentPositionId = " + BaseEntity.getTableName(Background.class) + ".id and" +
                 " " + BaseEntity.getTableName(BackgroundType.class) + ".id = " + BaseEntity.getTableName(Background.class) +
                 ".backgroundType and " + BaseEntity.getTableName(BackgroundType.class) + ".name = 'Work experience' and" +
-                " " + BaseEntity.getTableName(Background.class) + ".title like ?  and "+this.tableName+".id != ?");
+                " " + BaseEntity.getTableName(Background.class) + ".title like ?  ");
         ps.setString(1, companyName+"%");
-        ps.setLong(2, id);
 
+
+        System.out.println(ps.toString());
 
         ResultSet resultSet = ps.executeQuery();
         List<Profile> allObject = new ArrayList<>();
@@ -397,11 +402,27 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         savePs.execute();
     }
 
-    public List<Profile> searchOtherBaseLanguage(Long profileId, String language) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from "+this.tableName+" as pof where exists " +
-                "(select * from "+BaseEntity.getTableName(Language.class)+" as lan where lan.language like ? and lan.profile_id = ? )");
+    public List<Profile> searchOtherBaseLanguage( String language) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.tableName+" as pf where exists " +
+                "(select * from "+BaseEntity.getTableName(Language.class)+" as lan where lan.language like ? and lan.profile_id = pf.id )");
         ps.setString(1, language+"%");
-        ps.setLong(2, profileId);
+
+
+        System.out.println(ps.toString());
+        ResultSet resultSet = ps.executeQuery();
+        List<Profile> allObject = new ArrayList<>();
+        while (resultSet.next()) {
+            allObject.add(convertSql(resultSet));
+        }
+        return allObject;
+    }
+
+
+    public List<Profile> searchOtherBaseLocation( String location) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from "+this.tableName+" where locationInCountry like ? or country like ? or CONCAT( country,' ', locationInCountry) like ?");
+        ps.setString(1, location+"%");
+        ps.setString(2, location+"%");
+        ps.setString(3, location+"%");
 
 
         ResultSet resultSet = ps.executeQuery();
@@ -411,4 +432,38 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         }
         return allObject;
     }
+
+
+    public ProfileJson getProfileByIdJson(Long id) throws Exception
+    {
+        Profile profile = findById(id);
+        return convertToJson(profile);
+    }
+
+
+    public ProfileJson convertToJson(Profile profile) throws Exception {
+        ProfileJson profileJson = ProfileJson.convertToJson(profile);
+        if(profileJson.getCurrentEducationId() != null) {
+            BackgroundJson education = backgroundService.findByIdAndProfileIdJson(profileJson.getId(), profileJson.getCurrentEducationId());
+            profileJson.setCurrentEducation(education);
+        }
+        if(profileJson.getCurrentPositionId() != null){
+            BackgroundJson work = backgroundService.findByIdAndProfileIdJson(profileJson.getId(),profileJson.getCurrentPositionId());
+            profileJson.setCurrentPosition(work);}
+
+        FormerNameVisibilityType fnvt = formerNameVisibilityTypeService.findById(profileJson.getFormerNameVisibilityType());
+        profileJson.setFormerNameVisibilityTypeName(fnvt.getName());
+
+        PhoneType phoneType = phoneTypeService.findById(profileJson.getPhoneType());
+        profileJson.setPhoneTypeName(phoneType.getName());
+
+        return profileJson;
+
+    }
+
+
+
+
+
+
 }

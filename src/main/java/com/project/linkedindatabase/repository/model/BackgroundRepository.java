@@ -4,7 +4,9 @@ import com.project.linkedindatabase.domain.Background;
 import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.BackgroundType;
+import com.project.linkedindatabase.jsonToPojo.BackgroundJson;
 import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.service.types.BackgroundTypeService;
 import com.project.linkedindatabase.utils.DateConverter;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,11 @@ import java.util.List;
 @Service
 public class BackgroundRepository extends BaseRepository<Background,Long>  {
 
-    public BackgroundRepository() throws SQLException {
+    private final BackgroundTypeService backgroundTypeService;
+
+    public BackgroundRepository(BackgroundTypeService backgroundTypeService) throws SQLException {
         super(Background.class);
+        this.backgroundTypeService = backgroundTypeService;
     }
 
 
@@ -136,5 +141,45 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         ps.setLong(1, background.getId());
         ps.setLong(2, background.getProfileId());
         ps.execute();
+    }
+
+
+    //check for not be null
+    public BackgroundJson findByIdAndProfileIdJson(Long profileId,Long id) throws Exception {
+        PreparedStatement ps = conn.prepareStatement("select * from " + this.getTableName() + " where id = ? and profileId = ?");
+        ps.setLong(1,id);
+        ps.setLong(2,profileId);
+        ResultSet resultSet = ps.executeQuery();
+        if (!resultSet.isBeforeFirst())
+        {
+            return null;
+        }
+        resultSet.next();
+        Background background = convertSql(resultSet);
+        if (background == null)
+            return null;
+        return convertToJson(background);
+    }
+
+    public List<BackgroundJson> findByProfileIdJson(Long profileId) throws Exception {
+        List<Background>  backgroundList=findByProfileId(profileId);
+        List<BackgroundJson> backgroundJsonList = new ArrayList<>();
+
+
+        for (Background i: backgroundList)
+        {
+            backgroundJsonList.add(convertToJson(i));
+
+        }
+
+        return backgroundJsonList;
+    }
+
+    public BackgroundJson convertToJson(Background background) throws Exception {
+        BackgroundJson backgroundJson = BackgroundJson.convertToBackGround(background);
+        BackgroundType backgroundType = backgroundTypeService.findById(backgroundJson.getBackgroundType());
+        backgroundJson.setBackgroundTypeName(backgroundType.getName());
+        return backgroundJson;
+
     }
 }

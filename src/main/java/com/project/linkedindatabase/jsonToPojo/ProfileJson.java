@@ -25,6 +25,7 @@ public class ProfileJson {
     private String phoneNumber;
 
     private Long phoneType;// foreign key to phoneType ==>enum
+    private String phoneTypeName;
 
 
     private String password;
@@ -36,14 +37,17 @@ public class ProfileJson {
     private String formerName;
 
     private Long formerNameVisibilityType;// foreign key to formerNameVisibility ==>enum
+    private String formerNameVisibilityTypeName;
 
     private String headline;
 
     private Long currentPositionId;// foreign key to Experience table
+    private BackgroundJson currentPosition;
 
     private Boolean showCurrentPositionId;
 
-    private Long currentEducationId;// foreign key to Education table
+    private Long currentEducationId;
+    private BackgroundJson currentEducation;
 
     private Boolean showCurrentEducationId;
 
@@ -52,6 +56,7 @@ public class ProfileJson {
     private String locationInCountry;
 
     private Long industry;// foreign key to  industry
+    private String industryName;
 
     private String address;
 
