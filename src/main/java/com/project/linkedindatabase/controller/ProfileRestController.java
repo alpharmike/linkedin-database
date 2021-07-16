@@ -44,6 +44,58 @@ public class ProfileRestController {
         return profile;
     }
 
+    @CrossOrigin(origins = "*")
+    @GetMapping("/profile-json")
+    public ProfileJson getProfileJson(@RequestHeader Map<String, Object> jsonHeader){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+        ProfileJson profileJson;
+        try {
+            profileJson = profileService.getProfileByIdJson(profile.getId());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        return profileJson;
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/profile-json/{id}")
+    public ProfileJson getProfileJsonById(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id){
+        log.info(jsonHeader.toString());
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+        ProfileJson profileJson;
+        try {
+            profileJson = profileService.getProfileByIdJson(id);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        return profileJson;
+    }
+
     @PostMapping("/sign-up")
     public Profile newEmployee(@RequestBody ProfileJson profileJson) throws SQLException {
         Profile profile;

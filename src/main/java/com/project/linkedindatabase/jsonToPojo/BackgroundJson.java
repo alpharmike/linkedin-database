@@ -19,6 +19,7 @@ import java.text.ParseException;
 public class BackgroundJson {
 
     private Long BackgroundType;
+    private String BackgroundTypeName;
     private String Description;
     private Long ProfileId;
     private String StartDate;
@@ -36,8 +37,22 @@ public class BackgroundJson {
         background.setId(getId());
         background.setStartDate(DateConverter.parse(getStartDate(),"yyyy-MM-dd"));
         if (endDate != null && !endDate.equals(""))
-            background.setStartDate(DateConverter.parse(getStartDate(),"yyyy-MM-dd"));
+            background.setStartDate(DateConverter.parse(getEndDate(),"yyyy-MM-dd"));
         return background;
+    }
+
+
+    public static BackgroundJson convertToBackGround(Background background) throws ParseException {
+        BackgroundJson backgroundJson = new BackgroundJson();
+        backgroundJson.setBackgroundType(background.getBackgroundType());
+        backgroundJson.setProfileId(background.getProfileId());
+        backgroundJson.setDescription(background.getDescription());
+        backgroundJson.setTitle(background.getTitle());
+        backgroundJson.setId(background.getId());
+        backgroundJson.setStartDate(DateConverter.convertDate(background.getStartDate(),"yyyy-MM-dd"));
+        if (background.getEndDate() != null && !background.getEndDate().equals(""))
+            backgroundJson.setStartDate(DateConverter.convertDate(background.getEndDate(),"yyyy-MM-dd"));
+        return backgroundJson;
     }
 
 
