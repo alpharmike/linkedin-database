@@ -124,7 +124,7 @@ public class ChatController {
             return null;
         }
     }
-    @CrossOrigin(origins = "*")
+    /*@CrossOrigin(origins = "*")
     @GetMapping("/chats/search-messages/{searchKey}")
     public ArrayList<Chat> search(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
@@ -135,5 +135,5 @@ public class ChatController {
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 }

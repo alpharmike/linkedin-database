@@ -23,4 +23,12 @@ public class DateConverter {
         cal.setTime(date);
         return cal;
     }
+
+    public static Calendar getCurrentTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
 }

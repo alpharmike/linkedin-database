@@ -1,5 +1,6 @@
 package com.project.linkedindatabase.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.linkedindatabase.annotations.Table;
 import com.project.linkedindatabase.domain.BaseEntity;
 import lombok.Getter;
@@ -22,5 +23,6 @@ public class Comment extends BaseEntity {
 
     private String body;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Calendar createdDate;
 }

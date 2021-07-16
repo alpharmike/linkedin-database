@@ -70,7 +70,7 @@ public class PostJson {
         post.setSharedId(getSharedId());
         post.setShowPostType(getShowPostType());
         post.setBody(getBody());
-        post.setCreatedDate(DateConverter.parse(getCreatedDate(),"yyyy-MM-dd hh:mm:ss"));
+        post.setCreatedDate(DateConverter.getCurrentTime());
         post.setFile(getFile());
         return post;
     }

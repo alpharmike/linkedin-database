@@ -58,7 +58,7 @@ public class CommentJson {
         comment.setPostId(getPostId());
         comment.setReCommentId(getReCommentId());
         comment.setBody(getBody());
-        comment.setCreatedDate(DateConverter.parse(getCreatedDate(), "yyyy-MM-dd HH:mm:ss"));
+        comment.setCreatedDate(DateConverter.getCurrentTime());
 
         return comment;
     }

@@ -194,7 +194,7 @@ public class PostController {
 
     }
 
-    @PostMapping("/post/Like")
+    @PostMapping("/post/like")
     public void createLikePost(@RequestHeader Map<String, Object> jsonHeader,@RequestBody LikePost likePost) throws SQLException {
 
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
@@ -240,7 +240,7 @@ public class PostController {
 
     }
 
-    @DeleteMapping("/post/Like/{id}")
+    @DeleteMapping("/post/like/{id}")
     public void deleteLikePost(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 

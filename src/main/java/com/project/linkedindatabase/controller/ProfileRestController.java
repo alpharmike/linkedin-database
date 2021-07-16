@@ -210,7 +210,7 @@ public class ProfileRestController {
     }
 
     @GetMapping("/get-profile/username/{username}")
-    public Profile getProfileByUsername(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "username") String userName){
+    public ProfileJson getProfileByUsername(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "username") String userName){
         log.info(jsonHeader.toString());
         Profile profile;
         try {
@@ -225,7 +225,8 @@ public class ProfileRestController {
 
         try {
 
-            return  profileService.findByUsername(userName);
+            Profile userProfile = profileService.findByUsername(userName);
+            return profileService.getProfileByIdJson(userProfile.getId());
         }catch (Exception e)
         {
             e.printStackTrace();
