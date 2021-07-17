@@ -242,27 +242,35 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         List<ChatJson> chatJsons = new ArrayList<>();
         for (Chat i: chats)
         {
-            chatJsons.add(convertToJson(i));
+            chatJsons.add(convertToJson(i,profileId));
         }
         return chatJsons;
 
     }
 
-    public ChatJson getChatByChatId(Long chatId) throws SQLException {
+    public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException {
         Chat chat = findById(chatId);
         if (chat != null)
-            return convertToJson(chat);
+            return convertToJson(chat,userIdRequest);
         return null;
     }
 
-    public ChatJson convertToJson(Chat chat) throws SQLException {
+    public ChatJson convertToJson(Chat chat,Long userIdRequest) throws SQLException {
         ChatJson chatJson = ChatJson.convertToJson(chat);
+
         Profile profile1 = profileService.findById(chatJson.getMyProfileId());
         Profile profile2 = profileService.findById(chatJson.getOtherProfileId());
         List<MessageJson> messageJsons = messageService.getAllMessageByChatIdJson(chatJson.getId());
 
-        chatJson.setMyProfile(ProfileJson.convertToJson(profile1));
-        chatJson.setOtherProfile(ProfileJson.convertToJson(profile2));
+        if (profile1.getId() == userIdRequest) {
+            chatJson.setMyProfile(ProfileJson.convertToJson(profile1));
+            chatJson.setOtherProfile(ProfileJson.convertToJson(profile2));
+        }else
+        {
+            chatJson.setMyProfile(ProfileJson.convertToJson(profile2));
+            chatJson.setOtherProfile(ProfileJson.convertToJson(profile1));
+        }
+
         chatJson.setMessageJsons(messageJsons);
 
         return chatJson;

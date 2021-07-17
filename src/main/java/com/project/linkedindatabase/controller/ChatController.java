@@ -242,7 +242,7 @@ public class ChatController {
         Profile profile;
         try {
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            return chatService.getChatByChatId(id);
+            return chatService.getChatByChatId(id,profile.getId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);

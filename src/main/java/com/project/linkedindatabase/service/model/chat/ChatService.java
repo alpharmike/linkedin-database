@@ -33,7 +33,7 @@ public interface ChatService extends BaseService<Chat,Long> {
     public List<Chat> getAllChatByProfileId(Long profileId) throws SQLException ;
     public List<ChatJson> getAllChatByProfileIdJson(Long profileId) throws SQLException ;
 
-    public ChatJson getChatByChatId(Long chatId) throws SQLException ;
+    public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException ;
 
 
 }

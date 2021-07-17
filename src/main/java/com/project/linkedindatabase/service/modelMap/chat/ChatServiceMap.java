@@ -127,7 +127,7 @@ public class ChatServiceMap implements ChatService {
     }
 
     @Override
-    public ChatJson getChatByChatId(Long chatId) throws SQLException {
-        return chatRepository.getChatByChatId(chatId);
+    public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException {
+        return chatRepository.getChatByChatId(chatId,userIdRequest);
     }
 }
