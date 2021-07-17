@@ -3,6 +3,7 @@ package com.project.linkedindatabase.service.modelMap.post;
 import com.project.linkedindatabase.domain.post.Comment;
 import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.repository.model.post.CommentRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.post.CommentService;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,10 @@ import java.util.List;
 public class CommentServiceMap implements CommentService {
 
     private final CommentRepository commentRepository;
-
-    public CommentServiceMap(LikeCommentService likeCommentService) throws SQLException {
+    
+    public CommentServiceMap(LikeCommentService likeCommentService, ProfileService profileService) throws SQLException {
         this.commentRepository = new CommentRepository(likeCommentService, profileService);
+
     }
 
     @Override

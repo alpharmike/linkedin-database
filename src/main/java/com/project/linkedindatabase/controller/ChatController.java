@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -126,7 +127,7 @@ public class ChatController {
     }
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/search-messages/{searchKey}")
-    public ArrayList<Chat> searchForMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
+    public HashMap<Chat, Message> searchForMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
