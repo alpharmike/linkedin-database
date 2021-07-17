@@ -5,6 +5,7 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.ConnectService;
+import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.accomplishment.AccomplishmentService;
 import com.project.linkedindatabase.service.model.accomplishment.LanguageService;
@@ -60,6 +61,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final SkillService skillService;
     private final EndorsementService endorsementService;
 
+    private NotificationService notificationService;
+
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
                      FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
@@ -70,7 +73,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                      BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService,
                      MessageService messageService, LikeCommentService likeCommentService,
                      CommentService commentService, LikePostService likePostService, PostService postService,
-                     SkillService skillService, EndorsementService endorsementService) {
+                     SkillService skillService, EndorsementService endorsementService, NotificationService notificationService) {
 
 
 
@@ -100,6 +103,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         this.postService = postService;
         this.skillService = skillService;
         this.endorsementService = endorsementService;
+        this.notificationService = notificationService;
     }
 
 
@@ -140,6 +144,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.commentService.createTable();
            this.likeCommentService.createTable();
            this.likePostService.createTable();
+
+           this.notificationService.createTable();
 
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();

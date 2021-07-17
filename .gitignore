@@ -33,4 +33,4 @@ build/
 .vscode/
 
 
-./src/main/java/com/project/linkedindatabase/connection/DataSourceConnector.java
+src/main/java/com/project/linkedindatabase/connection/DataSourceConnector.java
