@@ -55,7 +55,7 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/chat-token/{id}")
-    public void createChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id){
+    public Chat createChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
@@ -84,20 +84,19 @@ public class ChatController {
                     HttpStatus.BAD_REQUEST, "There is a problem with data ",e);
         }
 
-        if (isThereChat)
-        {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is chat already ",new Exception("duplicate"));
-        }
+
 
         try {
 
+            if (!isThereChat){
             Chat chat = new Chat();
             chat.setProfileId1(id);
             chat.setProfileId2(profile.getId());
             chat.setIsArchive(false);
             chat.setMarkUnread(false);
-            chatService.save(chat);
+            chatService.save(chat);}
+
+            return chatService.findByProfileIds(id,profile.getId());
         }catch (Exception e){
             e.printStackTrace();
             throw new ResponseStatusException(
