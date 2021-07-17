@@ -34,9 +34,8 @@ public class NotificationController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping("/notifications/{targetProfileId}")
-    public ArrayList<Notification> getNotificationsByTargetProfileId(@RequestHeader Map<String, Object> jsonHeader,
-                                                                     @PathVariable long targetProfileId) throws Exception {
+    @GetMapping("/notifications")
+    public ArrayList<Notification> getNotificationsByTargetProfileId(@RequestHeader Map<String, Object> jsonHeader) throws Exception {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try{
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);

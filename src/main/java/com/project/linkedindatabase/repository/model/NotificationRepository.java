@@ -40,7 +40,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         ps.setLong(2, object.getNotificationType());
         ps.setLong(3, object.getTargetProfileId());
         ps.setString(4, object.getBody());
-        ps.executeQuery();
+        ps.execute();
     }
 
     @Override
@@ -102,7 +102,6 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         String username1 = profileService.getProfileByIdJson(profileId).getUsername();
         notification.setBody(username1+" just visited your profile.");
         this.save(notification);
-
     }
 
     public void saveEndorsementNotification(long profileId, long skillId) throws Exception {
