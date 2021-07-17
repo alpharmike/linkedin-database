@@ -2,9 +2,11 @@ package com.project.linkedindatabase.service.modelMap.chat;
 
 import com.project.linkedindatabase.domain.chat.Chat;
 import com.project.linkedindatabase.domain.chat.Message;
+import com.project.linkedindatabase.jsonToPojo.ChatJson;
 import com.project.linkedindatabase.repository.model.chat.ChatRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
+import com.project.linkedindatabase.service.model.chat.MessageService;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
@@ -19,8 +21,8 @@ public class ChatServiceMap implements ChatService {
 
     private final ChatRepository chatRepository;
 
-    public ChatServiceMap(ProfileService profileService) throws SQLException {
-        this.chatRepository = new ChatRepository(profileService);
+    public ChatServiceMap(ProfileService profileService, MessageService messageService) throws SQLException {
+        this.chatRepository = new ChatRepository(profileService, messageService);
     }
 
 
@@ -112,5 +114,20 @@ public class ChatServiceMap implements ChatService {
     @Override
     public boolean isThereChat(Long profileId1, Long profileId2) throws SQLException {
         return chatRepository.isThereChat(profileId1,profileId2);
+    }
+
+    @Override
+    public List<Chat> getAllChatByProfileId(Long profileId) throws SQLException {
+        return chatRepository.getAllChatByProfileId(profileId);
+    }
+
+    @Override
+    public List<ChatJson> getAllChatByProfileIdJson(Long profileId) throws SQLException {
+        return chatRepository.getAllChatByProfileIdJson(profileId);
+    }
+
+    @Override
+    public ChatJson getChatByChatId(Long chatId) throws SQLException {
+        return chatRepository.getChatByChatId(chatId);
     }
 }

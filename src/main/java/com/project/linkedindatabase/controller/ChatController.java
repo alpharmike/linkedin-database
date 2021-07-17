@@ -3,6 +3,7 @@ package com.project.linkedindatabase.controller;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.chat.Chat;
 import com.project.linkedindatabase.domain.chat.Message;
+import com.project.linkedindatabase.jsonToPojo.ChatJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -120,15 +122,28 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @DeleteMapping("/chat-token/{id}")
-    public void deleteChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) throws SQLException {
+    public Chat deleteChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) throws SQLException {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
         try {
-            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Chat chat = chatService.findByProfileIds(id, profile.getId());
             if (chat != null)
                 chatService.deleteByObject(chat);
         }catch (Exception e){
             e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+
+        }
+        try {
+            return chatService.findByProfileIds(id,profile.getId());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+
         }
     }
 
@@ -146,7 +161,7 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/chat-messages/{chatId}")
-    public ArrayList<Message> getMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long chatId){
+    public List<Message> getMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long chatId){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
@@ -206,6 +221,39 @@ public class ChatController {
         }catch (Exception e){
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/chats-json")
+    public List<ChatJson> getAllChatByToken(@RequestHeader Map<String, Object> jsonHeader){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return chatService.getAllChatByProfileIdJson(profile.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+
+        }
+    }
+    @CrossOrigin(origins = "*")
+    @GetMapping("/chat-json-id/{id}")
+    public ChatJson getChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long id){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return chatService.getChatByChatId(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+
         }
     }
 }

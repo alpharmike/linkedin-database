@@ -4,8 +4,12 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.chat.Chat;
 import com.project.linkedindatabase.domain.chat.Message;
+import com.project.linkedindatabase.jsonToPojo.MessageJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.utils.DateConverter;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -13,12 +17,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MessageRepository extends BaseRepository<Message,Long>  {
 
-    public MessageRepository() throws SQLException {
+    private final ProfileService profileService;
+
+    public MessageRepository(ProfileService profileService) throws SQLException {
         super(Message.class);
+        this.profileService = profileService;
     }
 
 
@@ -87,11 +95,33 @@ public class MessageRepository extends BaseRepository<Message,Long>  {
     }
 
 
-    public ArrayList<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException {
+    public List<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException {
         PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE chatId=?");
         retrievePs.setLong(1, chatId);
         ResultSet resultSet = retrievePs.executeQuery();
         return this.convertAllSql(resultSet);
+    }
+
+    @SneakyThrows
+    public List<MessageJson> getAllMessageByChatIdJson(Long chatId) throws SQLException {
+        List<Message> messages = getMessagesByChatId(chatId);
+        List<MessageJson> messageJsons = new ArrayList<>();
+
+        for (Message i : messages)
+        {
+            messageJsons.add(convertToMessageJson(i));
+        }
+
+        return messageJsons;
+
+    }
+
+    public MessageJson convertToMessageJson(Message message) throws SQLException
+    {
+        MessageJson messageJson = MessageJson.convertToJson(message);
+        Profile profile = profileService.findById(messageJson.getSenderId());
+        messageJson.setProfileJson(ProfileJson.convertToJson(profile));
+        return messageJson;
     }
 
 }
