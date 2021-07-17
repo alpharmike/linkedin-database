@@ -230,7 +230,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
 
     public List<Chat> getAllChatByProfileId(Long profileId) throws SQLException {
         PreparedStatement findByArchived = this.conn.prepareStatement("SELECT * FROM "+this.tableName+
-                " WHERE profileId1=? OR profileId2=?)");
+                " WHERE profileId1=? OR profileId2=?");
 
         findByArchived.setLong(1, profileId);
         findByArchived.setLong(2, profileId);
@@ -257,12 +257,12 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
 
     public ChatJson convertToJson(Chat chat) throws SQLException {
         ChatJson chatJson = ChatJson.convertToJson(chat);
-        Profile profile1 = profileService.findById(chatJson.getProfileId1());
-        Profile profile2 = profileService.findById(chatJson.getProfileId1());
+        Profile profile1 = profileService.findById(chatJson.getMyProfileId());
+        Profile profile2 = profileService.findById(chatJson.getOtherProfileId());
         List<MessageJson> messageJsons = messageService.getAllMessageByChatIdJson(chatJson.getId());
 
-        chatJson.setProfileJson1(ProfileJson.convertToJson(profile1));
-        chatJson.setProfileJson2(ProfileJson.convertToJson(profile2));
+        chatJson.setMyProfile(ProfileJson.convertToJson(profile1));
+        chatJson.setOtherProfile(ProfileJson.convertToJson(profile2));
         chatJson.setMessageJsons(messageJsons);
 
         return chatJson;

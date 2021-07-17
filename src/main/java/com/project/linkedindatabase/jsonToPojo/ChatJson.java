@@ -20,10 +20,10 @@ public class ChatJson {
 
     private Boolean markUnread;
 
-    private Long profileId1;// foreign key to profile table.
-    private ProfileJson profileJson1;
-    private Long profileId2;// foreign key to profile table.
-    private ProfileJson profileJson2;
+    private Long myProfileId;// foreign key to profile table.
+    private ProfileJson myProfile;
+    private Long otherProfileId;// foreign key to profile table.
+    private ProfileJson otherProfile;
 
     private List<MessageJson> messageJsons = new ArrayList<>();
 
@@ -34,8 +34,8 @@ public class ChatJson {
         chatJson.setIsArchive(chat.getIsArchive());
         chatJson.setMarkUnread(chat.getMarkUnread());
 
-        chatJson.setProfileId1(chat.getProfileId1());
-        chatJson.setProfileId2(chat.getProfileId2());
+        chatJson.setMyProfileId(chat.getProfileId1());
+        chatJson.setOtherProfileId(chat.getProfileId2());
 
         return chatJson;
     }
@@ -48,8 +48,8 @@ public class ChatJson {
         chat.setIsArchive(getIsArchive());
         chat.setMarkUnread(getMarkUnread());
 
-        chat.setProfileId1(getProfileId1());
-        chat.setProfileId2(getProfileId2());
+        chat.setProfileId1(getMyProfileId());
+        chat.setProfileId2(getOtherProfileId());
         return chat;
 
     }

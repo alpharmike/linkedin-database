@@ -7,6 +7,7 @@ import com.project.linkedindatabase.jsonToPojo.MessageJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.MessageService;
+import com.project.linkedindatabase.utils.DateConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,17 +30,17 @@ public class MessageController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/message")
-    public void save(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Message message){
+    @PostMapping("/message/{id}")
+    public void save(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Message message, @PathVariable(name = "id") Long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
 
 
             message.setSenderId(profile.getId());
-
+            message.setChatId(id);
             message.setIsUnread(true);
-            message.setCreatedDate(Calendar.getInstance());
+            message.setCreatedDate(DateConverter.getCurrentTime());
             messageService.save(message);
         } catch (Exception e) {
             e.printStackTrace();

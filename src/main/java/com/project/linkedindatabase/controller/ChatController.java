@@ -37,7 +37,8 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/chat/{id1}-{id2}")
-    public void createChat(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id1, @PathVariable long id2){
+    public void createChat(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id1,
+                           @PathVariable long id2) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
@@ -46,75 +47,68 @@ public class ChatController {
             chat.setProfileId2(id2);
             chat.setIsArchive(false);
             chat.setMarkUnread(false);
-            if (!chatService.isThereChat(id1,id2))
-                chatService.save(chat);
-        }catch (Exception e){
+            if (!chatService.isThereChat(id1, id2)) chatService.save(chat);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @CrossOrigin(origins = "*")
     @PostMapping("/chat-token/{id}")
-    public Chat createChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id){
+    public Chat createChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
         }
 
-        if (profile.getId() == id)
-        {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "both id is the same ",new Exception("same"));
+        if (profile.getId() == id) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "both id is the same ", new Exception("same"));
         }
 
-        Boolean isThereChat =false;
+        boolean isThereChat = false;
         try {
 
-            if (chatService.isThereChat(id,profile.getId()))
-                isThereChat =true;
-        }catch (Exception e){
+            if (chatService.isThereChat(id, profile.getId())) isThereChat = true;
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with data ",e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
         }
-
 
 
         try {
 
-            if (!isThereChat){
-            Chat chat = new Chat();
-            chat.setProfileId1(id);
-            chat.setProfileId2(profile.getId());
-            chat.setIsArchive(false);
-            chat.setMarkUnread(false);
-            chatService.save(chat);}
+            if (!isThereChat) {
+                Chat chat = new Chat();
+                chat.setProfileId1(profile.getId());
+                chat.setProfileId2(id);
+                chat.setIsArchive(false);
+                chat.setMarkUnread(false);
+                chatService.save(chat);
+            }
 
-            return chatService.findByProfileIds(id,profile.getId());
-        }catch (Exception e){
+            return chatService.findByProfileIds(id, profile.getId());
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
         }
     }
 
     @CrossOrigin(origins = "*")
     @DeleteMapping("/chat/{id1}-{id2}")
-    public void deleteChat(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id1, @PathVariable long id2) throws SQLException {
+    public void deleteChat(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id1,
+                           @PathVariable long id2) throws SQLException {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Chat chat = chatService.findByProfileIds(id1, id2);
-            if (chat != null)
-                chatService.deleteByObject(chat);
+            if (chat != null) chatService.deleteByObject(chat);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -127,45 +121,42 @@ public class ChatController {
         try {
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Chat chat = chatService.findByProfileIds(id, profile.getId());
-            if (chat != null)
-                chatService.deleteByObject(chat);
-        }catch (Exception e){
+            if (chat != null) chatService.deleteByObject(chat);
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
 
         }
         try {
-            return chatService.findByProfileIds(id,profile.getId());
-        }catch (Exception e)
-        {
+            return chatService.findByProfileIds(id, profile.getId());
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
 
         }
     }
 
     @CrossOrigin(origins = "*")
     @PostMapping("/chat-unread-{status}/{id}")
-    public void setMarkAsUnread(@RequestHeader Map<String, Object> jsonHeader, @PathVariable boolean status, @PathVariable long id){
+    public void setMarkAsUnread(@RequestHeader Map<String, Object> jsonHeader, @PathVariable boolean status,
+                                @PathVariable long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             chatService.setUnread(id, status);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping("/chat-messages/{chatId}")
-    public List<Message> getMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long chatId){
+    public List<Message> getMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long chatId) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return messageService.getMessagesByChatId(chatId);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -174,12 +165,13 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/is_archive={status}")
-    public ArrayList<Chat> getChatsByArchive(@RequestHeader Map<String, Object> jsonHeader, @PathVariable boolean status){
+    public ArrayList<Chat> getChatsByArchive(@RequestHeader Map<String, Object> jsonHeader,
+                                             @PathVariable boolean status) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.findByArchived(profile.getId(), status);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -187,12 +179,13 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/is_unread={status}")
-    public ArrayList<Chat> getChatsByUnread(@RequestHeader Map<String, Object> jsonHeader, @PathVariable boolean status){
+    public ArrayList<Chat> getChatsByUnread(@RequestHeader Map<String, Object> jsonHeader,
+                                            @PathVariable boolean status) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.findByUnread(profile.getId(), status);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -200,58 +193,59 @@ public class ChatController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/search-user/{searchKey}")
-    public ArrayList<Chat> searchForUser(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
+    public ArrayList<Chat> searchForUser(@RequestHeader Map<String, Object> jsonHeader,
+                                         @PathVariable String searchKey) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.searchUser(searchKey, profile.getId());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
     @CrossOrigin(origins = "*")
     @GetMapping("/chats/search-messages/{searchKey}")
-    public HashMap<Chat, Message> searchForMessages(@RequestHeader Map<String, Object> jsonHeader, @PathVariable String searchKey){
+    public HashMap<Chat, Message> searchForMessages(@RequestHeader Map<String, Object> jsonHeader,
+                                                    @PathVariable String searchKey) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.searchMessages(searchKey, profile.getId());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
 
-
     @CrossOrigin(origins = "*")
     @GetMapping("/chats-json")
-    public List<ChatJson> getAllChatByToken(@RequestHeader Map<String, Object> jsonHeader){
+    public List<ChatJson> getAllChatByToken(@RequestHeader Map<String, Object> jsonHeader) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.getAllChatByProfileIdJson(profile.getId());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
 
         }
     }
+
     @CrossOrigin(origins = "*")
-    @GetMapping("/chat-json-id/{id}")
-    public ChatJson getChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long id){
+    @GetMapping("/chat-json/{id}")
+    public ChatJson getChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.getChatByChatId(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
 
         }
     }
