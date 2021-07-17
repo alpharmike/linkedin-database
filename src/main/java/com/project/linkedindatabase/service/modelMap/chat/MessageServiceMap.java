@@ -1,7 +1,9 @@
 package com.project.linkedindatabase.service.modelMap.chat;
 
 import com.project.linkedindatabase.domain.chat.Message;
+import com.project.linkedindatabase.jsonToPojo.MessageJson;
 import com.project.linkedindatabase.repository.model.chat.MessageRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.MessageService;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +16,8 @@ public class MessageServiceMap implements MessageService {
 
     private final MessageRepository messageRepository;
 
-    public MessageServiceMap() throws SQLException {
-        this.messageRepository = new MessageRepository();
+    public MessageServiceMap(ProfileService profileService) throws SQLException {
+        this.messageRepository = new MessageRepository(profileService);
     }
 
     @Override
@@ -49,7 +51,12 @@ public class MessageServiceMap implements MessageService {
     }
 
     @Override
-    public ArrayList<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException {
+    public List<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException {
         return messageRepository.getMessagesByChatId(chatId);
+    }
+
+    @Override
+    public List<MessageJson> getAllMessageByChatIdJson(Long chatId) throws SQLException {
+        return messageRepository.getAllMessageByChatIdJson(chatId);
     }
 }

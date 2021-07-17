@@ -4,12 +4,14 @@ import com.project.linkedindatabase.domain.BaseEntity;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.chat.Chat;
 import com.project.linkedindatabase.domain.chat.Message;
+import com.project.linkedindatabase.jsonToPojo.ChatJson;
+import com.project.linkedindatabase.jsonToPojo.MessageJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
-import com.project.linkedindatabase.repository.model.ProfileRepository;
 import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.model.chat.MessageService;
 import org.springframework.stereotype.Service;
 
-import javax.print.attribute.standard.PresentationDirection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,10 +24,12 @@ import java.util.List;
 public class ChatRepository extends BaseRepository<Chat,Long> {
 
     private final ProfileService profileService;
+    private final MessageService messageService;
 
-    public ChatRepository(ProfileService profileService) throws SQLException {
+    public ChatRepository(ProfileService profileService, MessageService messageService) throws SQLException {
         super(Chat.class);
         this.profileService = profileService;
+        this.messageService = messageService;
     }
 
 
@@ -174,7 +178,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
                     " WHERE chatId=?");
             searchMessagePs.setLong(1, c.getId());
             ResultSet resultSet = searchMessagePs.executeQuery();
-            ArrayList<Message> messages = new MessageRepository().convertAllSql(resultSet);
+            ArrayList<Message> messages = new MessageRepository(profileService).convertAllSql(resultSet);
             for (Message m:messages
             ) {
                 if(m.getBody().contains(searchKey)){
@@ -222,4 +226,46 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         }
 
     }
+
+
+    public List<Chat> getAllChatByProfileId(Long profileId) throws SQLException {
+        PreparedStatement findByArchived = this.conn.prepareStatement("SELECT * FROM "+this.tableName+
+                " WHERE profileId1=? OR profileId2=?)");
+
+        findByArchived.setLong(1, profileId);
+        findByArchived.setLong(2, profileId);
+        ResultSet resultSet = findByArchived.executeQuery();
+        return this.convertAllSql(resultSet);
+    }
+    public List<ChatJson> getAllChatByProfileIdJson(Long profileId) throws SQLException {
+        List<Chat> chats = getAllChatByProfileId(profileId);
+        List<ChatJson> chatJsons = new ArrayList<>();
+        for (Chat i: chats)
+        {
+            chatJsons.add(convertToJson(i));
+        }
+        return chatJsons;
+
+    }
+
+    public ChatJson getChatByChatId(Long chatId) throws SQLException {
+        Chat chat = findById(chatId);
+        if (chat != null)
+            return convertToJson(chat);
+        return null;
+    }
+
+    public ChatJson convertToJson(Chat chat) throws SQLException {
+        ChatJson chatJson = ChatJson.convertToJson(chat);
+        Profile profile1 = profileService.findById(chatJson.getProfileId1());
+        Profile profile2 = profileService.findById(chatJson.getProfileId1());
+        List<MessageJson> messageJsons = messageService.getAllMessageByChatIdJson(chatJson.getId());
+
+        chatJson.setProfileJson1(ProfileJson.convertToJson(profile1));
+        chatJson.setProfileJson2(ProfileJson.convertToJson(profile2));
+        chatJson.setMessageJsons(messageJsons);
+
+        return chatJson;
+    }
+
 }
