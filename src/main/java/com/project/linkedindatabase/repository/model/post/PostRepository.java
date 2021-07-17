@@ -187,7 +187,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         {
             Post sharePost = findById(post.getSharedId());
 
-            postJson.setSharedIdJson(PostJson.convertTOJson(sharePost));
+            postJson.setSharedIdJson(getDetailOfPost(sharePost));
         }
 
         List<LikePost> postLike = likePostService.getLikeByPostId(post.getId());
