@@ -137,13 +137,26 @@ public class ChatController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/chat-unread-{status}/{id}")
-    public void setMarkAsUnread(@RequestHeader Map<String, Object> jsonHeader, @PathVariable boolean status,
-                                @PathVariable long id) {
+    @PutMapping("/chat-unread/{id}")
+    public void toggleUnreadStatus(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            chatService.setUnread(id, status);
+
+            chatService.setUnread(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PutMapping("/chat-archive/{id}")
+    public void toggleArchiveStatus(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+            chatService.setArchive(id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,13 +177,12 @@ public class ChatController {
 
 
     @CrossOrigin(origins = "*")
-    @GetMapping("/chats/is_archive={status}")
-    public ArrayList<Chat> getChatsByArchive(@RequestHeader Map<String, Object> jsonHeader,
-                                             @PathVariable boolean status) {
+    @GetMapping("/chats/archived")
+    public ArrayList<ChatJson> getChatsByArchive(@RequestHeader Map<String, Object> jsonHeader) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            return chatService.findByArchived(profile.getId(), status);
+            return chatService.findByArchivedJson(profile.getId(), true);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -178,13 +190,12 @@ public class ChatController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping("/chats/is_unread={status}")
-    public ArrayList<Chat> getChatsByUnread(@RequestHeader Map<String, Object> jsonHeader,
-                                            @PathVariable boolean status) {
+    @GetMapping("/chats/unread")
+    public ArrayList<ChatJson> getChatsByUnread(@RequestHeader Map<String, Object> jsonHeader) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            return chatService.findByUnread(profile.getId(), status);
+            return chatService.findByUnreadJson(profile.getId(), true);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

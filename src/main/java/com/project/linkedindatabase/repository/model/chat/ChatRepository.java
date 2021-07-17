@@ -107,16 +107,18 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         return getChatByProfileId(profileId1, profileId2) != null;
     }
 
-    public void setArchive(long chatId, boolean status) throws SQLException {
+    public void setArchive(long chatId) throws SQLException {
         PreparedStatement setArchivePs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET isArchive=? WHERE id=?");
-        setArchivePs.setBoolean(1, status);
+        Chat chat = findById(chatId);
+        setArchivePs.setBoolean(1, !chat.getIsArchive());
         setArchivePs.setLong(2, chatId);
         setArchivePs.executeUpdate();
     }
 
-    public void setUnread(long chatId, boolean status) throws SQLException {
+    public void setUnread(long chatId) throws SQLException {
         PreparedStatement setUnreadPs = this.conn.prepareStatement("UPDATE "+this.tableName+" SET markUnread=? WHERE id=?");
-        setUnreadPs.setBoolean(1, status);
+        Chat chat = findById(chatId);
+        setUnreadPs.setBoolean(1, !chat.getMarkUnread());
         setUnreadPs.setLong(2, chatId);
         setUnreadPs.executeUpdate();
     }
@@ -137,6 +139,16 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         return this.convertAllSql(resultSet);
     }
 
+    public ArrayList<ChatJson> findByUnreadJson(long profileId, boolean status) throws SQLException {
+        ArrayList<Chat> unreadChats = findByUnread(profileId, status);
+        ArrayList<ChatJson> chatJsons = new ArrayList<>();
+        for (Chat i: unreadChats)
+        {
+            chatJsons.add(convertToJson(i,profileId));
+        }
+        return chatJsons;
+    }
+
     public ArrayList<Chat> findByArchived(long profileId, boolean status) throws SQLException {
         PreparedStatement findByArchived = this.conn.prepareStatement("SELECT * FROM "+this.tableName+
                 " WHERE isArchive=? AND (profileId1=? OR profileId2=?)");
@@ -145,6 +157,16 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         findByArchived.setLong(3, profileId);
         ResultSet resultSet = findByArchived.executeQuery();
         return this.convertAllSql(resultSet);
+    }
+
+    public ArrayList<ChatJson> findByArchivedJson(long profileId, boolean status) throws SQLException {
+        ArrayList<Chat> archivedChats = findByArchived(profileId, status);
+        ArrayList<ChatJson> chatJsons = new ArrayList<>();
+        for (Chat i: archivedChats)
+        {
+            chatJsons.add(convertToJson(i,profileId));
+        }
+        return chatJsons;
     }
 
     public ArrayList<Chat> searchUser(String searchKey, long id) throws SQLException, ParseException {

@@ -19,9 +19,11 @@ import java.util.List;
 public interface ChatService extends BaseService<Chat,Long> {
     public ArrayList<Chat> searchUser(String searchKey, long id) throws SQLException, ParseException;
     public ArrayList<Chat> findByArchived(long profileId, boolean status) throws SQLException;
+    public ArrayList<ChatJson> findByArchivedJson(long profileId, boolean status) throws SQLException;
     public ArrayList<Chat> findByUnread(long profileId, boolean status) throws SQLException;
-    public void setArchive(long chatId, boolean status) throws SQLException;
-    public void setUnread(long chatId, boolean status) throws SQLException;
+    public ArrayList<ChatJson> findByUnreadJson(long profileId, boolean status) throws SQLException;
+    public void setArchive(long chatId) throws SQLException;
+    public void setUnread(long chatId) throws SQLException;
     public void delete(long chatId) throws SQLException;
     public boolean exists(long profileId1, long profileId2) throws SQLException;
     public Chat getChatByProfileId(long profileId1, long profileId2) throws SQLException;

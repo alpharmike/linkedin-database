@@ -67,18 +67,28 @@ public class ChatServiceMap implements ChatService {
     }
 
     @Override
+    public ArrayList<ChatJson> findByArchivedJson(long profileId, boolean status) throws SQLException {
+        return chatRepository.findByArchivedJson(profileId, status);
+    }
+
+    @Override
     public ArrayList<Chat> findByUnread(long profileId, boolean status) throws SQLException {
         return chatRepository.findByUnread(profileId, status);
     }
 
     @Override
-    public void setArchive(long chatId, boolean status) throws SQLException {
-        chatRepository.setArchive(chatId, status);
+    public ArrayList<ChatJson> findByUnreadJson(long profileId, boolean status) throws SQLException {
+        return chatRepository.findByUnreadJson(profileId, status);
     }
 
     @Override
-    public void setUnread(long chatId, boolean status) throws SQLException {
-        chatRepository.setUnread(chatId, status);
+    public void setArchive(long chatId) throws SQLException {
+        chatRepository.setArchive(chatId);
+    }
+
+    @Override
+    public void setUnread(long chatId) throws SQLException {
+        chatRepository.setUnread(chatId);
     }
 
     @Override
