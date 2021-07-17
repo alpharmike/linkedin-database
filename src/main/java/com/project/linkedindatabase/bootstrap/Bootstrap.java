@@ -133,7 +133,14 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
            this.languageService.createTable();
            this.connectService.createTable();
            this.endorsementService.createTable();
-           chatService.createTable();
+           this.chatService.createTable();
+           this.messageService.createTable();
+
+           this.postService.createTable();
+           this.commentService.createTable();
+           this.likeCommentService.createTable();
+           this.likePostService.createTable();
+
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
 //            new IndustryRepository().createTable();

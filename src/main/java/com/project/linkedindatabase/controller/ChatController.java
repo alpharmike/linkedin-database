@@ -8,7 +8,9 @@ import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.ChatService;
 import com.project.linkedindatabase.service.model.chat.MessageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,9 +44,62 @@ public class ChatController {
             chat.setProfileId2(id2);
             chat.setIsArchive(false);
             chat.setMarkUnread(false);
+            if (!chatService.isThereChat(id1,id2))
+                chatService.save(chat);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/chat-token/{id}")
+    public void createChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id){
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Profile profile;
+        try {
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
+        }
+
+        if (profile.getId() == id)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "both id is the same ",new Exception("same"));
+        }
+
+        Boolean isThereChat =false;
+        try {
+
+            if (chatService.isThereChat(id,profile.getId()))
+                isThereChat =true;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ",e);
+        }
+
+        if (isThereChat)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is chat already ",new Exception("duplicate"));
+        }
+
+        try {
+
+            Chat chat = new Chat();
+            chat.setProfileId1(id);
+            chat.setProfileId2(profile.getId());
+            chat.setIsArchive(false);
+            chat.setMarkUnread(false);
             chatService.save(chat);
         }catch (Exception e){
             e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ",e);
         }
     }
 
@@ -55,7 +110,23 @@ public class ChatController {
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Chat chat = chatService.findByProfileIds(id1, id2);
-            chatService.deleteByObject(chat);
+            if (chat != null)
+                chatService.deleteByObject(chat);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("/chat-token/{id}")
+    public void deleteChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) throws SQLException {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            Chat chat = chatService.findByProfileIds(id, profile.getId());
+            if (chat != null)
+                chatService.deleteByObject(chat);
         }catch (Exception e){
             e.printStackTrace();
         }

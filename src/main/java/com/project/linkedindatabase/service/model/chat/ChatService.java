@@ -22,4 +22,5 @@ public interface ChatService extends BaseService<Chat,Long> {
     public ArrayList<Chat> convertAllSql(ResultSet resultSet) throws SQLException;
     public HashMap<Chat, Message> searchMessages(String searchKey, long id) throws SQLException, ParseException;
     public Chat findByProfileIds(long profileId1, long profileId2) throws SQLException;
+    public boolean isThereChat(Long profileId1,Long profileId2) throws SQLException;
 }
