@@ -42,6 +42,8 @@ public class PostJson {
 
     private List<LikeJson> likeJsons = new ArrayList<>();
 
+    private ProfileJson profileJson;
+
     private byte[] file;
 
     public static PostJson convertTOJson(Post post)

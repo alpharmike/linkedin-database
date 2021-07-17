@@ -89,7 +89,7 @@ public class LikeCommentRepository  extends BaseRepository<LikeComment,Long>  {
     }
 
     public void deleteByIdAndProfileId(Long id, Long profileId) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("DELETE  from "+this.getTableName()+" where id = ? and profileId = ?");
+        PreparedStatement ps = conn.prepareStatement("delete from "+this.getTableName()+" where id = ? and profileId = ?");
 
         ps.setLong(1, id);
         ps.setLong(2, profileId);

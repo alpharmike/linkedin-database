@@ -8,7 +8,9 @@ import com.project.linkedindatabase.domain.post.Post;
 import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.jsonToPojo.LikeJson;
 import com.project.linkedindatabase.jsonToPojo.PostJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.post.CommentService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
 import com.project.linkedindatabase.service.types.ShowPostTypeService;
@@ -31,13 +33,15 @@ public class PostRepository extends BaseRepository<Post,Long>  {
     private final LikePostService likePostService;
     private final ShowPostTypeService showPostTypeService;
     private final CommentService commentService;
+    private final ProfileService profileService;
 
 
-    public PostRepository(LikePostService likePostService, ShowPostTypeService showPostTypeService, CommentService commentService) throws SQLException {
+    public PostRepository(LikePostService likePostService, ShowPostTypeService showPostTypeService, CommentService commentService, ProfileService profileService) throws SQLException {
         super(Post.class);
         this.likePostService = likePostService;
         this.showPostTypeService = showPostTypeService;
         this.commentService = commentService;
+        this.profileService = profileService;
     }
 
 
@@ -196,6 +200,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         }
         postJson.setLikeJsons(likeJsonPost);
 
+        postJson.setProfileJson(ProfileJson.convertToJson(profileService.findById(post.getProfileId())));
         List<CommentJson> commentJsonList = commentService.findByPostIdJson(postJson.getId());
         postJson.setCommentJsons(commentJsonList);
 

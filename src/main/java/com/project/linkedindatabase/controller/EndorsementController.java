@@ -58,8 +58,10 @@ public class EndorsementController {
         boolean duplicate = false;
 
         try {
+            System.out.println("HERE");
             if(endorsementService.isThereAnotherEndorsement(endorsement))
             {
+                System.out.println("THHERE");
                 duplicate = true;
             }
 
@@ -77,7 +79,7 @@ public class EndorsementController {
 
         try {
             endorsementService.save(endorsement);
-            notificationService.saveEndorsementNotification(endorsement.getEndorserId(), endorsement.getSkillId());
+//            notificationService.saveEndorsementNotification(endorsement.getEndorserId(), endorsement.getSkillId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(

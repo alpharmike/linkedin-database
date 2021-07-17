@@ -54,8 +54,21 @@ public class PostController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
         }
+    }
 
+    @GetMapping("/post/{id}")
+    public List<PostJson> getProfilePost(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 
+        try {
+
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return postService.findByProfileId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
     }
 
     @GetMapping("/post/network")
@@ -127,8 +140,6 @@ public class PostController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
         }
-
-
     }
 
     @PostMapping("/post/{id}")
@@ -259,7 +270,7 @@ public class PostController {
     }
 
 
-    @PostMapping("/post/comment/Like")
+    @PostMapping("/post/comment/like")
     public void createLikeComment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody LikeComment likeComment) {
         try {
 
@@ -301,7 +312,7 @@ public class PostController {
 
     }
 
-    @DeleteMapping("/post/comment/Like/{id}")
+    @DeleteMapping("/post/comment/like/{id}")
     public void deleteLikeComment(@RequestHeader Map<String, Object> jsonHeader,@PathVariable(name = "id") Long id) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
 

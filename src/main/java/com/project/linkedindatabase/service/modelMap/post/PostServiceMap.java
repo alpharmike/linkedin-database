@@ -3,6 +3,7 @@ package com.project.linkedindatabase.service.modelMap.post;
 import com.project.linkedindatabase.domain.post.Post;
 import com.project.linkedindatabase.jsonToPojo.PostJson;
 import com.project.linkedindatabase.repository.model.post.PostRepository;
+import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.post.CommentService;
 import com.project.linkedindatabase.service.model.post.LikePostService;
 import com.project.linkedindatabase.service.model.post.PostService;
@@ -20,8 +21,8 @@ public class PostServiceMap implements PostService {
 
     private final PostRepository postRepository;
 
-    public PostServiceMap(LikePostService likePostService, ShowPostTypeService showPostTypeService, CommentService commentService) throws SQLException {
-        this.postRepository = new PostRepository(likePostService, showPostTypeService, commentService);
+    public PostServiceMap(LikePostService likePostService, ShowPostTypeService showPostTypeService, CommentService commentService, ProfileService profileService) throws SQLException {
+        this.postRepository = new PostRepository(likePostService, showPostTypeService, commentService, profileService);
     }
 
     @Override
