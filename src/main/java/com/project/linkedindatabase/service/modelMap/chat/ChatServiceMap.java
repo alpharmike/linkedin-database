@@ -108,4 +108,9 @@ public class ChatServiceMap implements ChatService {
     public Chat findByProfileIds(long profileId1, long profileId2) throws SQLException {
         return chatRepository.findByProfileIds(profileId1, profileId2);
     }
+
+    @Override
+    public boolean isThereChat(Long profileId1, Long profileId2) throws SQLException {
+        return chatRepository.isThereChat(profileId1,profileId2);
+    }
 }

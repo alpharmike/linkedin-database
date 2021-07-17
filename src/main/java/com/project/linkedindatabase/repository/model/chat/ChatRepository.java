@@ -58,18 +58,18 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
 
 
     @Override
-    public Chat convertSql(ResultSet resultSet) {
+    public Chat convertSql(ResultSet resultSet) throws SQLException {
         Chat chat = new Chat();
-        try {
-            resultSet.next();
-            chat.setId(resultSet.getLong("id"));
-            chat.setProfileId1(resultSet.getLong("profileId1"));
-            chat.setProfileId2(resultSet.getLong("profileId2"));
-            chat.setIsArchive(resultSet.getBoolean("isArchive"));
-            chat.setMarkUnread(resultSet.getBoolean("markUnread"));
-        } catch (SQLException s){
-            System.out.println(s.getMessage());
-        }
+
+
+        chat.setId(resultSet.getLong("id"));
+        chat.setProfileId1(resultSet.getLong("profileId1"));
+        chat.setProfileId2(resultSet.getLong("profileId2"));
+        chat.setIsArchive(resultSet.getBoolean("isArchive"));
+        chat.setMarkUnread(resultSet.getBoolean("markUnread"));
+
+
+
         return chat;
     }
 
@@ -187,12 +187,39 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
 
     public Chat findByProfileIds(long profileId1, long profileId2) throws SQLException {
         PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
+                "(profileId1=? AND profileId2=?) OR  (profileId1=? AND profileId2=?);");
+        retrievePs.setLong(1, profileId1);
+        retrievePs.setLong(2, profileId2);
+        retrievePs.setLong(3, profileId2);
+        retrievePs.setLong(4, profileId1);
+
+        ResultSet resultSet = retrievePs.executeQuery();
+
+        if (!resultSet.isBeforeFirst())
+        {
+
+            return null;
+        }
+        resultSet.next();
+
+        return this.convertSql(resultSet);
+    }
+
+    public boolean isThereChat(Long profileId1,Long profileId2) throws SQLException {
+        PreparedStatement retrievePs = this.conn.prepareStatement("SELECT * FROM "+this.tableName+" WHERE " +
                 "(profileId1=? AND profileId2=?) OR  (profileId1=? AND profileId2=?)");
         retrievePs.setLong(1, profileId1);
         retrievePs.setLong(2, profileId2);
         retrievePs.setLong(3, profileId2);
         retrievePs.setLong(4, profileId1);
         ResultSet resultSet = retrievePs.executeQuery();
-        return this.convertSql(resultSet);
+
+        if (!resultSet.isBeforeFirst() ) {
+            return false;
+        }else
+        {
+            return true;
+        }
+
     }
 }

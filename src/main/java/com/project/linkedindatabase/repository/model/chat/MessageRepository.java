@@ -31,7 +31,7 @@ public class MessageRepository extends BaseRepository<Message,Long>  {
         ps.setString(3, object.getBody());
         ps.setBoolean(4, object.getIsUnread());
         ps.setString(5, DateConverter.convertDate(object.getCreatedDate(), "yyyy-MM-dd HH:mm:ss"));
-        ps.executeQuery();
+        ps.execute();
     }
 
     @Override

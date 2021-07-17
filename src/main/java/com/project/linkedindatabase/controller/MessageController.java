@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Calendar;
 import java.util.Map;
 
 @Slf4j
@@ -27,15 +28,16 @@ public class MessageController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/message")
-    public void save(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody){
+    public void save(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Message message){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            Message message = new Message();
-            message.setChatId((long)jsonBody.get("chatId"));
-            message.setSenderId((long)jsonBody.get("senderId"));
-            message.setBody((String) jsonBody.get("body"));
+
+
+            message.setSenderId(profile.getId());
+
             message.setIsUnread(true);
+            message.setCreatedDate(Calendar.getInstance());
             messageService.save(message);
         } catch (Exception e) {
             e.printStackTrace();
