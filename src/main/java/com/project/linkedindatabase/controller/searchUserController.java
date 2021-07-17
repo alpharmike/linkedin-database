@@ -163,6 +163,7 @@ public class searchUserController {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
+            System.out.println("CALLED SORTED NAME");
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -173,7 +174,7 @@ public class searchUserController {
         try {
 
             Long profileId = profile.getId();
-            String name = (String) search.get("sortedName");
+            String name = (String) search.get("keyword");
             return connectService.searchBaseOfConnection(profileId,name);
         }catch (Exception e)
         {

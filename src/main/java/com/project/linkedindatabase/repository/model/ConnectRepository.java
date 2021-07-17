@@ -366,7 +366,6 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
                 " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )\n" +//19 20 21 id
                 ")) order by num"
         );
-
         ps.setLong(1,id);
         ps.setString(2,name+"%");
         ps.setString(3,name+"%");
@@ -391,7 +390,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         ps.setLong(20,id);
         ps.setLong(21,id);
 
-
+        System.out.println(ps.toString());
         ResultSet resultSet = ps.executeQuery();
         List<Map<String,Object> >allObject = new ArrayList<>();
         while (resultSet.next()) {

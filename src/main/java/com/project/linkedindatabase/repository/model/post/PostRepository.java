@@ -226,7 +226,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         return postJsonList;
     }
     public List<PostJson> getPostOfConnectionLike(Long profileId) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.profileId in " +
+        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.id in " +
                 "(select lp.postId from like_post as lp where lp.profileId in" +
                 "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
                 " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')" +
@@ -246,7 +246,7 @@ public class PostRepository extends BaseRepository<Post,Long>  {
         return postJsonList;
     }
     public List<PostJson> getPostOfConnectionComment(Long profileId) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.profileId in " +
+        PreparedStatement ps = conn.prepareStatement("select * from post as p where p.id in " +
                 "(select cmt.postId from comment as cmt where cmt.profileId in " +
                 "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
                 " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') " +

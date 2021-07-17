@@ -254,9 +254,34 @@ public class ConnectController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
         }
-
-
     }
+
+    @GetMapping("/network/{id}")
+    public List<Profile> getNetWorkById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable(name = "id") Long id) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        Long profileId;
+        try {
+            profileId = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader).getId();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+        try {
+
+            return connectService.getAllPeopleInConnection(id);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+    }
+
+
 
     private List<Map<String, Object>> convertToApiData( List<Connect> connects,List<ConnectType> types) throws Exception {
 
