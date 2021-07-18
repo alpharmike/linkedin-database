@@ -1,11 +1,13 @@
 package com.project.linkedindatabase.service.modelMap;
 
 import com.project.linkedindatabase.domain.Notification;
+import com.project.linkedindatabase.jsonToPojo.NotificationJson;
 import com.project.linkedindatabase.repository.model.NotificationRepository;
 import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
+import com.project.linkedindatabase.service.types.NotificationTypeService;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -20,11 +22,12 @@ public class NotificationServiceMap  implements NotificationService {
     private final ConnectService connectService;
     private final SkillService skillService;
 
-    public NotificationServiceMap(ProfileService profileService, ConnectService connectService, SkillService skillService) throws SQLException {
+    public NotificationServiceMap(ProfileService profileService, ConnectService connectService, SkillService skillService,
+                                  NotificationTypeService notificationTypeService) throws SQLException {
         this.profileService = profileService;
         this.connectService = connectService;
         this.skillService = skillService;
-        this.notificationRepository = new NotificationRepository(this.profileService, this.connectService, this.skillService);
+        this.notificationRepository = new NotificationRepository(this.profileService, this.connectService, this.skillService, notificationTypeService);
     }
 
     @Override
@@ -78,7 +81,24 @@ public class NotificationServiceMap  implements NotificationService {
     }
 
     @Override
-    public ArrayList<Notification> getAllNotificationsByTargetProfileId(long targetProfileId) throws SQLException {
+    public ArrayList<NotificationJson> getAllNotificationsByTargetProfileId(long targetProfileId) throws SQLException {
         return notificationRepository.getAllNotificationsByTargetProfileId(targetProfileId);
+    }
+
+    @Override
+    public void saveLikePostNotification(long profileId, long targetProfileId) throws Exception {
+        notificationRepository.saveLikePostNotification(profileId,targetProfileId);
+    }
+
+    @Override
+    public void saveCommentPostNotification(long profileId, long targetProfileId) throws Exception {
+        notificationRepository.saveCommentPostNotification(profileId,targetProfileId);
+
+    }
+
+    @Override
+    public void saveLikeOrReCommentNotification(long profileId, long targetProfileId, String message) throws Exception {
+        notificationRepository.saveLikeOrReCommentNotification(profileId,targetProfileId,message);
+
     }
 }

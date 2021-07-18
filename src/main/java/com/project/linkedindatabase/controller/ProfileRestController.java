@@ -226,7 +226,8 @@ public class ProfileRestController {
         try {
 
             Profile userProfile = profileService.findByUsername(userName);
-            notificationService.saveProfileVisitNotification(profile.getId(), userProfile.getId());
+            if (profile.getId() != userProfile.getId())
+                notificationService.saveProfileVisitNotification(profile.getId(), userProfile.getId());
             return profileService.getProfileByIdJson(userProfile.getId());
         }catch (Exception e)
         {

@@ -8,6 +8,7 @@ import com.project.linkedindatabase.domain.post.Post;
 import com.project.linkedindatabase.jsonToPojo.CommentJson;
 import com.project.linkedindatabase.jsonToPojo.PostJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
+import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.post.CommentService;
 import com.project.linkedindatabase.service.model.post.LikeCommentService;
@@ -31,14 +32,16 @@ public class PostController {
     private final CommentService commentService;
     private final LikeCommentService likeCommentService;
     private final LikePostService likePostService;
+    private final NotificationService notificationService;
 
     public PostController(ProfileService profileService, PostService postService, CommentService commentService,
-                          LikeCommentService likeCommentService, LikePostService likePostService) {
+                          LikeCommentService likeCommentService, LikePostService likePostService, NotificationService notificationService) {
         this.profileService = profileService;
         this.postService = postService;
         this.commentService = commentService;
         this.likeCommentService = likeCommentService;
         this.likePostService = likePostService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/post")
@@ -182,10 +185,10 @@ public class PostController {
     @PostMapping("/post/comment")
     public void createComment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody CommentJson commentJson) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
-
+        Profile profile;
         try {
 
-            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             commentJson.setProfileId(profile.getId());
 
         } catch (Exception e) {
@@ -195,6 +198,8 @@ public class PostController {
         }
         try {
             commentService.save(commentJson.convertToComment());
+            Post post = postService.findById(commentJson.getPostId());
+            notificationService.saveCommentPostNotification(profile.getId(),post.getProfileId());
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -213,8 +218,10 @@ public class PostController {
         try {
 
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            likePost.setProfileId(profile.getId());
 
+            likePost.setProfileId(profile.getId());
+            Post post = postService.findById(likePost.getPostId());
+            notificationService.saveLikePostNotification(profile.getId(),post.getProfileId());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,9 +279,10 @@ public class PostController {
 
     @PostMapping("/post/comment/like")
     public void createLikeComment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody LikeComment likeComment) {
+        Profile profile;
         try {
 
-            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             likeComment.setProfileId(profile.getId());
 
 
@@ -302,6 +310,39 @@ public class PostController {
 
         try {
             likeCommentService.save(likeComment);
+            Comment comment = commentService.findById(likeComment.getCommentId());
+            notificationService.saveLikeOrReCommentNotification(profile.getId(),comment.getProfileId(),"like your comment");
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with data ", e);
+        }
+
+
+    }
+
+    @PostMapping("/post/comment/re-comment/{id}")
+    public void createLikeComment(@RequestHeader Map<String, Object> jsonHeader,@RequestBody Comment comment,@PathVariable(name = "id") Long idComment) {
+        Profile profile;
+        try {
+
+            profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            comment.setProfileId(profile.getId());
+            comment.setReCommentId(idComment);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "There is a problem with token ", e);
+        }
+
+
+
+        try {
+            commentService.save(comment);
+            Comment parentComment = commentService.findById(idComment);
+            notificationService.saveLikeOrReCommentNotification(profile.getId(),parentComment.getProfileId(),"re-comment your comment");
         }catch (Exception e)
         {
             e.printStackTrace();

@@ -362,8 +362,14 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
                 "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdReceive) as RT,profile\n" +
                 "where profile.id = RT.ser and RT.ser = LF.ser )\n" +
                 "union\n" +
-                "(select pf.*,0 as num from profile as pf where pf.id not in\n" +
-                " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )\n" +//19 20 21 id
+                "(select pf.*,0 as num from profile as pf where " +
+                "(pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?)" +//18 20 21 22 name
+                " and pf.id not in\n" +
+                " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
+                " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')" +
+                " union " +
+                "select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  " +
+                "(select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )\n" +// 23 24 25 id
                 ")) order by num"
         );
         ps.setLong(1,id);
@@ -385,10 +391,14 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         ps.setString(16,name+"%");
         ps.setString(17,name+"%");
         ps.setString(18,name+"%");
+        ps.setString(19,name+"%");
+        ps.setString(20,name+"%");
+        ps.setString(21,name+"%");
+        ps.setString(22,name+"%");
 
-        ps.setLong(19,id);
-        ps.setLong(20,id);
-        ps.setLong(21,id);
+        ps.setLong(23,id);
+        ps.setLong(24,id);
+        ps.setLong(25,id);
 
         System.out.println(ps.toString());
         ResultSet resultSet = ps.executeQuery();

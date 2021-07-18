@@ -3,6 +3,7 @@ package com.project.linkedindatabase.controller;
 
 import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
+import com.project.linkedindatabase.jsonToPojo.NotificationJson;
 import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
@@ -35,7 +36,7 @@ public class NotificationController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/notifications")
-    public ArrayList<Notification> getNotificationsByTargetProfileId(@RequestHeader Map<String, Object> jsonHeader) throws Exception {
+    public ArrayList<NotificationJson> getNotificationsByTargetProfileId(@RequestHeader Map<String, Object> jsonHeader) throws Exception {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try{
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);

@@ -6,29 +6,35 @@ import com.project.linkedindatabase.domain.Notification;
 import com.project.linkedindatabase.domain.Profile;
 import com.project.linkedindatabase.domain.Type.NotificationType;
 import com.project.linkedindatabase.domain.skill.Skill;
+import com.project.linkedindatabase.jsonToPojo.NotificationJson;
+import com.project.linkedindatabase.jsonToPojo.ProfileJson;
 import com.project.linkedindatabase.repository.BaseRepository;
 import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
-import org.springframework.security.core.parameters.P;
+import com.project.linkedindatabase.service.types.NotificationTypeService;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NotificationRepository extends BaseRepository<Notification,Long>  {
     private final ProfileService profileService;
     private final ConnectService connectService;
     private final SkillService skillService;
+    private final NotificationTypeService notificationTypeService;
 
-    public NotificationRepository(ProfileService profileService, ConnectService connectService, SkillService skillService) throws SQLException {
+    public NotificationRepository(ProfileService profileService, ConnectService connectService, SkillService skillService,
+                                  NotificationTypeService notificationTypeService) throws SQLException {
         super(Notification.class);
         this.profileService = profileService;
         this.connectService = connectService;
         this.skillService = skillService;
+        this.notificationTypeService = notificationTypeService;
     }
 
 
@@ -97,7 +103,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
     public void saveProfileVisitNotification(long profileId, long targetProfileId) throws Exception {
         Notification notification = new Notification();
         notification.setProfileId(profileId);
-        notification.setNotificationType((long) 3);
+        notification.setNotificationType(notificationTypeService.findByName("profile visit").getId());
         notification.setTargetProfileId(targetProfileId);
         String username1 = profileService.getProfileByIdJson(profileId).getUsername();
         notification.setBody(username1+" just visited your profile.");
@@ -107,7 +113,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
     public void saveEndorsementNotification(long profileId, long skillId) throws Exception {
         Notification notification = new Notification();
         notification.setProfileId(profileId);
-        notification.setNotificationType((long) 7);
+        notification.setNotificationType(notificationTypeService.findByName("skill endorse").getId());
         Skill skill = skillService.getById(skillId);
         notification.setTargetProfileId(skill.getProfileId());
         String username1 = profileService.getProfileByIdJson(profileId).getUsername();
@@ -123,7 +129,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
              ) {
             Notification notification = new Notification();
             notification.setProfileId(profileId);
-            notification.setNotificationType((long) 9);
+            notification.setNotificationType(notificationTypeService.findByName("birthday").getId());
             notification.setTargetProfileId(c.getProfileIdRequest());
             String username = profileService.getProfileByIdJson(profileId).getUsername();
             notification.setBody("It is "+username+ " 's birthday.");
@@ -133,7 +139,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
              ) {
             Notification notification = new Notification();
             notification.setProfileId(profileId);
-            notification.setNotificationType((long) 9);
+            notification.setNotificationType(notificationTypeService.findByName("birthday").getId());
             notification.setTargetProfileId(c.getProfileIdReceive());
             String username = profileService.getProfileByIdJson(profileId).getUsername();
             notification.setBody("It is "+username+ " 's birthday.");
@@ -147,9 +153,11 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         requestedConnects = (ArrayList<Connect>) connectService.getSenderRequestsBaseOnType(profileId, "accept");
         for (Connect c:receivedConnects
         ) {
+
+
             Notification notification = new Notification();
             notification.setProfileId(profileId);
-            notification.setNotificationType((long) 9);
+            notification.setNotificationType(notificationTypeService.findByName("change job").getId());
             notification.setTargetProfileId(c.getProfileIdRequest());
             String username = profileService.getProfileByIdJson(profileId).getUsername();
             notification.setBody(username +" has changed his working station or his job check it out.");
@@ -159,7 +167,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         ) {
             Notification notification = new Notification();
             notification.setProfileId(profileId);
-            notification.setNotificationType((long) 9);
+            notification.setNotificationType(notificationTypeService.findByName("change job").getId());
             notification.setTargetProfileId(c.getProfileIdReceive());
             String username = profileService.getProfileByIdJson(profileId).getUsername();
             notification.setBody(username +" has changed his working station or his job check it out.");
@@ -167,12 +175,58 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         }
     }
 
-    public ArrayList<Notification> getAllNotificationsByTargetProfileId(long targetProfileId) throws SQLException {
+    public ArrayList<NotificationJson> getAllNotificationsByTargetProfileId(long targetProfileId) throws SQLException {
         PreparedStatement retrieveAllPs = this.conn.prepareStatement("SELECT * FROM "+this.tableName
-                +" WHERE targetProfileId=?");
+                +" WHERE targetProfileId = ?");
         retrieveAllPs.setLong(1, targetProfileId);
         ResultSet resultSet = retrieveAllPs.executeQuery();
-        return this.convertAllSql(resultSet);
+        List<Notification> notifications = this.convertAllSql(resultSet);
+        ArrayList<NotificationJson> notificationJsons = new ArrayList<>();
+        for (Notification i: notifications)
+        {
+            notificationJsons.add(convertToJson(i));
+        }
+        return notificationJsons;
+    }
+
+    public void saveLikePostNotification(long profileId, long targetProfileId) throws Exception {
+        Notification notification = new Notification();
+        notification.setProfileId(profileId);
+        notification.setNotificationType(notificationTypeService.findByName("like for post").getId());
+        notification.setTargetProfileId(targetProfileId);
+        String username1 = profileService.getProfileByIdJson(profileId).getUsername();
+        notification.setBody(username1+" like your post.");
+        this.save(notification);
+    }
+
+    public void saveCommentPostNotification(long profileId, long targetProfileId) throws Exception {
+        Notification notification = new Notification();
+        notification.setProfileId(profileId);
+        notification.setNotificationType(notificationTypeService.findByName("comment for post").getId());
+        notification.setTargetProfileId(targetProfileId);
+        String username1 = profileService.getProfileByIdJson(profileId).getUsername();
+        notification.setBody(username1+" comment your post.");
+        this.save(notification);
+    }
+
+    public void saveLikeOrReCommentNotification(long profileId, long targetProfileId,String message) throws Exception {
+        Notification notification = new Notification();
+        notification.setProfileId(profileId);
+        notification.setNotificationType(notificationTypeService.findByName("like or replay for comment").getId());
+        notification.setTargetProfileId(targetProfileId);
+        String username1 = profileService.getProfileByIdJson(profileId).getUsername();
+        notification.setBody(username1+" "+message);
+        this.save(notification);
+    }
+
+    public NotificationJson convertToJson(Notification notification) throws SQLException
+    {
+        NotificationJson notificationJson = NotificationJson.convertToJson(notification);
+        Profile profile = profileService.findById(notificationJson.getProfileId());
+        Profile targetProfile = profileService.findById(notificationJson.getTargetProfileId());
+        notificationJson.setProfileJson(ProfileJson.convertToJson(profile));
+        notificationJson.setTargetProfileJson(ProfileJson.convertToJson(targetProfile));
+        return notificationJson;
     }
 
 }

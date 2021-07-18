@@ -8,6 +8,7 @@ import com.project.linkedindatabase.service.jwt.JwtUserDetailsService;
 import com.project.linkedindatabase.service.model.BackgroundService;
 import com.project.linkedindatabase.service.model.NotificationService;
 import com.project.linkedindatabase.service.model.ProfileService;
+import com.project.linkedindatabase.service.types.BackgroundTypeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +25,13 @@ public class BackgroundController {
     private final BackgroundService backgroundService;
     private final ProfileService profileService ;
     private final NotificationService notificationService;
+    private final BackgroundTypeService backgroundTypeService;
 
-    public BackgroundController(BackgroundService backgroundService, ProfileService profileService, NotificationService notificationService) {
+    public BackgroundController(BackgroundService backgroundService, ProfileService profileService, NotificationService notificationService, BackgroundTypeService backgroundTypeService) {
         this.backgroundService = backgroundService;
         this.profileService = profileService;
         this.notificationService = notificationService;
+        this.backgroundTypeService = backgroundTypeService;
     }
 
     @GetMapping("/background")
@@ -150,8 +153,12 @@ public class BackgroundController {
             backgroundJson.setProfileId(profile.getId());
             Background background = backgroundJson.convertToBackGround();
             background.setId(id);
+            Background oldBackGround = backgroundService.findById(id);
             backgroundService.updateWithProfileId(background);
-            notificationService.saveChangedWorkExperienceNotification(profile.getId());
+            if (oldBackGround.getBackgroundType() == backgroundTypeService.findByName("Work experience").getId() &&
+                    !oldBackGround.getTitle().equals(background.getTitle())
+            ){
+                notificationService.saveChangedWorkExperienceNotification(profile.getId());}
         }catch (Exception e)
         {
             e.printStackTrace();
