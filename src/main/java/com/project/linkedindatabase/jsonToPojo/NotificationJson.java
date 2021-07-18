@@ -17,6 +17,7 @@ public class NotificationJson {
     private ProfileJson profileJson;
 
     private Long notificationType;// foreign key to notificationType ==>enum
+    private String notificationTypeName;// foreign key to notificationType ==>enum
 
     private Long targetProfileId;//notification will send for him
     private ProfileJson targetProfileJson;
