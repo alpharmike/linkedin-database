@@ -198,8 +198,15 @@ public class PostController {
         }
         try {
             commentService.save(commentJson.convertToComment());
+
             Post post = postService.findById(commentJson.getPostId());
             notificationService.saveCommentPostNotification(profile.getId(),post.getProfileId());
+
+            if (commentJson.getReCommentId() != null && commentJson.getReCommentId() != 0)
+            {
+                Comment parentComment = commentService.findById(commentJson.getReCommentId());
+                notificationService.saveLikeOrReCommentNotification(profile.getId(),parentComment.getProfileId(),"re-comment your comment");
+            }
         }catch (Exception e)
         {
             e.printStackTrace();
