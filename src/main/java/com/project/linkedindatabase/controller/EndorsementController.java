@@ -78,8 +78,8 @@ public class EndorsementController {
         }
 
         try {
-            endorsementService.save(endorsement);
-//            notificationService.saveEndorsementNotification(endorsement.getEndorserId(), endorsement.getSkillId());
+             endorsementService.save(endorsement);
+            notificationService.saveEndorsementNotification(endorsement.getEndorserId(), endorsement.getSkillId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(

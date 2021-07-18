@@ -65,6 +65,7 @@ public class SkillRepository extends BaseRepository<Skill,Long>  {
                 ResultSet.CONCUR_UPDATABLE);
         retrievePs.setLong(1, id);
         ResultSet resultSet = retrievePs.executeQuery();
+        resultSet.next();
         return this.convertSql(resultSet);
     }
 

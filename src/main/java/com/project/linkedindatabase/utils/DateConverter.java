@@ -31,4 +31,12 @@ public class DateConverter {
         cal.setTime(date);
         return cal;
     }
+
+    public static Calendar getToday() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
 }

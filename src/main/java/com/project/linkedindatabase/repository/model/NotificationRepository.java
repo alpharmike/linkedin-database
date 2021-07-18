@@ -195,7 +195,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         notification.setNotificationType(notificationTypeService.findByName("like for post").getId());
         notification.setTargetProfileId(targetProfileId);
         String username1 = profileService.getProfileByIdJson(profileId).getUsername();
-        notification.setBody(username1+" like your post.");
+        notification.setBody(username1+" liked your post.");
         this.save(notification);
     }
 
@@ -205,7 +205,7 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         notification.setNotificationType(notificationTypeService.findByName("comment for post").getId());
         notification.setTargetProfileId(targetProfileId);
         String username1 = profileService.getProfileByIdJson(profileId).getUsername();
-        notification.setBody(username1+" comment your post.");
+        notification.setBody(username1+" commented on your post.");
         this.save(notification);
     }
 
@@ -226,6 +226,8 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         Profile targetProfile = profileService.findById(notificationJson.getTargetProfileId());
         notificationJson.setProfileJson(ProfileJson.convertToJson(profile));
         notificationJson.setTargetProfileJson(ProfileJson.convertToJson(targetProfile));
+        NotificationType notificationType = notificationTypeService.findById(notification.getNotificationType());
+        notificationJson.setNotificationTypeName(notificationType.getName());
         return notificationJson;
     }
 
