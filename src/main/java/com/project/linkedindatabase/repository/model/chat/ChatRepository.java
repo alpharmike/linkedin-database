@@ -223,12 +223,32 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
 
         if (!resultSet.isBeforeFirst())
         {
-
+            System.out.println("HERE");
             return null;
         }
         resultSet.next();
 
         return this.convertSql(resultSet);
+    }
+
+    public void deleteChatCompletelyById(long chatId) throws SQLException {
+        System.out.println(chatId);
+        if (findById(chatId) == null) {
+            return;
+        }
+        PreparedStatement deleteMsgPs = this.conn.prepareStatement("DELETE FROM "+BaseEntity.getTableName(Message.class)+" WHERE " +
+                "chatId = ?");;
+
+        deleteMsgPs.setLong(1, chatId);
+
+        PreparedStatement deleteChatPs = this.conn.prepareStatement("DELETE FROM "+this.tableName+" WHERE " +
+                "id = ?;");
+
+        deleteChatPs.setLong(1, chatId);
+
+        deleteMsgPs.execute();
+        deleteChatPs.execute();
+
     }
 
     public boolean isThereChat(Long profileId1,Long profileId2) throws SQLException {

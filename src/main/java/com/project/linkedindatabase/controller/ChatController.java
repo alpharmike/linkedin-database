@@ -114,14 +114,13 @@ public class ChatController {
     }
 
     @CrossOrigin(origins = "*")
-    @DeleteMapping("/chat-token/{id}")
+    @DeleteMapping("/chat/{id}")
     public Chat deleteChatById(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id) throws SQLException {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Profile profile;
         try {
             profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            Chat chat = chatService.findByProfileIds(id, profile.getId());
-            if (chat != null) chatService.deleteByObject(chat);
+            chatService.deleteChatCompletelyById(id);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a problem with token ", e);

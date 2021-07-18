@@ -25,17 +25,21 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Slf4j
 @Component
 public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
-
 
 
     private final PhoneTypeService phoneTypeService;
@@ -71,16 +75,17 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 
     public Bootstrap(ProfileService profileService, PhoneTypeService phoneTypeService,
-                     FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService,
-                     ConnectTypeService connectTypeService, AccomplishmentTypeService accomplishmentTypeService,
+                     FormerNameVisibilityTypeService formerNameVisibilityTypeService, IndustryService industryService
+            , ConnectTypeService connectTypeService, AccomplishmentTypeService accomplishmentTypeService,
                      BackgroundTypeService backgroundTypeService, SkillLevelService skillLevelService,
                      NotificationTypeService notificationTypeService, ShowPostTypeService showPostTypeService,
                      LanguageLevelService languageLevelService, RelationKnowledgeService relationKnowledgeService,
-                     BackgroundService backgroundService, AccomplishmentService accomplishmentService, LanguageService languageService, ConnectService connectService, ChatService chatService,
+                     BackgroundService backgroundService, AccomplishmentService accomplishmentService,
+                     LanguageService languageService, ConnectService connectService, ChatService chatService,
                      MessageService messageService, LikeCommentService likeCommentService,
                      CommentService commentService, LikePostService likePostService, PostService postService,
-                     SkillService skillService, EndorsementService endorsementService, NotificationService notificationService) {
-
+                     SkillService skillService, EndorsementService endorsementService,
+                     NotificationService notificationService) {
 
 
         this.phoneTypeService = phoneTypeService;
@@ -118,41 +123,38 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
         log.info("Application Started");
         log.info(BaseEntity.getTableName(Profile.class));
-       try {
+        try {
 
 
-
-           this.phoneTypeService.createTable();
-           this.formerNameVisibilityTypeService.createTable();
-           this.connectTypeService.createTable();
-           this.industryService.createTable();
-           this.accomplishmentTypeService.createTable();
-           this.backgroundTypeService.createTable();
-           this.skillLevelService.createTable();
-           this.notificationTypeService.createTable();
-           this.showPostTypeService.createTable();
-           this.languageLevelService.createTable();
-           this.relationKnowledgeService.createTable();
-
+            this.phoneTypeService.createTable();
+            this.formerNameVisibilityTypeService.createTable();
+            this.connectTypeService.createTable();
+            this.industryService.createTable();
+            this.accomplishmentTypeService.createTable();
+            this.backgroundTypeService.createTable();
+            this.skillLevelService.createTable();
+            this.notificationTypeService.createTable();
+            this.showPostTypeService.createTable();
+            this.languageLevelService.createTable();
+            this.relationKnowledgeService.createTable();
 
 
+            this.profileService.createTable();
+            this.backgroundService.createTable();
+            this.accomplishmentService.createTable();
+            this.skillService.createTable();
+            this.languageService.createTable();
+            this.connectService.createTable();
+            this.endorsementService.createTable();
+            this.chatService.createTable();
+            this.messageService.createTable();
 
-           this.profileService.createTable();
-           this.backgroundService.createTable();
-           this.accomplishmentService.createTable();
-           this.skillService.createTable();
-           this.languageService.createTable();
-           this.connectService.createTable();
-           this.endorsementService.createTable();
-           this.chatService.createTable();
-           this.messageService.createTable();
+            this.postService.createTable();
+            this.commentService.createTable();
+            this.likeCommentService.createTable();
+            this.likePostService.createTable();
 
-           this.postService.createTable();
-           this.commentService.createTable();
-           this.likeCommentService.createTable();
-           this.likePostService.createTable();
-
-           this.notificationService.createTable();
+            this.notificationService.createTable();
 
 //            new PhoneTypeRepository().createTable();
 //            new FormerNameVisibilityTypeRepository().createTable();
@@ -172,102 +174,120 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 //            new LikePostRepository().createTable();
 //            new LikeCommentRepository().createTable();
 //
-           addType();
-      } catch (Exception throwables) {
+            addType();
+        } catch (Exception throwables) {
 
-           throwables.printStackTrace();
-       }
+            throwables.printStackTrace();
+        }
 
         TimerTask birthDay = new TimerTask() {
             @Override
             public void run() {
                 try {
-                    if (isValidDate())
+                    if (isValidDate()) {
                         notificationService.createBirthDayNotification();
+                    }
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
             }
         };
-        Timer t=new Timer();
-        t.scheduleAtFixedRate(birthDay, 0,24*60*60*1000);
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(birthDay, 0, 24 * 60 * 60 * 1000);
     }
 
-    private boolean isValidDate(){
+    private boolean isValidDate() {
+        String filepath = "src/main/data/dates/dates.txt";
+        Path path = Paths.get(filepath);
+        String text = DateConverter.convertDate(DateConverter.getToday(), "yyy-MM-dd");
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
+                StandardOpenOption.CREATE)) {
+            if (existInFile(filepath, text)) {
+                return false;
+            }
+            writer.write(text + "\n");
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean existInFile(String filepath, String target) throws FileNotFoundException {
+        File file = new File(filepath);
+        if (!file.exists()) {
+            return false;
+        }
+        final Scanner scanner = new Scanner(file);
+        while (scanner.hasNextLine()) {
+            final String lineFromFile = scanner.nextLine();
+            System.out.println(lineFromFile);
+            if (lineFromFile.contains(target)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     private void addType() throws Exception {
         List<String> accomplishmentType = SaveTypes.readAccomplishmentType();
-        for (String name : accomplishmentType)
-        {
+        for (String name : accomplishmentType) {
             accomplishmentTypeService.saveIfNotExist(name);
         }
 
         List<String> backgroundType = SaveTypes.readBackgroundType();
-        for (String name : backgroundType)
-        {
+        for (String name : backgroundType) {
             backgroundTypeService.saveIfNotExist(name);
         }
 
         List<String> connectType = SaveTypes.readConnectType();
-        for (String name : connectType)
-        {
+        for (String name : connectType) {
 
             connectTypeService.saveIfNotExist(name);
         }
 
 
         List<String> skillLevel = SaveTypes.readSkillLevel();
-        for (String name : skillLevel)
-        {
+        for (String name : skillLevel) {
             skillLevelService.saveIfNotExist(name);
         }
 
         List<String> formerNameVisibilityType = SaveTypes.readFormerNameVisibilityType();
-        for (String name : formerNameVisibilityType)
-        {
+        for (String name : formerNameVisibilityType) {
             formerNameVisibilityTypeService.saveIfNotExist(name);
         }
 
-        List<String>  industryType = SaveTypes.readIndustryType();
-        for (String name :  industryType)
-        {
+        List<String> industryType = SaveTypes.readIndustryType();
+        for (String name : industryType) {
             industryService.saveIfNotExist(name);
         }
 
         List<String> languageLevel = SaveTypes.readLanguageLevel();
-        for (String name : languageLevel)
-        {
+        for (String name : languageLevel) {
             languageLevelService.saveIfNotExist(name);
         }
 
         List<String> notificationType = SaveTypes.readNotificationType();
-        for (String name : notificationType)
-        {
+        for (String name : notificationType) {
             notificationTypeService.saveIfNotExist(name);
         }
 
 
         List<String> phoneType = SaveTypes.readPhoneType();
-        for (String name : phoneType)
-        {
+        for (String name : phoneType) {
             phoneTypeService.saveIfNotExist(name);
         }
 
 
         List<String> readRelationKnowledge = SaveTypes.readRelationKnowledge();
-        for (String name : readRelationKnowledge)
-        {
+        for (String name : readRelationKnowledge) {
             relationKnowledgeService.saveIfNotExist(name);
         }
 
 
-
-
         List<String> showPostType = SaveTypes.readShowPostType();
-        for (String name : showPostType)
-        {
+        for (String name : showPostType) {
             showPostTypeService.saveIfNotExist(name);
         }
     }

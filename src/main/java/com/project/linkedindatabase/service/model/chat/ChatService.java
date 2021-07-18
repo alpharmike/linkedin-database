@@ -25,6 +25,7 @@ public interface ChatService extends BaseService<Chat,Long> {
     public void setArchive(long chatId) throws SQLException;
     public void setUnread(long chatId) throws SQLException;
     public void delete(long chatId) throws SQLException;
+    public void deleteChatCompletelyById(long chatId) throws SQLException;
     public boolean exists(long profileId1, long profileId2) throws SQLException;
     public Chat getChatByProfileId(long profileId1, long profileId2) throws SQLException;
     public ArrayList<Chat> convertAllSql(ResultSet resultSet) throws SQLException;

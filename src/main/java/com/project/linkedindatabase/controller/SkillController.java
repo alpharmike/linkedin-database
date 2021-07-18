@@ -92,15 +92,14 @@ public class SkillController {
 
     @CrossOrigin(origins = "*")
     @DeleteMapping("/skill/{id}")
-    public void delete(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody,
-                       @PathVariable long id){
+    public void delete(@RequestHeader Map<String, Object> jsonHeader, @PathVariable long id){
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             Skill skill = skillService.findById(id);
-            if (profile.getId() == skill.getProfileId()) {
+            if (profile.getId().longValue() == skill.getProfileId().longValue()) {
                 skillService.deleteById(id);
-                endorsementService.deleteAllBySkillId(id);
+                // endorsementService.deleteAllBySkillId(id);
             }
 
 

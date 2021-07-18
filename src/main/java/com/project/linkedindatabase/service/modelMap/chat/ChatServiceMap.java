@@ -97,6 +97,11 @@ public class ChatServiceMap implements ChatService {
     }
 
     @Override
+    public void deleteChatCompletelyById(long chatId) throws SQLException {
+        chatRepository.deleteChatCompletelyById(chatId);
+    }
+
+    @Override
     public boolean exists(long profileId1, long profileId2) throws SQLException {
         return chatRepository.exists(profileId1, profileId2);
     }
