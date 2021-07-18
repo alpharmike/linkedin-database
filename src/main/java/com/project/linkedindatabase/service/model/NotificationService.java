@@ -18,4 +18,5 @@ public interface NotificationService extends BaseService<Notification,Long> {
     public void saveCommentPostNotification(long profileId, long targetProfileId) throws Exception;
 
     public void saveLikeOrReCommentNotification(long profileId, long targetProfileId,String message) throws Exception ;
+    public void createBirthDayNotification() throws SQLException;
 }

@@ -19,12 +19,18 @@ import com.project.linkedindatabase.service.model.skill.EndorsementService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import com.project.linkedindatabase.service.types.*;
+import com.project.linkedindatabase.utils.DateConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Slf4j
 @Component
@@ -115,6 +121,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
        try {
 
 
+
            this.phoneTypeService.createTable();
            this.formerNameVisibilityTypeService.createTable();
            this.connectTypeService.createTable();
@@ -170,6 +177,24 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
            throwables.printStackTrace();
        }
+
+        TimerTask birthDay = new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    if (isValidDate())
+                        notificationService.createBirthDayNotification();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        };
+        Timer t=new Timer();
+        t.scheduleAtFixedRate(birthDay, 0,24*60*60*1000);
+    }
+
+    private boolean isValidDate(){
+        return false;
     }
 
     private void addType() throws Exception {

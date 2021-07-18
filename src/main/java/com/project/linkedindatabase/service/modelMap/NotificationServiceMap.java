@@ -101,4 +101,9 @@ public class NotificationServiceMap  implements NotificationService {
         notificationRepository.saveLikeOrReCommentNotification(profileId,targetProfileId,message);
 
     }
+    @Override
+    public void createBirthDayNotification() throws SQLException{
+        notificationRepository.createBirthDayNotification();
+    }
+
 }

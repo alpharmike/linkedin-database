@@ -13,12 +13,14 @@ import com.project.linkedindatabase.service.model.ConnectService;
 import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.skill.SkillService;
 import com.project.linkedindatabase.service.types.NotificationTypeService;
+import com.project.linkedindatabase.utils.DateConverter;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -227,6 +229,30 @@ public class NotificationRepository extends BaseRepository<Notification,Long>  {
         notificationJson.setProfileJson(ProfileJson.convertToJson(profile));
         notificationJson.setTargetProfileJson(ProfileJson.convertToJson(targetProfile));
         return notificationJson;
+    }
+
+    public void createBirthDayNotification() throws SQLException {
+        PreparedStatement retrieveAllPs = this.conn.prepareStatement("select p1.id as profile ,p2.id as target from profile as p1, profile as p2 where\n" +
+                "p1.dateOfBirth like ? and exists (select * from connect as con where \n" +
+                "con.connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')  \n" +
+                "and ((con.profileIdReceive = p1.id and con.profileIdRequest = p2.id ) or\n" +
+                "(con.profileIdRequest = p1.id and con.profileIdReceive = p2.id ) ))");
+
+        Calendar calendar = Calendar.getInstance();
+        retrieveAllPs.setString(1,"%"+DateConverter.convertDate(calendar,"MM-dd"));
+        ResultSet resultSet =  retrieveAllPs.executeQuery();
+        while (resultSet.next())
+        {
+            Notification notification = new Notification();
+            notification.setNotificationType(notificationTypeService.findByName("birthday").getId());
+            Long profile = resultSet.getLong("profile");
+            Long target = resultSet.getLong("target");
+            Profile profileObject = profileService.findById(profile);
+            notification.setBody("It is "+profileObject.getUsername()+ " 's birthday.");
+            notification.setProfileId(profile);
+            notification.setTargetProfileId(target);
+            save(notification);
+        }
     }
 
 }
