@@ -305,18 +305,57 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         return connectJsons;
     }
 
-    public List<Profile> profileYouMightKnow(Long id) throws Exception {
+    public List<Map<String,Object> >profileYouMightKnow(Long id) throws Exception {
         PreparedStatement ps = this.conn.prepareStatement(
-                "select * from profile as pf where pf.id not in (" +
-                        " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )" +
-                        ") and  " +
-                "exists (select * from connect as ct where  " +
-                "((ct.profileIdReceive = pf.id and ct.profileIdRequest in (" +
-                        " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )" +
-                        ")) or (ct.profileIdRequest = pf.id and ct.profileIdReceive in (" +
-                        " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )" +
-                        ")))  " +
-                "and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept'));"
+                "select p.* ,(lf.num  + rt.num) as num from profile as p , \n" +
+                        "((select search.profileIdReceive as ser , count(goal.id) as num from connect as search,connect_type,connect as goal\n" +
+                        "where \n" +
+                        "((search.profileIdRequest = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                        "or (search.profileIdRequest = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                        "and search.id != goal.id\n" +
+                        " and search.connectType = connect_type.id\n" +
+                        "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdReceive)\n" +
+                        "union\n" +
+                        "(select pf.id as ser ,  0 as num from profile as pf where\n" +
+                        "pf.id not in\n" +
+                        "(select search.profileIdReceive as ser  from connect as search,connect_type,connect as goal\n" +
+                        "where \n" +
+                        "((search.profileIdRequest = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                        "or (search.profileIdRequest = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                        "and search.id != goal.id\n" +
+                        " and search.connectType = connect_type.id\n" +
+                        "and goal.connectType = connect_type.id and connect_type.name = 'accept')\n" +
+                        "))\n" +
+                        " as lf\n" +
+                        ",\n" +
+                        "((select search.profileIdRequest as ser , count(goal.id) as num from connect as search,connect_type,connect as goal\n" +
+                        "where \n" +
+                        "((search.profileIdReceive = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                        "or (search.profileIdReceive = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                        "and search.id != goal.id\n" +
+                        " and search.connectType = connect_type.id\n" +
+                        "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdRequest)\n" +
+                        "union \n" +
+                        "select pf.id as ser ,  0 as num from profile as pf where\n" +
+                        "pf.id not in\n" +
+                        "(select search.profileIdRequest as ser from connect as search,connect_type,connect as goal\n" +
+                        "where \n" +
+                        "((search.profileIdReceive = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                        "or (search.profileIdReceive = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                        "and search.id != goal.id\n" +
+                        " and search.connectType = connect_type.id\n" +
+                        "and goal.connectType = connect_type.id and connect_type.name = 'accept' )\n" +
+                        ") \n" +
+                        " as rt\n" +
+                        "where p.id = rt.ser and lf.ser = rt.ser and \n" +
+                        " (lf.num  + rt.num) != 0 and " +
+                        "p.id not in " +
+                        "(select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')\n" +
+                        "union\n" +
+                        " select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')\n" +
+                        " union\n" +
+                        " select pf.id as pfid from profile as pf where pf.id = ?  )" +
+                        "ORDER BY num DESC"
         );
 
         ps.setLong(1,id);
@@ -328,12 +367,18 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         ps.setLong(7,id);
         ps.setLong(8,id);
         ps.setLong(9,id);
+        ps.setLong(10,id);
+        ps.setLong(11,id);
 
-
+        System.out.println(ps.toString());
         ResultSet resultSet = ps.executeQuery();
-        List<Profile> allObject = new ArrayList<>();
+        List<Map<String,Object> >allObject = new ArrayList<>();
         while (resultSet.next()) {
-            allObject.add(profileService.convertSql(resultSet));
+            Map<String,Object>  objectMap = new HashMap<>();
+            objectMap.put("person",profileService.convertSql(resultSet));
+            Long mutualConnectionsCount = resultSet.getLong("num");
+            objectMap.put("mutualConnectionsCount",mutualConnectionsCount);
+            allObject.add(objectMap);
         }
         return allObject;
 
@@ -341,64 +386,62 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
     }
 
     public List<Map<String,Object>> searchBaseOfConnection(Long id, String name) throws Exception {
-        PreparedStatement ps = this.conn.prepareStatement("((select profile.*,(RT.num +LF.num) as num from\n" +
-                "\n" +
-                "(select search.profileIdRequest as ser , count(goal.id) as num from connect as search,connect_type,connect as goal,profile as pf\n" +
-                "where search.profileIdRequest = ? and\n" +//1 id
-                "((search.profileIdReceive = goal.profileIdReceive and pf.id = goal.profileIdRequest and \n" +
-                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?))\n" +//2 3 4 5 name
-                "or (search.profileIdReceive = goal.profileIdRequest and pf.id = goal.profileIdReceive and \n" +
-                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?)))\n" +//6 7 8 9 name
-                "and search.profileIdRequest != goal.profileIdRequest and search.connectType = connect_type.id\n" +
-                "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdRequest) as LF ,\n" +
-                "\n" +
-                "(select search.profileIdReceive as ser , count(goal.id) as num from connect as search,connect_type,connect as goal,profile as pf\n" +
-                "where search.profileIdReceive = ? and\n" +//10 id
-                "((search.profileIdRequest = goal.profileIdReceive and pf.id = goal.profileIdRequest and \n" +
-                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?))\n" +// 11 12 13 14 name
-                "or (search.profileIdRequest = goal.profileIdRequest and pf.id = goal.profileIdReceive and \n" +
-                " (pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?)))\n" +// 15 16 17 18 name
-                "and search.profileIdReceive != goal.profileIdReceive and search.connectType = connect_type.id\n" +
-                "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdReceive) as RT,profile\n" +
-                "where profile.id = RT.ser and RT.ser = LF.ser )\n" +
+        PreparedStatement ps = this.conn.prepareStatement("select p.* ,(lf.num  + rt.num) as num from profile as p , \n" +
+                "((select search.profileIdReceive as ser , count(goal.id) as num from connect as search,connect_type,connect as goal\n" +
+                "where \n" +
+                "((search.profileIdRequest = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                "or (search.profileIdRequest = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                "and search.id != goal.id\n" +
+                " and search.connectType = connect_type.id\n" +
+                "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdReceive)\n" +
                 "union\n" +
-                "(select pf.*,0 as num from profile as pf where " +
-                "(pf.firstName like ? or pf.lastName like ? or CONCAT( pf.firstName,' ', pf.lastName) like ? or pf.username like ?)" +//18 20 21 22 name
-                " and pf.id not in\n" +
-                " (select cn.profileIdRequest as pfid from connect as cn where cn.profileIdReceive = ? and connectType in" +
-                " (select cn_t.id from connect_type as cn_t where cn_t.name = 'accept')" +
-                " union " +
-                "select cn.profileIdReceive as pfid from connect as cn where cn.profileIdRequest = ? and connectType in  " +
-                "(select cn_t.id from connect_type as cn_t where cn_t.name = 'accept') union select pf.id as pfid from profile as pf where pf.id = ?  )\n" +// 23 24 25 id
-                ")) order by num"
+                "(select pf.id as ser ,  0 as num from profile as pf where\n" +
+                "pf.id not in\n" +
+                "(select search.profileIdReceive as ser  from connect as search,connect_type,connect as goal\n" +
+                "where \n" +
+                "((search.profileIdRequest = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                "or (search.profileIdRequest = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                "and search.id != goal.id\n" +
+                " and search.connectType = connect_type.id\n" +
+                "and goal.connectType = connect_type.id and connect_type.name = 'accept')\n" +
+                "))\n" +
+                " as lf\n" +
+                ",\n" +
+                "((select search.profileIdRequest as ser , count(goal.id) as num from connect as search,connect_type,connect as goal\n" +
+                "where \n" +
+                "((search.profileIdReceive = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                "or (search.profileIdReceive = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                "and search.id != goal.id\n" +
+                " and search.connectType = connect_type.id\n" +
+                "and goal.connectType = connect_type.id and connect_type.name = 'accept' group by search.profileIdRequest)\n" +
+                "union \n" +
+                "select pf.id as ser ,  0 as num from profile as pf where\n" +
+                "pf.id not in\n" +
+                "(select search.profileIdRequest as ser from connect as search,connect_type,connect as goal\n" +
+                "where \n" +
+                "((search.profileIdReceive = goal.profileIdReceive and ? = goal.profileIdRequest )\n" +
+                "or (search.profileIdReceive = goal.profileIdRequest and ? = goal.profileIdReceive ))\n" +
+                "and search.id != goal.id\n" +
+                " and search.connectType = connect_type.id\n" +
+                "and goal.connectType = connect_type.id and connect_type.name = 'accept' )\n" +
+                ") \n" +
+                " as rt\n" +
+                "where p.id = rt.ser and lf.ser = rt.ser and \n" +
+                "(p.firstName like ? or p.lastName like ? or CONCAT( p.firstName,' ', p.lastName) like ? or p.username like ?)" +
+                "ORDER BY num DESC"
         );
         ps.setLong(1,id);
-        ps.setString(2,name+"%");
-        ps.setString(3,name+"%");
-        ps.setString(4,name+"%");
-        ps.setString(5,name+"%");
-        ps.setString(6,name+"%");
-        ps.setString(7,name+"%");
-        ps.setString(8,name+"%");
+        ps.setLong(2,id);
+        ps.setLong(3,id);
+        ps.setLong(4,id);
+        ps.setLong(5,id);
+        ps.setLong(6,id);
+        ps.setLong(7,id);
+        ps.setLong(8,id);
         ps.setString(9,name+"%");
-
-        ps.setLong(10,id);
+        ps.setString(10,name+"%");
         ps.setString(11,name+"%");
         ps.setString(12,name+"%");
-        ps.setString(13,name+"%");
-        ps.setString(14,name+"%");
-        ps.setString(15,name+"%");
-        ps.setString(16,name+"%");
-        ps.setString(17,name+"%");
-        ps.setString(18,name+"%");
-        ps.setString(19,name+"%");
-        ps.setString(20,name+"%");
-        ps.setString(21,name+"%");
-        ps.setString(22,name+"%");
-
-        ps.setLong(23,id);
-        ps.setLong(24,id);
-        ps.setLong(25,id);
 
         System.out.println(ps.toString());
         ResultSet resultSet = ps.executeQuery();

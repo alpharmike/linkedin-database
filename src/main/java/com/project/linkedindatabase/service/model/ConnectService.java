@@ -25,7 +25,7 @@ public interface ConnectService extends BaseService<Connect,Long> {
     public Long getNumberOfConnection(Long profileId) throws Exception;
 
     public List<ConnectJson> getAllPending(Long profileIdReceiver) throws SQLException;
-    public List<Profile> profileYouMightKnow(Long id) throws Exception;
+    public List<Map<String,Object>> profileYouMightKnow(Long id) throws Exception;
     public List<Map<String,Object>> searchBaseOfConnection(Long id, String name) throws Exception;
 
     public List<Profile> getAllPeopleInConnection(Long profileId) throws SQLException;

@@ -103,7 +103,7 @@ public class ConnectServiceMap implements ConnectService {
     }
 
     @Override
-    public List<Profile> profileYouMightKnow(Long id) throws Exception
+    public List<Map<String,Object>> profileYouMightKnow(Long id) throws Exception
     {
         return connectRepository.profileYouMightKnow(id);
     }

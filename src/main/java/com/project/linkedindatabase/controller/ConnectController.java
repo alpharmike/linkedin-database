@@ -203,7 +203,7 @@ public class ConnectController {
     }
 
     @GetMapping("/people-you-might-know")
-    public List<Profile> peopleYouMightKnow(@RequestHeader Map<String, Object> jsonHeader) {
+    public List<Map<String,Object>> peopleYouMightKnow(@RequestHeader Map<String, Object> jsonHeader) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         Long profileId;
         try {
