@@ -59,4 +59,9 @@ public class MessageServiceMap implements MessageService {
     public List<MessageJson> getAllMessageByChatIdJson(Long chatId) throws SQLException {
         return messageRepository.getAllMessageByChatIdJson(chatId);
     }
+    @Override
+    public MessageJson convertToMessageJson(Message message) throws SQLException
+    {
+        return messageRepository.convertToMessageJson(message);
+    }
 }

@@ -57,7 +57,7 @@ public class ChatServiceMap implements ChatService {
     }
 
     @Override
-    public ArrayList<Chat> searchUser(String searchKey, long id) throws SQLException, ParseException {
+    public ArrayList<Chat> searchUser(String searchKey, long id) throws Exception {
         return chatRepository.searchUser(searchKey, id);
     }
 
@@ -142,7 +142,17 @@ public class ChatServiceMap implements ChatService {
     }
 
     @Override
+    public List<ChatJson> searchUserJson(String searchKey, long id) throws Exception{
+        return chatRepository.searchUserJson(searchKey,id);
+    }
+
+    @Override
     public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException {
         return chatRepository.getChatByChatId(chatId,userIdRequest);
+    }
+
+    @Override
+    public List<ChatJson> searchMessagesJson(String searchKey, long id) throws SQLException, ParseException {
+        return chatRepository.searchMessagesJson(searchKey,id);
     }
 }

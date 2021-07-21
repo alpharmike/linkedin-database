@@ -12,6 +12,7 @@ import com.project.linkedindatabase.service.model.ProfileService;
 import com.project.linkedindatabase.service.model.chat.MessageService;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -169,9 +170,23 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         return chatJsons;
     }
 
-    public ArrayList<Chat> searchUser(String searchKey, long id) throws SQLException, ParseException {
+    public ArrayList<Chat> searchUser(String searchKey, long id) throws Exception
+    {
+        List<Profile> profiles = profileService.searchOtherBaseName(searchKey);
+        ArrayList<Chat> chats = new ArrayList<>();
+        for (Profile p :profiles)
+        {
+            chats.addAll(searchUserProfile(p,id));
+        }
+
+        return chats;
+    }
+
+
+    public ArrayList<Chat> searchUserProfile(Profile profile, long id) throws SQLException, ParseException {
         ArrayList<Chat> result = new ArrayList<>();
-        long userId = profileService.findByUsername(searchKey).getId();
+
+        long userId = profile.getId();
         PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName
                 +" WHERE (profileId1=? AND profileId2=?) OR (profileId1=? AND profileId2=?)"
         );
@@ -181,14 +196,23 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         searchPs.setLong(3, id);
         searchPs.setLong(4, userId);
         ResultSet userResultSet = searchPs.executeQuery();
-        result.add(this.convertSql(userResultSet));
+        result = this.convertAllSql(userResultSet);
 
         return result;
+    }
+    public List<ChatJson> searchUserJson(String searchKey, long id) throws Exception {
+        ArrayList<Chat> chats = searchUser(searchKey,id);
+
+
+        List<ChatJson> chatJsonList = new ArrayList<>();
+        for (Chat i : chats)
+            chatJsonList.add(convertToJson(i,id));
+        return chatJsonList;
     }
 
     public HashMap<Chat, Message> searchMessages(String searchKey, long id) throws SQLException, ParseException {
         HashMap<Chat, Message> result = new HashMap<>();
-        PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE profileId1=? OR profileId2=?" +
+        PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" WHERE (profileId1=? OR profileId2=?)" +
                 " AND id IN (SELECT chatId FROM "+BaseEntity.getTableName(Message.class)+")");
         searchPs.setLong(1, id);
         searchPs.setLong(2, id);
@@ -206,6 +230,42 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
                 if(m.getBody().contains(searchKey)){
                     result.put(c, m);
                 }
+            }
+        }
+        return result;
+    }
+
+    public List<ChatJson> searchMessagesJson(String searchKey, long id) throws SQLException, ParseException {
+       List<ChatJson> result = new ArrayList<>();
+        PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName +" as ch WHERE (profileId1=? OR profileId2=?)" +
+                " AND id IN (SELECT chatId FROM "+BaseEntity.getTableName(Message.class)+") and exists  " +
+                "(select * from message as ms where ms.body like ? and ms.chatId = ch.id)");
+        searchPs.setLong(1, id);
+        searchPs.setLong(2, id);
+        searchPs.setString(3, searchKey+"%");
+
+        ResultSet messagesResultSet = searchPs.executeQuery();
+        ArrayList<Chat> resultTemp = this.convertAllSql(messagesResultSet);
+
+        for (Chat c:resultTemp
+        ) {
+
+            PreparedStatement searchMessagePs = this.conn.prepareStatement("SELECT * FROM "+BaseEntity.getTableName(Message.class)+
+                    " WHERE chatId=?");
+            searchMessagePs.setLong(1, c.getId());
+            ResultSet resultSet = searchMessagePs.executeQuery();
+
+            ArrayList<Message> messages = new MessageRepository(profileService).convertAllSql(resultSet);
+            ChatJson chatJson = convertToJson(c,id);
+            chatJson.setMessageJsons(new ArrayList<>());
+            for (Message m:messages
+            ) {
+                System.out.println(m.getBody());
+                if(m.getBody().contains(searchKey)){
+                    chatJson.getMessageJsons().add(messageService.convertToMessageJson(m));
+                    System.out.println(m.getBody());
+                }
+                result.add(chatJson);
             }
         }
         return result;

@@ -216,6 +216,20 @@ public class ChatController {
     }
 
     @CrossOrigin(origins = "*")
+    @GetMapping("/chats/search-user-json/{searchKey}")
+    public List<ChatJson> searchForUserJson(@RequestHeader Map<String, Object> jsonHeader,
+                                         @PathVariable String searchKey) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return chatService.searchUserJson(searchKey, profile.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
     @GetMapping("/chats/search-messages/{searchKey}")
     public HashMap<Chat, Message> searchForMessages(@RequestHeader Map<String, Object> jsonHeader,
                                                     @PathVariable String searchKey) {
@@ -223,6 +237,20 @@ public class ChatController {
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
             return chatService.searchMessages(searchKey, profile.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/chats/search-messages-json/{searchKey}")
+    public List<ChatJson> searchForMessagesJson(@RequestHeader Map<String, Object> jsonHeader,
+                                                    @PathVariable String searchKey) {
+        String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
+        try {
+            Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
+            return chatService.searchMessagesJson(searchKey, profile.getId());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

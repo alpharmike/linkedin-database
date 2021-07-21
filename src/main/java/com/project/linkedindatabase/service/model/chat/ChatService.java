@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ChatService extends BaseService<Chat,Long> {
-    public ArrayList<Chat> searchUser(String searchKey, long id) throws SQLException, ParseException;
+    public ArrayList<Chat> searchUser(String searchKey, long id) throws Exception;
     public ArrayList<Chat> findByArchived(long profileId, boolean status) throws SQLException;
     public ArrayList<ChatJson> findByArchivedJson(long profileId, boolean status) throws SQLException;
     public ArrayList<Chat> findByUnread(long profileId, boolean status) throws SQLException;
@@ -35,8 +35,9 @@ public interface ChatService extends BaseService<Chat,Long> {
 
     public List<Chat> getAllChatByProfileId(Long profileId) throws SQLException ;
     public List<ChatJson> getAllChatByProfileIdJson(Long profileId) throws SQLException ;
-
+    public List<ChatJson> searchUserJson(String searchKey, long id) throws Exception;
     public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException ;
+    public List<ChatJson> searchMessagesJson(String searchKey, long id) throws SQLException, ParseException;
 
 
 }

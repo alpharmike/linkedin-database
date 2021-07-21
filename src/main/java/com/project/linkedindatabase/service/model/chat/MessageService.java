@@ -12,4 +12,5 @@ import java.util.List;
 public interface MessageService extends BaseService<Message,Long> {
     public List<Message> getMessagesByChatId(long chatId) throws SQLException, ParseException;
     public List<MessageJson> getAllMessageByChatIdJson(Long chatId) throws SQLException;
+    public MessageJson convertToMessageJson(Message message) throws SQLException;
 }
