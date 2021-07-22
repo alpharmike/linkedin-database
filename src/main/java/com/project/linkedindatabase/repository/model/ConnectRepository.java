@@ -277,9 +277,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
 
     private ConnectJson convertToJson(Connect connect) throws SQLException {
         ConnectJson connectJson = ConnectJson.convertToJson(connect);
-        System.out.println(connect.getProfileIdReceive());
-        System.out.println(connect.getProfileIdRequest());
-        System.out.println(connect.getConnectType());
+
         Profile profileReceiver = profileService.findById(connectJson.getProfileIdReceive());
         Profile profileRequest = profileService.findById(connectJson.getProfileIdRequest());
         String name = connectTypeService.findById(connectJson.getConnectType()).getName();
@@ -370,7 +368,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         ps.setLong(10,id);
         ps.setLong(11,id);
 
-        System.out.println(ps.toString());
+
         ResultSet resultSet = ps.executeQuery();
         List<Map<String,Object> >allObject = new ArrayList<>();
         while (resultSet.next()) {
@@ -443,7 +441,7 @@ public class ConnectRepository extends BaseRepository<Connect,Long> {
         ps.setString(11,name+"%");
         ps.setString(12,name+"%");
 
-        System.out.println(ps.toString());
+
         ResultSet resultSet = ps.executeQuery();
         List<Map<String,Object> >allObject = new ArrayList<>();
         while (resultSet.next()) {

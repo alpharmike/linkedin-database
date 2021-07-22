@@ -286,7 +286,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         ps.setString(1, companyName+"%");
 
 
-        System.out.println(ps.toString());
+
 
         ResultSet resultSet = ps.executeQuery();
         List<Profile> allObject = new ArrayList<>();
@@ -398,7 +398,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
         savePs.setLong(18, profile.getId());
 
-        System.out.println(savePs.toString());
+
         savePs.execute();
     }
 
@@ -408,7 +408,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
         ps.setString(1, language+"%");
 
 
-        System.out.println(ps.toString());
+
         ResultSet resultSet = ps.executeQuery();
         List<Profile> allObject = new ArrayList<>();
         while (resultSet.next()) {
@@ -523,7 +523,7 @@ public class ProfileRepository extends BaseRepository<Profile,Long>   {
 
         savePs.setLong(1,0L);
         savePs.setLong(2,profile.getId());
-        System.out.println(savePs.toString());
+
         savePs.execute();
 
     }

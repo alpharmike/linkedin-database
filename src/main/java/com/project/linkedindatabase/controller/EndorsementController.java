@@ -58,10 +58,9 @@ public class EndorsementController {
         boolean duplicate = false;
 
         try {
-            System.out.println("HERE");
+
             if(endorsementService.isThereAnotherEndorsement(endorsement))
             {
-                System.out.println("THHERE");
                 duplicate = true;
             }
 

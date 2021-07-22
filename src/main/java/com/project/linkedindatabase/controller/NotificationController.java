@@ -55,11 +55,8 @@ public class NotificationController {
         DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd");
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
         String today = dtf.format(zonedDateTime);
-        System.out.println(today);
+
         for (Profile p : profileService.findAll()) {
-            System.out.println(p.getUsername());
-            System.out.println(p.getDateOfBirth().get(Calendar.DAY_OF_YEAR));
-            System.out.println(DateConverter.getToday().get(Calendar.DAY_OF_YEAR));
             if (p.getDateOfBirth().get(Calendar.DAY_OF_YEAR) == DateConverter.getToday().get(Calendar.DAY_OF_YEAR)) {
                 try {
                     notificationService.saveBirthdayNotification(p.getId());

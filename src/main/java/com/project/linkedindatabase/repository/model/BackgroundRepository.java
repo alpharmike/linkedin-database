@@ -111,7 +111,7 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         ps.setString(4, object.getTitle());
         ps.setString(5, object.getDescription());
         ps.setLong(6, object.getId());
-        System.out.println(ps.toString());
+
 
         ps.execute();
     }
@@ -130,7 +130,7 @@ public class BackgroundRepository extends BaseRepository<Background,Long>  {
         ps.setString(5, object.getDescription());
         ps.setLong(6, object.getId());
         ps.setLong(7, object.getProfileId());
-        System.out.println(ps.toString());
+
         ps.execute();
     }
 

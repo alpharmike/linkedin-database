@@ -36,8 +36,11 @@ public interface ChatService extends BaseService<Chat,Long> {
     public List<Chat> getAllChatByProfileId(Long profileId) throws SQLException ;
     public List<ChatJson> getAllChatByProfileIdJson(Long profileId) throws SQLException ;
     public List<ChatJson> searchUserJson(String searchKey, long id) throws Exception;
+    public List<ChatJson> searchUserUnreadJson(String searchKey, long id,Boolean unread) throws Exception;
+    public List<ChatJson> searchUserArchiverJson(String searchKey, long id,Boolean archive) throws Exception;
     public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException ;
     public List<ChatJson> searchMessagesJson(String searchKey, long id) throws SQLException, ParseException;
+    public ChatJson searchMessagesBaseChatIdJson(String searchKey, long id,long chatId) throws SQLException, ParseException;
 
 
 }

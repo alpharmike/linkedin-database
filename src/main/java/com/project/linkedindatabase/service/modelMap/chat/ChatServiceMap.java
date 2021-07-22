@@ -147,6 +147,16 @@ public class ChatServiceMap implements ChatService {
     }
 
     @Override
+    public List<ChatJson> searchUserUnreadJson(String searchKey, long id,Boolean isUnread) throws Exception {
+        return chatRepository.searchUserUnreadJson(searchKey,id,isUnread);
+    }
+
+    @Override
+    public List<ChatJson> searchUserArchiverJson(String searchKey, long id,Boolean isArchive) throws Exception {
+        return chatRepository.searchUserArchiverJson(searchKey,id,isArchive);
+    }
+
+    @Override
     public ChatJson getChatByChatId(Long chatId,Long userIdRequest) throws SQLException {
         return chatRepository.getChatByChatId(chatId,userIdRequest);
     }
@@ -154,5 +164,10 @@ public class ChatServiceMap implements ChatService {
     @Override
     public List<ChatJson> searchMessagesJson(String searchKey, long id) throws SQLException, ParseException {
         return chatRepository.searchMessagesJson(searchKey,id);
+    }
+
+    @Override
+    public ChatJson searchMessagesBaseChatIdJson(String searchKey, long id, long chatId) throws SQLException, ParseException {
+        return chatRepository.searchMessagesBaseChatIdJson(searchKey,id,chatId);
     }
 }

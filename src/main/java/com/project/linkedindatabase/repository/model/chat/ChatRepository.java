@@ -183,6 +183,8 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
     }
 
 
+
+
     public ArrayList<Chat> searchUserProfile(Profile profile, long id) throws SQLException, ParseException {
         ArrayList<Chat> result = new ArrayList<>();
 
@@ -209,6 +211,75 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
             chatJsonList.add(convertToJson(i,id));
         return chatJsonList;
     }
+    public List<ChatJson> searchUserArchiverJson(String searchKey, long id,Boolean isArchive) throws Exception {
+
+        List<Profile> profiles = profileService.searchOtherBaseName(searchKey);
+        List<Chat> chats = new ArrayList<>();
+        for (Profile p:profiles)
+        {
+            chats.addAll(searchUserArchiverOne(p,id,isArchive));
+        }
+        List<ChatJson> chatJsonList = new ArrayList<>();
+        for (Chat c: chats)
+        {
+            chatJsonList.add(convertToJson(c,id));
+        }
+
+        return chatJsonList;
+    }
+    public List<Chat> searchUserArchiverOne(Profile profile, long id,Boolean isUnread) throws Exception {
+        List<Chat> chats = new ArrayList<>();
+
+        PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName
+                +" WHERE ((profileId1=? or profileId2=?) OR (profileId1=? AND profileId2=?)) and isArchive = ? "
+        );
+
+        searchPs.setLong(1, profile.getId());
+        searchPs.setLong(2, id);
+        searchPs.setLong(3, id);
+        searchPs.setLong(4, profile.getId());
+        searchPs.setBoolean(5, isUnread);
+        ResultSet userResultSet = searchPs.executeQuery();
+        chats = this.convertAllSql(userResultSet);
+
+        return chats;
+    }
+
+    public List<ChatJson> searchUserUnreadJson(String searchKey, long id,Boolean isUnread) throws Exception
+    {
+        List<Profile> profiles = profileService.searchOtherBaseName(searchKey);
+        List<Chat> chats = new ArrayList<>();
+        for (Profile p:profiles)
+        {
+            chats.addAll(searchUserIsUnreadOne(p,id,isUnread));
+        }
+        List<ChatJson> chatJsonList = new ArrayList<>();
+        for (Chat c: chats)
+        {
+            chatJsonList.add(convertToJson(c,id));
+        }
+
+        return chatJsonList;
+    }
+
+    public List<Chat> searchUserIsUnreadOne(Profile profile, long id,Boolean isUnread) throws Exception {
+        List<Chat> chats = new ArrayList<>();
+
+        PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName
+                +" WHERE ((profileId1=? or profileId2=?) OR (profileId1=? AND profileId2=?)) and markUnread = ? "
+        );
+
+        searchPs.setLong(1, profile.getId());
+        searchPs.setLong(2, id);
+        searchPs.setLong(3, id);
+        searchPs.setLong(4, profile.getId());
+        searchPs.setBoolean(5, isUnread);
+        ResultSet userResultSet = searchPs.executeQuery();
+        chats = this.convertAllSql(userResultSet);
+
+        return chats;
+    }
+
 
     public HashMap<Chat, Message> searchMessages(String searchKey, long id) throws SQLException, ParseException {
         HashMap<Chat, Message> result = new HashMap<>();
@@ -242,7 +313,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
                 "(select * from message as ms where ms.body like ? and ms.chatId = ch.id)");
         searchPs.setLong(1, id);
         searchPs.setLong(2, id);
-        searchPs.setString(3, searchKey+"%");
+        searchPs.setString(3, "%"+searchKey+"%");
 
         ResultSet messagesResultSet = searchPs.executeQuery();
         ArrayList<Chat> resultTemp = this.convertAllSql(messagesResultSet);
@@ -251,8 +322,9 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         ) {
 
             PreparedStatement searchMessagePs = this.conn.prepareStatement("SELECT * FROM "+BaseEntity.getTableName(Message.class)+
-                    " WHERE chatId=?");
+                    " WHERE chatId=? and body like ?");
             searchMessagePs.setLong(1, c.getId());
+            searchMessagePs.setString(2, "%"+searchKey+"%");
             ResultSet resultSet = searchMessagePs.executeQuery();
 
             ArrayList<Message> messages = new MessageRepository(profileService).convertAllSql(resultSet);
@@ -260,15 +332,42 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
             chatJson.setMessageJsons(new ArrayList<>());
             for (Message m:messages
             ) {
-                System.out.println(m.getBody());
+
                 if(m.getBody().contains(searchKey)){
                     chatJson.getMessageJsons().add(messageService.convertToMessageJson(m));
-                    System.out.println(m.getBody());
+
                 }
                 result.add(chatJson);
             }
         }
         return result;
+    }
+
+    public ChatJson searchMessagesBaseChatIdJson(String searchKey, long id, long chatId) throws SQLException, ParseException {
+        Chat chat = findChatByChatIdAndProfileId(id,chatId);
+        if (chat == null)
+            return null;
+        PreparedStatement searchMessagePs = this.conn.prepareStatement("SELECT * FROM "+BaseEntity.getTableName(Message.class)+
+                " WHERE chatId = ? and body like ?");
+        searchMessagePs.setLong(1, chat.getId());
+        searchMessagePs.setString(2, "%"+searchKey+"%");
+        ResultSet resultSet = searchMessagePs.executeQuery();
+
+        ArrayList<Message> messages = new MessageRepository(profileService).convertAllSql(resultSet);
+        ChatJson chatJson = convertToJson(chat,id);
+        chatJson.setMessageJsons(new ArrayList<>());
+        for (Message m:messages
+        ) {
+
+            if(m.getBody().contains(searchKey)){
+                chatJson.getMessageJsons().add(messageService.convertToMessageJson(m));
+
+            }
+
+        }
+
+        return chatJson;
+
     }
 
     public Chat findByProfileIds(long profileId1, long profileId2) throws SQLException {
@@ -283,7 +382,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
 
         if (!resultSet.isBeforeFirst())
         {
-            System.out.println("HERE");
+
             return null;
         }
         resultSet.next();
@@ -292,7 +391,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
     }
 
     public void deleteChatCompletelyById(long chatId) throws SQLException {
-        System.out.println(chatId);
+
         if (findById(chatId) == null) {
             return;
         }
@@ -376,6 +475,21 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         chatJson.setMessageJsons(messageJsons);
 
         return chatJson;
+    }
+
+    public Chat findChatByChatIdAndProfileId(Long  profileId,Long chatId) throws SQLException
+    {
+        PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName
+                +" WHERE (profileId1=? or profileId2=?) AND  id = ?"
+        );
+        searchPs.setLong(1, profileId);
+        searchPs.setLong(2, profileId);
+        searchPs.setLong(3, chatId);
+        ResultSet userResultSet = searchPs.executeQuery();
+        ArrayList<Chat>result = this.convertAllSql(userResultSet);
+        if (result.size() > 0)
+            return result.get(0);
+        return null;
     }
 
 }
