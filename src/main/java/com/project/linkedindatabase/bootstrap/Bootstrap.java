@@ -197,7 +197,12 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     private boolean isValidDate() {
-        String filepath = "src/main/data/dates/dates.txt";
+        String directoryPath = "src/main/data/dates/";
+        String filepath = directoryPath + "dates.txt";
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
         Path path = Paths.get(filepath);
         String text = DateConverter.convertDate(DateConverter.getToday(), "yyy-MM-dd");
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
