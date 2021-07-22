@@ -216,26 +216,26 @@ public class ChatController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping("/chats/search-user-json/{searchKey}")
+    @PostMapping("/chats/search-user-json")
     public List<ChatJson> searchForUserJson(@RequestHeader Map<String, Object> jsonHeader,
-                                            @RequestBody Map<String, Object> jsonBody,
-                                         @PathVariable String searchKey) {
+                                            @RequestBody Map<String, Object> jsonBody) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
 
-            String searchType = (String) jsonBody.get("key");
-            if (searchType == null)
+            String keyword = (String) jsonBody.get("keyword");
+            String chatType = (String) jsonBody.get("chatType");
+            if (chatType == null)
             {
-                return chatService.searchUserJson(searchKey, profile.getId());
+                return chatService.searchUserJson(keyword, profile.getId());
             }
-            switch (searchType) {
+            switch (chatType) {
                 case "archive":
-                    return chatService.searchUserArchiverJson(searchKey, profile.getId(), true);
+                    return chatService.searchUserArchiverJson(keyword, profile.getId(), true);
                 case "unread":
-                    return chatService.searchUserUnreadJson(searchKey, profile.getId(), true);
+                    return chatService.searchUserUnreadJson(keyword, profile.getId(), true);
                 default:
-                    return chatService.searchUserJson(searchKey, profile.getId());
+                    return chatService.searchUserJson(keyword, profile.getId());
 
             }
         } catch (Exception e) {
@@ -278,14 +278,13 @@ public class ChatController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping("/chats/search-messages-json/{chatId}/{searchKey}")
-    public ChatJson searchForMessagesJsonChatId(@RequestHeader Map<String, Object> jsonHeader,
-                                                @PathVariable(name = "searchKey") String searchKey,@PathVariable(name = "chatId") Long chatId) {
+    @PostMapping("/chats/search-messages-json/{chatId}")
+    public ChatJson searchForMessagesJsonChatId(@RequestHeader Map<String, Object> jsonHeader, @RequestBody Map<String, Object> jsonBody, @PathVariable(name = "chatId") Long chatId) {
         String token = JwtUserDetailsService.getTokenByHeader(jsonHeader);
         try {
-            String searchType = (String) jsonHeader.get("key");
+            String searchType = (String) jsonBody.get("keyword");
             Profile profile = new JwtUserDetailsService(profileService).getProfileByHeader(jsonHeader);
-            return chatService.searchMessagesBaseChatIdJson(searchKey,profile.getId(),chatId);
+            return chatService.searchMessagesBaseChatIdJson(searchType,profile.getId(),chatId);
 
         } catch (Exception e) {
             e.printStackTrace();
