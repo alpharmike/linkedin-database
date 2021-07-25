@@ -231,7 +231,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         List<Chat> chats = new ArrayList<>();
 
         PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName
-                +" WHERE ((profileId1=? or profileId2=?) OR (profileId1=? AND profileId2=?)) and isArchive = ? "
+                +" WHERE ((profileId1=? AND profileId2=?) OR (profileId1=? AND profileId2=?)) and isArchive = ? "
         );
 
         searchPs.setLong(1, profile.getId());
@@ -266,7 +266,7 @@ public class ChatRepository extends BaseRepository<Chat,Long> {
         List<Chat> chats = new ArrayList<>();
 
         PreparedStatement searchPs = this.conn.prepareStatement("SELECT * FROM "+ this.tableName
-                +" WHERE ((profileId1=? or profileId2=?) OR (profileId1=? AND profileId2=?)) and markUnread = ? "
+                +" WHERE ((profileId1=? AND profileId2=?) OR (profileId1=? AND profileId2=?)) and markUnread = ? "
         );
 
         searchPs.setLong(1, profile.getId());
